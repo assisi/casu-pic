@@ -1,15 +1,21 @@
 #include "pic2beaglebone.h"
 
+/*Init variables for measured data*/
 float temp_f = 20.0, temp_b = 12.0, temp_r = -10.0, temp_l = -5.0, temp_t = 25.2;
 float vAmp_f = 1.0 , vAmp_b = 2.0, vAmp_r = 3.0, vAmp_l = 4.0;
 UINT16 fAmp_f = 200, fAmp_b = 300, fAmp_r = 400, fAmp_l = 500;
 UINT16 proxy_f = 2500, proxy_fr = 2470, proxy_br = 2380, proxy_b = 3000, proxy_bl = 3100, proxy_fl = 3200, proxy_t = 1000;
 UINT8 ctlPeltier = 50, pwmMotor = 10, pwmR_ctl = 24, pwmG_ctl = 23, pwmB_ctl = 42, pwmR_diag = 43, pwmG_diag = 76, pwmB_diag = 80;
 
+/* Init variables for storing references and control inputs*/
 float temp_ref = 20.0;
 UINT16 vibeFreq_ref = 0;
 UINT8 pwmR_ref = 0, pwmG_ref = 0, pwmB_ref = 0;
 
+/*
+ * Function updates references (temperature, motor, LED1, LED2) transfered from beaglebone.
+ * It takes data from rx_buff used in i2c communication with beaglebone
+ */
 void updateReferences() {
     UINT16 dummy;
     dummy = rx_buff[0] | (rx_buff[1] << 8);
@@ -26,6 +32,10 @@ void updateReferences() {
 
 }
 
+/*
+ * Function updates tx_buff used in i2c communication with Beaglebone with
+ *  new measured/calculated data
+ */
 void updateMeasurements() {
     UINT16 dummy;
     if (temp_f >= 0)
