@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <p33Fxxxx.h>
 #include "../../sensors/adxl345/adxl345.h"
 #include "../../sensors/adt7320/adt7320.h"
@@ -58,75 +59,75 @@ int main(int argc, char** argv) {
     delay_t1(100);
     sprintf(sbuff, "(Re)starting device \n\r", temp);
     uart2WriteString(sbuff);
-//         uart2WriteString(sbuff);
-//    status = adxl345Init(aSlave0);
-//    if (status == 0) {
-//        sprintf(sbuff, "SPI comm failed ");
-//        uart2WriteString(sbuff);
-//    }
-//    else if (status == -1) {
-//        sprintf(sbuff, "Device id failed ");
-//        uart2WriteString(sbuff);
-//    }
-//    else if (status == -2) {
-//        sprintf(sbuff, "Device powering failed ");
-//        uart2WriteString(sbuff);
-//    }
-//    delay_t1(100);
-//
-//    for(i = 0; i < 10; i ++) {
-//        if (adxlReadReg(aSlave0, REG_POWER_CTL, &data) < 0) {
-//            sprintf(sbuff, "SPI comm failed ");
-//            uart2WriteString(sbuff);
-//        }
-//        sprintf(sbuff, "Power ctl reg = %x \n\r", data);
-//        uart2WriteString(sbuff);
-//    }
-//
-//    status = adxl345Init(aSlave1);
-//    if (status == 0) {
-//        sprintf(sbuff, "SPI comm failed ");
-//        uart2WriteString(sbuff);
-//    }
-//    else if (status == -1) {
-//        sprintf(sbuff, "Device id failed ");
-//        uart2WriteString(sbuff);
-//    }
-//    else if (status == -2) {
-//        sprintf(sbuff, "Device powering failed ");
-//        uart2WriteString(sbuff);
-//    }
-//    delay_t1(100);
-//
-//    status = adt7320Init(tSlave0, ADT_CONT_MODE |ADT_16_BIT);
-//    if (status == 0) {
-//        sprintf(sbuff, "ADT7320 1, SPI comm failed ");
-//        uart2WriteString(sbuff);
-//    }
-//    else if (status == -1) {
-//        sprintf(sbuff, "ADT7320 1, Device id failed ");
-//        uart2WriteString(sbuff);
-//    }
-//    else if (status == -2) {
-//        sprintf(sbuff, "ADT7320 1 , Device settings failed ");
-//        uart2WriteString(sbuff);
-//    }
-//    delay_t1(100);
-//
-//    status = adt7320Init(tSlave1, ADT_CONT_MODE |ADT_16_BIT);
-//    if (status == 0) {
-//        sprintf(sbuff, "ADT7320 1, SPI comm failed ");
-//        uart2WriteString(sbuff);
-//    }
-//    else if (status == -1) {
-//        sprintf(sbuff, "ADT7320 1, Device id failed ");
-//        uart2WriteString(sbuff);
-//    }
-//    else if (status == -2) {
-//        sprintf(sbuff, "ADT7320 1 , Device settings failed ");
-//        uart2WriteString(sbuff);
-//    }
-//    delay_t1(100);
+         uart2WriteString(sbuff);
+    status = adxl345Init(aSlave0);
+    if (status == 0) {
+        sprintf(sbuff, "SPI comm failed ");
+        uart2WriteString(sbuff);
+    }
+    else if (status == -1) {
+        sprintf(sbuff, "Device id failed ");
+        uart2WriteString(sbuff);
+    }
+    else if (status == -2) {
+        sprintf(sbuff, "Device powering failed ");
+        uart2WriteString(sbuff);
+    }
+    delay_t1(100);
+
+    for(i = 0; i < 10; i ++) {
+        if (adxlReadReg(aSlave0, REG_POWER_CTL, &data) < 0) {
+            sprintf(sbuff, "SPI comm failed ");
+            uart2WriteString(sbuff);
+        }
+        sprintf(sbuff, "Power ctl reg = %x \n\r", data);
+        uart2WriteString(sbuff);
+    }
+
+    status = adxl345Init(aSlave1);
+    if (status == 0) {
+        sprintf(sbuff, "SPI comm failed ");
+        uart2WriteString(sbuff);
+    }
+    else if (status == -1) {
+        sprintf(sbuff, "Device id failed ");
+        uart2WriteString(sbuff);
+    }
+    else if (status == -2) {
+        sprintf(sbuff, "Device powering failed ");
+        uart2WriteString(sbuff);
+    }
+    delay_t1(100);
+
+    status = adt7320Init(tSlave0, ADT_CONT_MODE |ADT_16_BIT);
+    if (status == 0) {
+        sprintf(sbuff, "ADT7320 1, SPI comm failed ");
+        uart2WriteString(sbuff);
+    }
+    else if (status == -1) {
+        sprintf(sbuff, "ADT7320 1, Device id failed ");
+        uart2WriteString(sbuff);
+    }
+    else if (status == -2) {
+        sprintf(sbuff, "ADT7320 1 , Device settings failed ");
+        uart2WriteString(sbuff);
+    }
+    delay_t1(100);
+
+    status = adt7320Init(tSlave1, ADT_CONT_MODE |ADT_16_BIT);
+    if (status == 0) {
+        sprintf(sbuff, "ADT7320 1, SPI comm failed ");
+        uart2WriteString(sbuff);
+    }
+    else if (status == -1) {
+        sprintf(sbuff, "ADT7320 1, Device id failed ");
+        uart2WriteString(sbuff);
+    }
+    else if (status == -2) {
+        sprintf(sbuff, "ADT7320 1 , Device settings failed ");
+        uart2WriteString(sbuff);
+    }
+    delay_t1(100);
 
     // init i2c1 bus in a slave mode
     I2C1SlaveInit(0x0b, 1);     // address = 0x0b, interrupt priority = 1
@@ -147,58 +148,64 @@ int main(int argc, char** argv) {
     digitalLow(slave1);
     //PORTAbits.RA1 = 1;
     while (1) {
-
         if (pinValue(slave1))
             digitalLow(slave1);
         else
             digitalHigh(slave1);
        
-//         if (readAccX(aSlave0, &ax) <= 0) {
-//               ax = -999;
-//         }
-//         if (readAccY(aSlave0, &ay) <= 0) {
-//               ay = -999;
-//         }
-//         if (readAccZ(aSlave0, &az) <= 0) {
-//              az = -999;
-//         }
-//
-//         sprintf(sbuff, "acc0 ax ay az = %d %d %d\n\r ", ax, ay, az);
-//         uart2WriteString(sbuff);
-//
-//         if (readAccX(aSlave1, &ax) <= 0) {
-//               ax = -999;
-//         }
-//         if (readAccY(aSlave1, &ay) <= 0) {
-//               ay = -999;
-//         }
-//         if (readAccZ(aSlave1, &az) <= 0) {
-//              az = -999;
-//         }
-//
-//         sprintf(sbuff, "acc1 ax ay az = %d %d %d\n\r ", ax, ay, az);
-//         uart2WriteString(sbuff);
-//
-//         if (adt7320ReadTemp(tSlave0, &temp) <= 0) temp = -999;
-//         sprintf(sbuff, "temp0 = %.3f\n\r", temp);
-//         uart2WriteString(sbuff);
-//
-//         if (adt7320ReadTemp(tSlave1, &temp) <= 0) temp = -999;
-//         sprintf(sbuff, "temp1 = %.3f\n\r", temp);
-//         uart2WriteString(sbuff);
+        if (readAccX(aSlave0, &ax) <= 0) {
+               ax = -999;
+        }
+        if (readAccY(aSlave0, &ay) <= 0) {
+              ay = -999;
+        }
+        if (readAccZ(aSlave0, &az) <= 0) {
+              az = -999;
+        }
 
-//         sprintf(sbuff, "i2c1 int entries, rx_bytes, tx_bytes: %d, %d, %d \n\r", i2cIntNum, rx_bytes, tx_bytes);
-//         uart2WriteString(sbuff);
-//         if (rx_bytes > 0) {
-//             sprintf(sbuff, "i2c1 received %d bytes : ", rx_bytes);
-//             uart2WriteString(sbuff);
-//             for(i = 0; i < rx_bytes; i++) {
-//                 uart2WriteByte(rx_buff[i]);
-//             }
-//             uart2WriteString("\n\r");
-//             //rx_bytes = 0;
-//             delay_t1(5000);
-//         }
+        // it is assume the front acc is slave0
+        vAmp_f = sqrtl((double)ax * ax + (double)ay * ay + (double)az * az);
+
+        if (DEBUG_UART) {
+            sprintf(sbuff, "acc0 ax ay az = %d %d %d\n\r ", ax, ay, az);
+            uart2WriteString(sbuff);
+        }
+
+
+        if (readAccX(aSlave1, &ax) <= 0) {
+              ax = -999;
+        }
+        if (readAccY(aSlave1, &ay) <= 0) {
+              ay = -999;
+        }
+        if (readAccZ(aSlave1, &az) <= 0) {
+             az = -999;
+        }
+
+        // it is assume the right acc is slave1
+        vAmp_r = sqrtl((double)ax * ax + (double)ay * ay + (double)az * az);
+
+        if (DEBUG_UART) {
+            sprintf(sbuff, "acc1 ax ay az = %d %d %d\n\r ", ax, ay, az);
+            uart2WriteString(sbuff);
+        }
+
+        if (adt7320ReadTemp(tSlave0, &temp) <= 0) temp = -999;
+        temp_f = temp;
+
+        if (DEBUG_UART) {
+            sprintf(sbuff, "temp0 = %.3f\n\r", temp);
+            uart2WriteString(sbuff);
+        }
+
+        if (adt7320ReadTemp(tSlave1, &temp) <= 0) temp = -999;
+        temp_r = temp;
+        
+        if (DEBUG_UART) {
+            sprintf(sbuff, "temp1 = %.3f\n\r", temp);
+            uart2WriteString(sbuff);
+        }
+
         updateReferences();
         sprintf(sbuff, "temp_r, vibe_r, r_r, g_r, b_r  = %.1f, %d, %d , %d, %d \n\r", temp_ref, vibeFreq_ref, pwmR_ref, pwmG_ref, pwmB_ref);
         uart2WriteString(sbuff);

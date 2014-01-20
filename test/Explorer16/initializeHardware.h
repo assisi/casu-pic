@@ -10,6 +10,7 @@
 
 // desired frequency Fosc, note that Fp = Fcy = Fosc /2 = 40 Mhz
 #define FOSC 80000000
+#define DEBUG_UART 0
 
 #include <p33Fxxxx.h>
 #include "../../peripheral/timer/timerFunctions.h"

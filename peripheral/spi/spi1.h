@@ -8,8 +8,8 @@
 #ifndef SPI1_H
 #define	SPI1_H
 
-#include "p33Fxxxx.h"
-#include "Generic.h"
+#include <p33Fxxxx.h>
+#include <Generic.h>
 #include "../gpio/digitalIO.h"
 
 #define chipSelect(slave) digitalLow(slave)
