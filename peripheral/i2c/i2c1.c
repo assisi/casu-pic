@@ -1,13 +1,16 @@
 #include "i2c1.h"
 
-UINT8 rx_buff[BUFF_SIZE] = {0};
-UINT8 rx_head = 0;
-UINT8 rx_bytes = 0;
-UINT8 tx_buff[BUFF_SIZE] = {0};
-UINT8 tx_head = 0;
-UINT8 tx_bytes = 0;
-UINT16 i2cIntNum = 0;
+UINT8 rx_buff[BUFF_SIZE] = {0};     // buffer for incoming data
+UINT8 rx_head = 0;                  // pointer to buffer element where new byte is to be stored
+UINT8 tx_buff[BUFF_SIZE] = {0};     // buffer for outgoing data
+UINT8 tx_head = 0;                  // pointer to a buffer element which will be send in next outgoing transmission
 
+/*
+ * Function initializes i2c1 module as a slave device
+ * inputs: address - i2c address to be assigned to device
+ *         int_priority - interrupt priority to be assigned to slave i2c1 interrupt
+ * returns: 1 - device initialized and enabled
+ */
 UINT8 I2C1SlaveInit(UINT8 address, UINT8 int_priority) {
 
     I2C1CONbits.SEN = 0;        // disable module before setting
@@ -41,64 +44,12 @@ UINT8 I2C1SlaveInit(UINT8 address, UINT8 int_priority) {
     return 1;                   // i2c1 initialized and enabled
 }
 
-UINT8 I2C1SlaveWrite() {
-    
-    int i = 0;                                      // "watchdog timer" variable
-    while(1) {
-        I2C1TRN = tx_buff[tx_head++];               //send byte
-        while (!_SI2C1IF) {                         // wait for master to respond
-            i++;
-            if (i == WAIT_TIME) {                   // check if the waiting lasts too long
-                tx_head = 0;
-                return 0;
-            }
-        }
-        _SI2C1IF = 0;
-        if (I2C1STATbits.ACKSTAT == 1) break;       // master expects no more data
-        if (I2C1STATbits.TBF == 1) {
-            // sending data failed
-            I2C1STATbits.TBF = 0;
-        }
-        if (tx_head == BUFF_SIZE) tx_head = 0;      // reset tx_head
-
-        i = 0;
-    }
-    
-    return 1;
-}
-
-UINT8 I2C1SlaveRead() {
-
-    int i = 0;  // watchog timer
-    if ((I2C1CONbits.STREN) && (!I2C1CONbits.SCLREL))
-            I2C1CONbits.SCLREL = 1;                 // Clock is released after ACK
-    while(!I2C1STATbits.P) {                        // wait for the stop bit
-        while(!I2C1STATbits.RBF) {                  // wait for the received byte
-            if (I2C1STATbits.P) return 1;           // check the stop bit
-            i++;
-            if (i == WAIT_TIME) {
-                rx_head = 0;
-                return 0;
-            }
-
-        }
-        rx_buff[rx_head++] = I2C1RCV;
-        I2C1STATbits.I2COV = 0;                     // reset overflow flag
-        if ((I2C1CONbits.STREN) && (!I2C1CONbits.SCLREL))
-            I2C1CONbits.SCLREL = 1;                 // Clock is released after ACK
-        if (rx_head == BUFF_SIZE) rx_head = 0;
-        i = 0;
-    }
-    return 1;
-}
-
 /*
  * Slave i2c1 interrupt service routine
+ * When interrupt occurs immediately store incoming data to rx_buff or send outgoing data from tx_buff
  */
 void __attribute__((__interrupt__, auto_psv)) _SI2C1Interrupt(void) {
     
-    i2cIntNum++;
-
     if (I2C1STATbits.D_A == 0) {
         // device address detected
         rx_head = 0;
