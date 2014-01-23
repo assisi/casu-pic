@@ -4,6 +4,8 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <logicalFolder name="f1" displayName="CASU-karlo" projectFiles="true">
+      </logicalFolder>
       <logicalFolder name="gpio" displayName="gpio" projectFiles="true">
         <itemPath>/home/thaus/development/mplab/peripheral/gpio/digitalIO.h</itemPath>
       </logicalFolder>
@@ -20,6 +22,7 @@
         <itemPath>/home/thaus/development/mplab/peripheral/timer/timerFunctions.h</itemPath>
         <itemPath>/home/thaus/development/mplab/peripheral/timer/timer1.h</itemPath>
       </logicalFolder>
+      <itemPath>../test/CASU-karlo/initializeHardware.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -28,9 +31,9 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <logicalFolder name="CASU" displayName="CASU" projectFiles="true">
-        <itemPath>/home/thaus/development/mplab/test/CASU/initizializeHardware.c</itemPath>
-        <itemPath>/home/thaus/development/mplab/test/CASU/main.c</itemPath>
+      <logicalFolder name="CASU-karlo" displayName="CASU-karlo" projectFiles="true">
+        <itemPath>../test/CASU-karlo/initizializeHardware.c</itemPath>
+        <itemPath>../test/CASU-karlo/main.c</itemPath>
       </logicalFolder>
       <logicalFolder name="gpio" displayName="gpio" projectFiles="true">
         <itemPath>/home/thaus/development/mplab/peripheral/gpio/digitalIO.c</itemPath>
@@ -52,6 +55,7 @@
     <Elem>/home/thaus/development/mplab/peripheral/timer</Elem>
     <Elem>/home/thaus/development/mplab/pic-to-beaglebone</Elem>
     <Elem>/home/thaus/development/mplab/peripheral/i2c</Elem>
+    <Elem>../test/CASU-karlo</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -63,8 +67,8 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>ICD3PlatformTool</platformTool>
         <languageToolchain>XC16</languageToolchain>
-        <languageToolchainVersion>1.21</languageToolchainVersion>
-        <platform>2</platform>
+        <languageToolchainVersion>1.11</languageToolchainVersion>
+        <platform>3</platform>
       </toolsSet>
       <compileType>
         <linkerTool>
