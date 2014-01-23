@@ -8,7 +8,7 @@
 #ifndef PIC2BEAGLEBONE_H
 #define	PIC2BEAGLEBONE_H
 
-#include "../peripheral/i2c/i2c1.h"
+#include "../peripheral/i2c/i2c2.h"
 #include <Generic.h>
 
 #define IN_DATA_NUM 7

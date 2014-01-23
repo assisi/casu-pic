@@ -46,7 +46,6 @@ int main(int argc, char** argv) {
     setUpPorts();
     while (1) {
 
-        updateReferences();
         if (status == 0) {
             digitalHigh(LED2R);
             digitalLow(LED2G);
@@ -67,7 +66,6 @@ int main(int argc, char** argv) {
         }
 
         delay_t1(1000);
-        updateMeasurements();
     }
 
     return (EXIT_SUCCESS);
