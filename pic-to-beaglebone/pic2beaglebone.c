@@ -38,6 +38,9 @@ void updateReferences() {
  */
 void updateMeasurements() {
     UINT16 dummy;
+
+    // send back what you received
+    temp_f = temp_ref;
     if (temp_f >= 0)
         dummy = (int)(temp_f * 10);
     else
@@ -73,6 +76,8 @@ void updateMeasurements() {
     tx_buff[8] = dummy & 0x00FF;
     tx_buff[9] = (dummy & 0xFF00) >> 8;
 
+    //send back what you received
+    vAmp_f = vibeFreq_ref;
     dummy = vAmp_f * 10;
     tx_buff[10] = dummy & 0x00FF;
     tx_buff[11] = (dummy & 0xFF00) >> 8;
@@ -125,8 +130,12 @@ void updateMeasurements() {
     tx_buff[40] = ctlPeltier;
     tx_buff[41] = pwmMotor;
 
+    // send back what you received
+    pwmR_ctl = pwmR_ref;
     tx_buff[42] = pwmR_ctl;
+    pwmG_ctl = pwmG_ref;
     tx_buff[43] = pwmG_ctl;
+    pwmB_ctl = pwmB_ref;
     tx_buff[44] = pwmB_ctl;
 
     tx_buff[45] = pwmR_diag;
