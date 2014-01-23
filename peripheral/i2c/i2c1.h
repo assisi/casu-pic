@@ -8,7 +8,14 @@
 #ifndef I2C1_H
 #define	I2C1_H
 
+#if defined(__PIC24F__)
+#include <p24Fxxxx.h>
+#elif defined(__dsPIC33F__)
 #include <p33Fxxxx.h>
+#elif defined(__dsPIC33E__)
+#include <p33Exxxx.h>
+#endif
+
 #include <Generic.h>
 
 #define BUFF_SIZE 64

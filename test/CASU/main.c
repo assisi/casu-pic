@@ -13,6 +13,7 @@
 #include "initializeHardware.h"
 #include "../../peripheral/gpio/digitalIO.h"
 #include "../../peripheral/timer/timerFunctions.h"
+#include "../../pic-to-beaglebone/pic2beaglebone.h"
 
 // Select Internal FRC at POR
 _FOSCSEL(FNOSC_FRC & IESO_OFF);
