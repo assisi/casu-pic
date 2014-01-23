@@ -6,10 +6,11 @@
  * return: 1 - initialization succeeded
  *         0 - initialization failed
  */
+//??? Provjeriti -> zakomentirane prve dvije linije
 UINT8 spi1Init(UINT8 mode, UINT8 int_en) {
 
-    TRISFbits.TRISF6 = 0;                    // SCLK output
-    TRISFbits.TRISF7 = 1;                    //SDI input
+    //TRISFbits.TRISF6 = 0;                    // SCLK output
+    //TRISFbits.TRISF7 = 1;                    //SDI input
     TRISFbits.TRISF8 = 0;                   // SDO output
     
     SPI1STATbits.SPIEN = 0;                  // Disable module

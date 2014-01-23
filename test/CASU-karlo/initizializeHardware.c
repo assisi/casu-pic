@@ -6,6 +6,7 @@ digitalPin LED2R = {&TRISCbits, &PORTCbits, 3};
 digitalPin LED2G = {&TRISCbits, &PORTCbits, 2};
 digitalPin LED2B = {&TRISEbits, &PORTEbits, 4};
 
+
 void setUpPorts() {
     /* Set port configuration */
     ANSELA = ANSELB = ANSELC = ANSELD = ANSELE = ANSELG = 0x0000;; // all ports digitaL

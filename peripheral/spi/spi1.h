@@ -8,7 +8,14 @@
 #ifndef SPI1_H
 #define	SPI1_H
 
+#if defined(__PIC24F__)
+#include <p24Fxxxx.h>
+#elif defined(__dsPIC33F__)
 #include <p33Fxxxx.h>
+#elif defined(__dsPIC33E__)
+#include <p33Exxxx.h>
+#endif
+
 #include <Generic.h>
 #include "../gpio/digitalIO.h"
 

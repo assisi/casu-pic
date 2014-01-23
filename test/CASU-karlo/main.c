@@ -15,6 +15,10 @@
 #include "../../peripheral/timer/timerFunctions.h"
 #include "../../pic-to-beaglebone/pic2beaglebone.h"
 
+#include "../../actuators/led.h"
+#include "../../actuators/peltier.h"
+
+
 // Select Internal FRC at POR
 _FOSCSEL(FNOSC_FRC & IESO_OFF);
 // Enable Clock Switching and Configure POSC in XT mode
@@ -43,26 +47,40 @@ int main(int argc, char** argv) {
     while (OSCCONbits.LOCK!= 1);
 
     int status = 0;
+    PWMInit();
+    
+    UINT8 ledUserR, ledUserB, ledUserG;
+    LedUser(ledUserR, ledUserB, ledUserG);
     setUpPorts();
+
+
+
     while (1) {
 
-        if (status == 0) {
-            digitalHigh(LED2R);
-            digitalLow(LED2G);
-            digitalLow(LED2B);
-            status++;
-        }
-        else if (status == 1) {
-            digitalLow(LED2R);
-            digitalHigh(LED2G);
-            digitalLow(LED2B);
-            status++;
-        }
-        else if (status == 2) {
-            digitalLow(LED2R);
-            digitalLow(LED2G);
-            digitalHigh(LED2B);
-            status = 0;
+//        if (status == 0) {
+//            digitalHigh(LED2R);
+//            digitalLow(LED2G);
+//            digitalLow(LED2B);
+//            //status++;
+//        }
+//        else if (status == 1) {
+//            digitalLow(LED2R);
+//            digitalHigh(LED2G);
+//            digitalLow(LED2B);
+//            //status++;
+//        }
+//        else if (status == 2) {
+//            digitalLow(LED2R);
+//            digitalLow(LED2G);
+//            digitalHigh(LED2B);
+//            //status = 0;
+//        }
+        //digitalHigh(LED2R);
+        //PWM testing
+        if (status == 3) {
+            //LedUser(ledUserR, ledUserB, ledUserG);
+            ledUserR += 10;
+            ledUserR %= 100;
         }
 
         delay_t1(1000);
