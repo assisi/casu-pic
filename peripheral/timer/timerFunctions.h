@@ -9,7 +9,7 @@
 #define	TIMERFUNCTIONS_H
 
 #include "timer1.h"
-#include "../../test/testSensorBoard/initializeHardware.h"
+#include "../../test/CASU/initializeHardware.h"
 
 void delay_t1(int msec);
 long ticks_from_ms(int msec, int prescaler);

@@ -178,7 +178,8 @@ int main(int argc, char** argv) {
         if (readAccY(aSlave1, &ay) <= 0) {
               ay = -999;
         }
-        if (readAccZ(aSlave1, &az) <= 0) {
+        if (readAccZ(aSlave1, &az) <=
+                0) {
              az = -999;
         }
 

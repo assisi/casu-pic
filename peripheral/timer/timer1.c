@@ -1,9 +1,3 @@
-
-#if defined(__PIC24F__)
-#include <p24Fxxxx.h>
-#elif defined(__dsPIC33F__)
-#include <p33Fxxxx.h>
-#endif
 #include "timer1.h"
 
 /********************************************************************

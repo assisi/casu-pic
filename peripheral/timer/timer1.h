@@ -9,16 +9,14 @@
 #define	TIMER1_H
 #endif
 
-#ifdef	__cplusplus
-extern "C" {
+#if defined(__PIC24F__)
+#include <p24Fxxxx.h>
+#elif defined(__dsPIC33F__)
+#include <p33Fxxxx.h>
+#elif defined(__dsPIC33E__)
+#include <p33Exxxx.h>
 #endif
 
-
-
-
-#ifdef	__cplusplus
-}
-#endif
 
 #include "Generic.h"
 
