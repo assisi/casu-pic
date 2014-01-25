@@ -39,8 +39,6 @@ void updateReferences() {
 void updateMeasurements() {
     UINT16 dummy;
 
-    // send back what you received
-    temp_f = temp_ref;
     if (temp_f >= 0)
         dummy = (int)(temp_f * 10);
     else
@@ -76,8 +74,6 @@ void updateMeasurements() {
     tx_buff[8] = dummy & 0x00FF;
     tx_buff[9] = (dummy & 0xFF00) >> 8;
 
-    //send back what you received
-    vAmp_f = vibeFreq_ref;
     dummy = vAmp_f * 10;
     tx_buff[10] = dummy & 0x00FF;
     tx_buff[11] = (dummy & 0xFF00) >> 8;

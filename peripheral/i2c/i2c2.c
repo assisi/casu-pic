@@ -29,7 +29,8 @@ UINT8 I2C2SlaveInit(UINT8 address, UINT8 int_priority) {
     I2C2CONbits.SCLREL = 1;     // release SCLx clock
     /*check*/
     I2C2CONbits.I2CSIDL = 0;    // Continue module operation in IDLE mode
-    UINT8 dummy = I2C2RCV;      // read value to clear I2C2RBF flag
+    UINT8 dummy;
+    dummy = I2C2RCV;      // read value to clear I2C2RBF flag
     I2C2STATbits.I2COV = 0;     // clear overflow flag
 
 

@@ -8,10 +8,10 @@
 UINT8 bits16Used;
 
 /*define slaves' chip select pins*/
-digitalPin tSlave0 = {&TRISDbits, &PORTDbits, 0};
-digitalPin tSlave1 = {&TRISDbits, &PORTDbits, 5};
-digitalPin tSlave2;
-digitalPin tSlave3;
+digitalPin tSlaveF = {&TRISBbits, &PORTBbits, 5};
+digitalPin tSlaveR = {&TRISAbits, &PORTAbits, 6};
+digitalPin tSlaveB = {&TRISAbits, &PORTAbits, 4};
+digitalPin tSlaveL = {&TRISBbits, &PORTBbits, 10};
 
 /* Function for initializing ADT7320, digital temperature sensor with SPI comm
  * inputs:  csPin - chip select pin for temperature sensor
@@ -26,9 +26,9 @@ UINT8 adt7320Init(digitalPin csPin, UINT8 config) {
 
     digitalOutput(csPin);   // set csPin digital output
     chipDeselect(csPin);    // set csPin high, i.e. deselect slave
-    // check if spi1 is enabled
-    if (!SPI1STATbits.SPIEN) {
-        spi1Init(2, 0);     // mode 2, interrupt disabled
+    // check if spi2 is enabled
+    if (!SPI2STATbits.SPIEN) {
+        spi2Init(2, 0);     // mode 2, interrupt disabled
     }
 
     UINT16 buff[2], i;
@@ -38,7 +38,7 @@ UINT8 adt7320Init(digitalPin csPin, UINT8 config) {
     buff[1] = 0xFFFF;
 
     chipSelect(csPin);
-    status = spi1TransferBuff(buff, 2);
+    status = spi2TransferBuff(buff, 2);
     chipDeselect(csPin);
     if (status <= 0) return 0;
 
@@ -49,7 +49,7 @@ UINT8 adt7320Init(digitalPin csPin, UINT8 config) {
     for(i = 0; i <  10; i++) {
         buff[0] = ADT_COMMAND(ADT_REG_ID, ADT_READ) << 8;
         chipSelect(csPin);
-        status = spi1TransferBuff(buff, 1);
+        status = spi2TransferBuff(buff, 1);
         chipDeselect(csPin);
         if (status <= 0) return 0;
         if ((buff[0] & 0x00FF) != ADT_DEV_ID) return -1;
@@ -59,7 +59,7 @@ UINT8 adt7320Init(digitalPin csPin, UINT8 config) {
     for(i = 0; i <  10; i++) {
         buff[0] = ADT_COMMAND(ADT_REG_STATUS, ADT_READ) << 8;
         chipSelect(csPin);
-        status = spi1TransferBuff(buff, 1);
+        status = spi2TransferBuff(buff, 1);
         chipDeselect(csPin);
         if (status <= 0) return 0;
         if ((buff[0] & 0x00FF) != ADT_INIT_STATUS) return -1;
@@ -69,14 +69,14 @@ UINT8 adt7320Init(digitalPin csPin, UINT8 config) {
      // the device can now be enabled and configured
      buff[0] = (ADT_COMMAND(ADT_REG_CONFIG, ADT_WRITE) << 8) | config;
      chipSelect(csPin);
-     status = spi1TransferBuff(buff, 1);
+     status = spi2TransferBuff(buff, 1);
      chipDeselect(csPin);
      if (status <= 0) return 0;
 
      // read config register to check changes
      buff[0] = (ADT_COMMAND(ADT_REG_CONFIG, ADT_READ) << 8);
      chipSelect(csPin);
-     status = spi1TransferBuff(buff, 1);
+     status = spi2TransferBuff(buff, 1);
      chipDeselect(csPin);
      if (status <= 0) return 0;
      if ((buff[0] & 0x00FF) != config) return -2;
@@ -98,7 +98,7 @@ UINT8 adt7320ReadTemp(digitalPin csPin, float *temp) {
 
     buff[0] = ADT_COMMAND(ADT_REG_TEMP_VAL, ADT_READ) << 8;
     chipSelect(csPin);
-    status = spi1TransferBuff(buff, 2);
+    status = spi2TransferBuff(buff, 2);
     chipDeselect(csPin);
     if (status <= 0) return 0;
     buff[1] = (buff[1] >> 8) | ((buff[0] & 0x00FF) << 8);

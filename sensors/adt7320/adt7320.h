@@ -9,7 +9,7 @@
 #ifndef ADT7320_H
 #define	ADT7320_H
 
-#include "../../peripheral/spi/spi1.h"
+#include "../../peripheral/spi/spi2.h"
 #include "../../peripheral/gpio/digitalIO.h"
 
 /*ADT7220 registers*/
@@ -58,10 +58,10 @@ enum ADT_REGISTERS {
 #define ADT_SLAVE1_OFF PORTDbits.RD5 = 1
 
 /*Define chip select pins for adt7320 sensors used*/
-extern digitalPin tSlave0;
-extern digitalPin tSlave1;
-extern digitalPin tSlave2;
-extern digitalPin tSlave3;
+extern digitalPin tSlaveF;
+extern digitalPin tSlaveR;
+extern digitalPin tSlaveB;
+extern digitalPin tSlaveL;
 
 /*ADT7320 command format*/
 #define ADT_COMMAND(reg, readWrite)  ((reg << 3) | readWrite)
