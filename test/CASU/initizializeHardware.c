@@ -18,16 +18,24 @@ void setUpPorts() {
     digitalOutput(LED2B);
     // configure accelerometer SPI chip select ports as outputs
     digitalOutput(aSlaveF);
+    digitalHigh(aSlaveF);
     digitalOutput(aSlaveR);
+    digitalHigh(aSlaveR);
     digitalOutput(aSlaveB);
     digitalHigh(aSlaveB);
     digitalOutput(aSlaveL);
+    digitalHigh(aSlaveL);
+
     // configure temperature sensor SPI chip select ports as outputs
     digitalOutput(tSlaveF);
+    digitalHigh(tSlaveF);
     digitalOutput(tSlaveR);
+    digitalHigh(tSlaveR);
     digitalOutput(tSlaveB);
     digitalHigh(tSlaveB);
     digitalOutput(tSlaveL);
+    digitalHigh(tSlaveL);
+
     // configure i2c2 as a slave device with address 0x0b and interrupt priority 1
     I2C2SlaveInit(0x0b, 1);
 }
