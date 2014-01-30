@@ -59,327 +59,353 @@ int main(int argc, char** argv) {
 
     setUpPorts();
 
-    status = adxl345Init(aSlaveF);
-    if (status == 0) {
-        /*
-         * Send error message "ACC_F, SPI comm failes"
-         */
-        error = 1;
-        digitalHigh(LED2R);
-    }
-    else if (status == -1) {
-        /*
-         * Send error message "ACC_F, Device id failed "
-         */
-        error = 1;
-        digitalHigh(LED2G);
-    }
-    else if (status == -2) {
-        /*
-         * Send error message "ACC_F, Device powering failed"
-         */
-        error = 1;
-        digitalHigh(LED2B);
-    }
-    delay_t1(100);
-
-    status = adxl345Init(aSlaveR);
-    if (status == 0) {
-        /*
-         * Send error message "ACC_F, SPI comm failes"
-         */
-        error = 1;
-        digitalHigh(LED2R);
-    }
-    else if (status == -1) {
-        /*
-         * Send error message "ACC_F, Device id failed "
-         */
-        error = 1;
-        digitalHigh(LED2G);
-    }
-    else if (status == -2) {
-        /*
-         * Send error message "ACC_F, Device powering failed"
-         */
-        error = 1;
-        digitalHigh(LED2B);
-    }
-    delay_t1(100);
-
-    status = adxl345Init(aSlaveB);
-    if (status == 0) {
-        /*
-         * Send error message "ACC_F, SPI comm failes"
-         */
-        error = 1;
-        digitalHigh(LED2R);
-    }
-    else if (status == -1) {
-        /*
-         * Send error message "ACC_F, Device id failed "
-         */
-        error = 1;
-        digitalHigh(LED2G);
-    }
-    else if (status == -2) {
-        /*
-         * Send error message "ACC_F, Device powering failed"
-         */
-        error = 1;
-        digitalHigh(LED2B);
-    }
-    delay_t1(100);
-
-    status = adxl345Init(aSlaveL);
-    if (status == 0) {
-        /*
-         * Send error message "ACC_F, SPI comm failes"
-         */
-        error = 1;
-        digitalHigh(LED2R);
-    }
-    else if (status == -1) {
-        /*
-         * Send error message "ACC_F, Device id failed "
-         */
-        error = 1;
-        digitalHigh(LED2G);
-    }
-    else if (status == -2) {
-        /*
-         * Send error message "ACC_F, Device powering failed"
-         */
-        error = 1;
-        digitalHigh(LED2B);
-    }
-    delay_t1(100);
-    
-    status = adt7320Init(tSlaveF, ADT_CONT_MODE |ADT_16_BIT);
-    if (status == 0) {
-        /*
-         * Send error message "Temp_F, SPI comm failed"
-         */
-        error = 1;
-        digitalHigh(LED2R);
-    }
-    else if (status == -1) {
-        /*
-         * Send error message "Temp_F, Device ID failed"
-         */
-        error = 1;
-        digitalHigh(LED2G);
-    }
-    else if (status == -2) {
-        /*
-         * Send error message "Temp_F, Device settings failed"
-         */
-        error = 1;
-        digitalHigh(LED2B);
-    }
-    delay_t1(100);
-
-    status = adt7320Init(tSlaveR, ADT_CONT_MODE |ADT_16_BIT);
-    if (status == 0) {
-        /*
-         * Send error message "Temp_F, SPI comm failed"
-         */
-        error = 1;
-        digitalHigh(LED2R);
-    }
-    else if (status == -1) {
-        /*
-         * Send error message "Temp_F, Device ID failed"
-         */
-        error = 1;
-        digitalHigh(LED2G);
-    }
-    else if (status == -2) {
-        /*
-         * Send error message "Temp_F, Device settings failed"
-         */
-        error = 1;
-        digitalHigh(LED2B);
-    }
-    delay_t1(100);
-
-    status = adt7320Init(tSlaveB, ADT_CONT_MODE |ADT_16_BIT);
-    if (status == 0) {
-        /*
-         * Send error message "Temp_F, SPI comm failed"
-         */
-        error = 1;
-        digitalHigh(LED2R);
-    }
-    else if (status == -1) {
-        /*
-         * Send error message "Temp_F, Device ID failed"
-         */
-        error = 1;
-        digitalHigh(LED2G);
-    }
-    else if (status == -2) {
-        /*
-         * Send error message "Temp_F, Device settings failed"
-         */
-        error = 1;
-        digitalHigh(LED2B);
-    }
-    delay_t1(100);
-
-    status = adt7320Init(tSlaveL, ADT_CONT_MODE |ADT_16_BIT);
-    if (status == 0) {
-        /*
-         * Send error message "Temp_F, SPI comm failed"
-         */
-        error = 1;
-        digitalHigh(LED2R);
-    }
-    else if (status == -1) {
-        /*
-         * Send error message "Temp_F, Device ID failed"
-         */
-        error = 1;
-        digitalHigh(LED2G);
-    }
-    else if (status == -2) {
-        /*
-         * Send error message "Temp_F, Device settings failed"
-         */
-        error = 1;
-        digitalHigh(LED2B);
-    }
-    delay_t1(100);
-
-    status = 0;
-    
-    while (1) {
-
+    delay_t1(500);
+    digitalHigh(LED2R);
+    while(1) {
+        
         updateReferences();
-        if (error == 0) {
-            if (status == 0) {
-                digitalHigh(LED2R);
-                digitalLow(LED2G);
-                digitalLow(LED2B);
-                status++;
-            }
-            else if (status == 1) {
-                digitalLow(LED2R);
-                digitalHigh(LED2G);
-                digitalLow(LED2B);
-                status++;
-            }
-            else if (status == 2) {
-                digitalLow(LED2R);
-                digitalLow(LED2G);
-                digitalHigh(LED2B);
-                status = 0;
-            }
-        }
 
-        if (readAccX(aSlaveF, &ax) <= 0) {
-               ax = 1;
-               error = 1;
-               digitalHigh(LED2R);
-        }
-        if (readAccY(aSlaveF, &ay) <= 0) {
-              ay = 0;
-              error = 1;
-              digitalHigh(LED2R);
-        }
-        if (readAccZ(aSlaveF, &az) <= 0) {
-              az = 0;
-              error = 1;
-              digitalHigh(LED2R);
-        }
+//        if (diagLED_r[0] > 0)
+//            digitalHigh(LED2R);
+//        else
+//            digitalLow(LED2R);
 
-        vAmp_f = sqrtl((double)ax * ax + (double)ay * ay + (double)az * az);
-
-        if (readAccX(aSlaveR, &ax) <= 0) {
-               ax = 1;
-               error = 1;
-               digitalHigh(LED2R);
-        }
-        if (readAccY(aSlaveR, &ay) <= 0) {
-              ay = 0;
-              error = 1;
-              digitalHigh(LED2R);
-        }
-        if (readAccZ(aSlaveR, &az) <= 0) {
-              az = 0;
-              error = 1;
-              digitalHigh(LED2R);
-        }
-
-        vAmp_r = sqrtl((double)ax * ax + (double)ay * ay + (double)az * az);
-        
-        if (readAccX(aSlaveB, &ax) <= 0) {
-               ax = 1;
-               error = 1;
-               digitalHigh(LED2R);
-        }
-        if (readAccY(aSlaveB, &ay) <= 0) {
-              ay = 0;
-              error = 1;
-              digitalHigh(LED2R);
-        }
-        if (readAccZ(aSlaveB, &az) <= 0) {
-              az = 0;
-              error = 1;
-              digitalHigh(LED2R);
-        }
-
-        vAmp_b = sqrtl((double)ax * ax + (double)ay * ay + (double)az * az);
-
-         if (readAccX(aSlaveL, &ax) <= 0) {
-               ax = 1;
-               error = 1;
-               digitalHigh(LED2R);
-        }
-        if (readAccY(aSlaveL, &ay) <= 0) {
-              ay = 0;
-              error = 1;
-              digitalHigh(LED2R);
-        }
-        if (readAccZ(aSlaveL, &az) <= 0) {
-              az = 0;
-              error = 1;
-              digitalHigh(LED2R);
-        }
-
-        vAmp_l = sqrtl((double)ax * ax + (double)ay * ay + (double)az * az);
-
-        if (adt7320ReadTemp(tSlaveF, &temp) <= 0) {
-            temp = 1;
-            error = 1;
+        if (diagLED_r[1] > 0)
             digitalHigh(LED2G);
-        }
-        temp_f = temp;
+        else
+            digitalLow(LED2G);
 
-        if (adt7320ReadTemp(tSlaveR, &temp) <= 0) {
-            temp = 1;
-            error = 1;
-            digitalHigh(LED2G);
-        }
-        temp_r = temp;
+        if (diagLED_r[2] > 0)
+            digitalHigh(LED2B);
+        else
+            digitalLow(LED2B);
 
-        if (adt7320ReadTemp(tSlaveB, &temp) <= 0) {
-            temp = 1;
-            error = 1;
-            digitalHigh(LED2G);
-        }
-        temp_b = temp;
-
-        if (adt7320ReadTemp(tSlaveL, &temp) <= 0) {
-            temp = 1;
-            error = 1;
-            digitalHigh(LED2G);
-        }
-        temp_l = temp;
-        
-        delay_t1(1000);
         updateMeasurements();
+        delay_t1(20);
+
     }
+
+//    status = adxl345Init(aSlaveF);
+//    if (status == 0) {
+//        /*
+//         * Send error message "ACC_F, SPI comm failes"
+//         */
+//        error = 1;
+//        digitalHigh(LED2R);
+//    }
+//    else if (status == -1) {
+//        /*
+//         * Send error message "ACC_F, Device id failed "
+//         */
+//        error = 1;
+//        digitalHigh(LED2G);
+//    }
+//    else if (status == -2) {
+//        /*
+//         * Send error message "ACC_F, Device powering failed"
+//         */
+//        error = 1;
+//        digitalHigh(LED2B);
+//    }
+//    delay_t1(100);
+//
+//    status = adxl345Init(aSlaveR);
+//    if (status == 0) {
+//        /*
+//         * Send error message "ACC_F, SPI comm failes"
+//         */
+//        error = 1;
+//        digitalHigh(LED2R);
+//    }
+//    else if (status == -1) {
+//        /*
+//         * Send error message "ACC_F, Device id failed "
+//         */
+//        error = 1;
+//        digitalHigh(LED2G);
+//    }
+//    else if (status == -2) {
+//        /*
+//         * Send error message "ACC_F, Device powering failed"
+//         */
+//        error = 1;
+//        digitalHigh(LED2B);
+//    }
+//    delay_t1(100);
+//
+//    status = adxl345Init(aSlaveB);
+//    if (status == 0) {
+//        /*
+//         * Send error message "ACC_F, SPI comm failes"
+//         */
+//        error = 1;
+//        digitalHigh(LED2R);
+//    }
+//    else if (status == -1) {
+//        /*
+//         * Send error message "ACC_F, Device id failed "
+//         */
+//        error = 1;
+//        digitalHigh(LED2G);
+//    }
+//    else if (status == -2) {
+//        /*
+//         * Send error message "ACC_F, Device powering failed"
+//         */
+//        error = 1;
+//        digitalHigh(LED2B);
+//    }
+//    delay_t1(100);
+//
+//    status = adxl345Init(aSlaveL);
+//    if (status == 0) {
+//        /*
+//         * Send error message "ACC_F, SPI comm failes"
+//         */
+//        error = 1;
+//        digitalHigh(LED2R);
+//    }
+//    else if (status == -1) {
+//        /*
+//         * Send error message "ACC_F, Device id failed "
+//         */
+//        error = 1;
+//        digitalHigh(LED2G);
+//    }
+//    else if (status == -2) {
+//        /*
+//         * Send error message "ACC_F, Device powering failed"
+//         */
+//        error = 1;
+//        digitalHigh(LED2B);
+//    }
+//    delay_t1(100);
+//
+//    status = adt7320Init(tSlaveF, ADT_CONT_MODE |ADT_16_BIT);
+//    if (status == 0) {
+//        /*
+//         * Send error message "Temp_F, SPI comm failed"
+//         */
+//        error = 1;
+//        digitalHigh(LED2R);
+//    }
+//    else if (status == -1) {
+//        /*
+//         * Send error message "Temp_F, Device ID failed"
+//         */
+//        error = 1;
+//        digitalHigh(LED2G);
+//    }
+//    else if (status == -2) {
+//        /*
+//         * Send error message "Temp_F, Device settings failed"
+//         */
+//        error = 1;
+//        digitalHigh(LED2B);
+//    }
+//    delay_t1(100);
+//
+//    status = adt7320Init(tSlaveR, ADT_CONT_MODE |ADT_16_BIT);
+//    if (status == 0) {
+//        /*
+//         * Send error message "Temp_F, SPI comm failed"
+//         */
+//        error = 1;
+//        digitalHigh(LED2R);
+//    }
+//    else if (status == -1) {
+//        /*
+//         * Send error message "Temp_F, Device ID failed"
+//         */
+//        error = 1;
+//        digitalHigh(LED2G);
+//    }
+//    else if (status == -2) {
+//        /*
+//         * Send error message "Temp_F, Device settings failed"
+//         */
+//        error = 1;
+//        digitalHigh(LED2B);
+//    }
+//    delay_t1(100);
+//
+//    status = adt7320Init(tSlaveB, ADT_CONT_MODE |ADT_16_BIT);
+//    if (status == 0) {
+//        /*
+//         * Send error message "Temp_F, SPI comm failed"
+//         */
+//        error = 1;
+//        digitalHigh(LED2R);
+//    }
+//    else if (status == -1) {
+//        /*
+//         * Send error message "Temp_F, Device ID failed"
+//         */
+//        error = 1;
+//        digitalHigh(LED2G);
+//    }
+//    else if (status == -2) {
+//        /*
+//         * Send error message "Temp_F, Device settings failed"
+//         */
+//        error = 1;
+//        digitalHigh(LED2B);
+//    }
+//    delay_t1(100);
+//
+//    status = adt7320Init(tSlaveL, ADT_CONT_MODE |ADT_16_BIT);
+//    if (status == 0) {
+//        /*
+//         * Send error message "Temp_F, SPI comm failed"
+//         */
+//        error = 1;
+//        digitalHigh(LED2R);
+//    }
+//    else if (status == -1) {
+//        /*
+//         * Send error message "Temp_F, Device ID failed"
+//         */
+//        error = 1;
+//        digitalHigh(LED2G);
+//    }
+//    else if (status == -2) {
+//        /*
+//         * Send error message "Temp_F, Device settings failed"
+//         */
+//        error = 1;
+//        digitalHigh(LED2B);
+//    }
+//    delay_t1(100);
+//
+//    status = 0;
+//
+//    while (1) {
+//
+//        updateReferences();
+//        if (error == 0) {
+//            if (status == 0) {
+//                digitalHigh(LED2R);
+//                digitalLow(LED2G);
+//                digitalLow(LED2B);
+//                status++;
+//            }
+//            else if (status == 1) {
+//                digitalLow(LED2R);
+//                digitalHigh(LED2G);
+//                digitalLow(LED2B);
+//                status++;
+//            }
+//            else if (status == 2) {
+//                digitalLow(LED2R);
+//                digitalLow(LED2G);
+//                digitalHigh(LED2B);
+//                status = 0;
+//            }
+//        }
+//
+//        if (readAccX(aSlaveF, &ax) <= 0) {
+//               ax = 1;
+//               error = 1;
+//               digitalHigh(LED2R);
+//        }
+//        if (readAccY(aSlaveF, &ay) <= 0) {
+//              ay = 0;
+//              error = 1;
+//              digitalHigh(LED2R);
+//        }
+//        if (readAccZ(aSlaveF, &az) <= 0) {
+//              az = 0;
+//              error = 1;
+//              digitalHigh(LED2R);
+//        }
+//
+//        vAmp_f = sqrtl((double)ax * ax + (double)ay * ay + (double)az * az);
+//
+//        if (readAccX(aSlaveR, &ax) <= 0) {
+//               ax = 1;
+//               error = 1;
+//               digitalHigh(LED2R);
+//        }
+//        if (readAccY(aSlaveR, &ay) <= 0) {
+//              ay = 0;
+//              error = 1;
+//              digitalHigh(LED2R);
+//        }
+//        if (readAccZ(aSlaveR, &az) <= 0) {
+//              az = 0;
+//              error = 1;
+//              digitalHigh(LED2R);
+//        }
+//
+//        vAmp_r = sqrtl((double)ax * ax + (double)ay * ay + (double)az * az);
+//
+//        if (readAccX(aSlaveB, &ax) <= 0) {
+//               ax = 1;
+//               error = 1;
+//               digitalHigh(LED2R);
+//        }
+//        if (readAccY(aSlaveB, &ay) <= 0) {
+//              ay = 0;
+//              error = 1;
+//              digitalHigh(LED2R);
+//        }
+//        if (readAccZ(aSlaveB, &az) <= 0) {
+//              az = 0;
+//              error = 1;
+//              digitalHigh(LED2R);
+//        }
+//
+//        vAmp_b = sqrtl((double)ax * ax + (double)ay * ay + (double)az * az);
+//
+//         if (readAccX(aSlaveL, &ax) <= 0) {
+//               ax = 1;
+//               error = 1;
+//               digitalHigh(LED2R);
+//        }
+//        if (readAccY(aSlaveL, &ay) <= 0) {
+//              ay = 0;
+//              error = 1;
+//              digitalHigh(LED2R);
+//        }
+//        if (readAccZ(aSlaveL, &az) <= 0) {
+//              az = 0;
+//              error = 1;
+//              digitalHigh(LED2R);
+//        }
+//
+//        vAmp_l = sqrtl((double)ax * ax + (double)ay * ay + (double)az * az);
+//
+//        if (adt7320ReadTemp(tSlaveF, &temp) <= 0) {
+//            temp = 1;
+//            error = 1;
+//            digitalHigh(LED2G);
+//        }
+//        temp_f = temp;
+//
+//        if (adt7320ReadTemp(tSlaveR, &temp) <= 0) {
+//            temp = 1;
+//            error = 1;
+//            digitalHigh(LED2G);
+//        }
+//        temp_r = temp;
+//
+//        if (adt7320ReadTemp(tSlaveB, &temp) <= 0) {
+//            temp = 1;
+//            error = 1;
+//            digitalHigh(LED2G);
+//        }
+//        temp_b = temp;
+//
+//        if (adt7320ReadTemp(tSlaveL, &temp) <= 0) {
+//            temp = 1;
+//            error = 1;
+//            digitalHigh(LED2G);
+//        }
+//        temp_l = temp;
+//
+//        delay_t1(1000);
+//        updateMeasurements();
+//    }
 
     return (EXIT_SUCCESS);
 }

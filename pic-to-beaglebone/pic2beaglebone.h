@@ -11,7 +11,7 @@
 #include "../peripheral/i2c/i2c2.h"
 #include <Generic.h>
 
-#define IN_DATA_NUM 7
+#define IN_DATA_NUM 10
 #define OUT_DATA_NUM 48
 
 /*Variables for measured data*/
@@ -24,7 +24,8 @@ extern UINT8 ctlPeltier, pwmMotor, pwmR_ctl, pwmG_ctl, pwmB_ctl, pwmR_diag, pwmG
 /* Variables for storing references and control inputs*/
 extern float temp_ref;
 extern UINT16 vibeFreq_ref;
-extern UINT8 pwmR_ref, pwmG_ref, pwmB_ref;
+extern UINT8 ctlLED_r[3];
+extern UINT8 diagLED_r[3];
 
 void updateReferences();
 void updateMeasurements();

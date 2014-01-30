@@ -10,7 +10,8 @@ UINT8 ctlPeltier = 50, pwmMotor = 10, pwmR_ctl = 24, pwmG_ctl = 23, pwmB_ctl = 4
 /* Init variables for storing references and control inputs*/
 float temp_ref = 20.0;
 UINT16 vibeFreq_ref = 0;
-UINT8 pwmR_ref = 0, pwmG_ref = 0, pwmB_ref = 0;
+UINT8 ctlLED_r[3] = {0};
+UINT8 diagLED_r[3] = {0};
 
 /*
  * Function updates references (temperature, motor, LED1, LED2) transfered from beaglebone.
@@ -26,9 +27,13 @@ void updateReferences() {
 
     if (temp_ref )
     vibeFreq_ref = rx_buff[2] | (rx_buff[3] << 8);
-    pwmR_ref = rx_buff[4];
-    pwmG_ref = rx_buff[5];
-    pwmB_ref = rx_buff[6];
+    ctlLED_r[0] = rx_buff[4];
+    ctlLED_r[1] = rx_buff[5];
+    ctlLED_r[2] = rx_buff[6];
+    diagLED_r[0] = rx_buff[7];
+    diagLED_r[1] = rx_buff[8];
+    diagLED_r[2] = rx_buff[9];
+    
 
 }
 
@@ -127,14 +132,11 @@ void updateMeasurements() {
     tx_buff[41] = pwmMotor;
 
     // send back what you received
-    pwmR_ctl = pwmR_ref;
-    tx_buff[42] = pwmR_ctl;
-    pwmG_ctl = pwmG_ref;
-    tx_buff[43] = pwmG_ctl;
-    pwmB_ctl = pwmB_ref;
-    tx_buff[44] = pwmB_ctl;
+    tx_buff[42] = ctlLED_r[0];
+    tx_buff[43] = ctlLED_r[1];
+    tx_buff[44] = ctlLED_r[2];
 
-    tx_buff[45] = pwmR_diag;
-    tx_buff[46] = pwmG_diag;
-    tx_buff[47] = pwmB_diag;
+    tx_buff[45] = diagLED_r[0];
+    tx_buff[46] = diagLED_r[1];
+    tx_buff[47] = diagLED_r[2];
 }
