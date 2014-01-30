@@ -10,12 +10,17 @@
 #define	PELTIER_H
 
 #include <Generic.h>
+#include "../test/CASU-karlo/initializeHardware.h"
 
-#define IMAX     3   //[A] - maximum output current
-#define I2C1ADD  0   //Peltier DAC I2C address
+#define IMAX     3          //[A] - maximum output current
+#define DAC_G    0          //DAC output gain 0 - 2x, 1 - 1x
+#define DMAX     IMAX*250+1500            //DAC maximum voltage for maximum current, Itec=(Vout-1.5)*4
+#define DOFFSET 1500                      //Peltier zero current
+#define DCOEF   (DMAX-DOFFSET)/100        //Output multiplification factor
 
+void PeltierInit(digitalPin csPin);
 
-void PeltierSet(UINT8 set);
+void PeltierSet(digitalPin csPin, UINT8 lShdn, int set);
 
 #endif	/* PELTIER_H */
 

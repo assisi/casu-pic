@@ -22,9 +22,9 @@
 #include "../../peripheral/timer/timerFunctions.h"
 #include "../../peripheral/gpio/digitalIO.h"
 
-extern digitalPin LED2R;
-extern digitalPin LED2G;
-extern digitalPin LED2B;
+
+extern digitalPin PELTIER;
+extern digitalPin PELTIER_EN;
 
 void setUpPorts();
 

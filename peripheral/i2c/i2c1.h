@@ -22,9 +22,24 @@
 #define WAIT_TIME 100
 #define I2C1_DEBUG 1
 
+#define PCAMUX_ADD  0x70    //PCA9547 mux address
+
+
 extern UINT8 rx_buff[BUFF_SIZE], tx_buff[BUFF_SIZE];
 
+UINT8 I2C1MasterInit(void);
+
 UINT8 I2C1SlaveInit(UINT8 address, UINT8 int_priority);
+
+int I2C1ChSelect(UINT8 enable, UINT8 channel);
+
+int MUXTest();
+
+UINT8 I2C1WriteByte(UINT8 slaveAdd, UINT8 registerAdd, UINT8 data);
+
+unsigned char I2C1ReadByte(UINT8 slaveAdd, UINT8 registerAdd);
+
+void __attribute__((__interrupt__, auto_psv)) _SI2C1Interrupt(void);
 
 #endif	/* I2C1_H */
 

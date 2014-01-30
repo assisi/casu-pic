@@ -6,13 +6,11 @@
  * return: 1 - initialization succeeded
  *         0 - initialization failed
  */
-//??? Provjeriti -> zakomentirane prve dvije linije
 UINT8 spi1Init(UINT8 mode, UINT8 int_en) {
 
-    //TRISFbits.TRISF6 = 0;                    // SCLK output
-    //TRISFbits.TRISF7 = 1;                    //SDI input
-    TRISFbits.TRISF8 = 0;                   // SDO output
-    
+    RPOR8bits.RP98R = 0b000110;             //SPI1_CLK
+    RPOR11bits.RP104R = 0b000101;           //SPI1_DO
+
     SPI1STATbits.SPIEN = 0;                  // Disable module
     IFS0bits.SPI1IF = 0;                     // Clear the Interrupt flag
     IEC0bits.SPI1IE = 0;                     // Disable the interrupt
@@ -21,7 +19,7 @@ UINT8 spi1Init(UINT8 mode, UINT8 int_en) {
    SPI1CON1bits.DISSCK = 0;                 // Internal serial clock is enabled
    SPI1CON1bits.DISSDO = 0;                 // SDOx pin is controlled by the module
    SPI1CON1bits.MODE16 = 1;                 // Communication is word-wide (16 bits)
-   SPI1CON1bits.SMP = 1;                    // Input data is sampled at the end of data output time
+   SPI1CON1bits.SMP = 1;                    // Input data is sampled at the middle of data output time
    SPI1CON1bits.CKE = mode & 0x01;          // 1 = Serial output data changes on transition from active clock state to Idle clock state
    SPI1CON1bits.CKP = (mode & 0x02) >> 1;   // 1 = Idle state for clock is a high-level, active is low level
    SPI1CON1bits.SSEN = 0;
@@ -42,7 +40,7 @@ UINT8 spi1Init(UINT8 mode, UINT8 int_en) {
    // clear rx buff full flag
    while(!SPI1STATbits.SPIRBF) {
         i++;                        // watchdog timer
-        if (i == 1000) return 0;    // timeout, return without sending
+        if (i > 1000) return 0;    // timeout, return without sending
    }
    
    // read data to clear rx buff full flag
