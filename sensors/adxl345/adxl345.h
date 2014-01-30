@@ -11,8 +11,8 @@
 #include <Generic.h>
 #include <stdio.h>
 #include "../../peripheral/gpio/digitalIO.h"
-/* Sensors are connected to spi1 */
-#include "../../peripheral/spi/spi1.h"
+/* Sensors are connected to spi2 */
+#include "../../peripheral/spi/spi2.h"
 
 #define ADXL_READ 0x80           // reading register
 #define ADXL_WRITE 0             // writing register
@@ -61,10 +61,10 @@ enum ADXL_REGISTERS {
 };
 
 /* Digital pins used as chip select pins for SPI comm*/
-extern digitalPin aSlave0;
-extern digitalPin aSlave1;
-extern digitalPin aSlave2;
-extern digitalPin aSlave3;
+extern digitalPin aSlaveF;
+extern digitalPin aSlaveR;
+extern digitalPin aSlaveB;
+extern digitalPin aSlaveL;
 
 UINT8 adxl345Init(digitalPin csPin);
 UINT8 readAccX(digitalPin csPin, int *ax);

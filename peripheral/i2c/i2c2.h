@@ -26,5 +26,5 @@ extern UINT8 rx_buff[BUFF_SIZE], tx_buff[BUFF_SIZE];
 
 UINT8 I2C2SlaveInit(UINT8 address, UINT8 int_priority);
 
-#endif	/* I2C1_H */
+#endif	/* I2C2_H */
 
