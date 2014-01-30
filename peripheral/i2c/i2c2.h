@@ -5,8 +5,8 @@
  * Created on January 17, 2014, 3:22 PM
  */
 
-#ifndef I2C1_H
-#define	I2C1_H
+#ifndef I2C2_H
+#define	I2C2_H
 
 #if defined(__PIC24F__)
 #include <p24Fxxxx.h>
