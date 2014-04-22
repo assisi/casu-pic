@@ -25,7 +25,7 @@
 #define PCAMUX_ADD  0x70    //PCA9547 mux address
 
 
-extern UINT8 rx_buff[BUFF_SIZE], tx_buff[BUFF_SIZE];
+extern UINT8 i2c1_rx_buff[BUFF_SIZE], i2c1_tx_buff[BUFF_SIZE];
 
 UINT8 I2C1MasterInit(void);
 

@@ -1,9 +1,9 @@
 #include "i2c2.h"
 
-UINT8 rx_buff[BUFF_SIZE] = {0};     // buffer for incoming data
-UINT8 rx_head = 0;                  // pointer to buffer element where new byte is to be stored
-UINT8 tx_buff[BUFF_SIZE] = {0};     // buffer for outgoing data
-UINT8 tx_head = 0;                  // pointer to a buffer element which will be send in next outgoing transmission
+UINT8 i2c2_rx_buff[BUFF_SIZE] = {0};     // buffer for incoming data
+UINT8 i2c2_rx_head = 0;                  // pointer to buffer element where new byte is to be stored
+UINT8 i2c2_tx_buff[BUFF_SIZE] = {0};     // buffer for outgoing data
+UINT8 i2c2_tx_head = 0;                  // pointer to a buffer element which will be send in next outgoing transmission
 
 /*
  * Function initializes i2c2 module as a slave device
@@ -53,8 +53,8 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
     
     if (I2C2STATbits.D_A == 0) {
         // device address detected
-        rx_head = 0;
-        tx_head = 0;
+        i2c2_rx_head = 0;
+        i2c2_tx_head = 0;
         UINT8 dummy;
         if (I2C2STATbits.R_W == 0) {
             // master request writing
@@ -63,7 +63,7 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
         else {
             // master request reading
             dummy = I2C2RCV;  // dummy read
-            I2C2TRN = tx_buff[tx_head++];
+            I2C2TRN = i2c2_tx_buff[i2c2_tx_head++];
             int i = 0;                  // watchdog variable
             while(I2C2STATbits.TBF) {
                 //Wait till all
@@ -76,7 +76,7 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
         // data byte incoming or outgoing
         if (I2C2STATbits.R_W == 0) {
             // master requests writing
-            rx_buff[rx_head++] = I2C2RCV;
+            i2c2_rx_buff[i2c2_rx_head++] = I2C2RCV;
         }
         else {
             // master request reading
@@ -85,7 +85,7 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
 
             if (I2C2STATbits.ACKSTAT == 0) {
                 // master expects more bytes
-                I2C2TRN = tx_buff[tx_head++];
+                I2C2TRN = i2c2_tx_buff[i2c2_tx_head++];
                 int i = 0;
                 while(I2C2STATbits.TBF) {
                     //Wait till all

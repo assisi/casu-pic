@@ -1,10 +1,10 @@
 #include "i2c1.h"
 #include <i2c.h>
 
-UINT8 rx_buff[BUFF_SIZE] = {0};     // buffer for incoming data
-UINT8 rx_head = 0;                  // pointer to buffer element where new byte is to be stored
-UINT8 tx_buff[BUFF_SIZE] = {0};     // buffer for outgoing data
-UINT8 tx_head = 0;                  // pointer to a buffer element which will be send in next outgoing transmission
+UINT8 i2c1_rx_buff[BUFF_SIZE] = {0};     // buffer for incoming data
+UINT8 i2c1_rx_head = 0;                  // pointer to buffer element where new byte is to be stored
+UINT8 i2c1_tx_buff[BUFF_SIZE] = {0};     // buffer for outgoing data
+UINT8 i2c1_tx_head = 0;                  // pointer to a buffer element which will be send in next outgoing transmission
 
 /*
  * Function initializes i2c1 module as a master device
@@ -23,7 +23,7 @@ UINT8 I2C1MasterInit(void) {
     I2C1CONbits.IPMIEN = 0;     // IPMI support disabled
     I2C1CONbits.A10M = 0;       // 7-bit slave address
     I2C1CONbits.DISSLW = 0;     // Slew rate control disabled
-    I2C1CONbits.SMEN = 0;       // Disable SMBus input thresholds
+    I2C1CONbits.SMEN = 1;       // Disable SMBus input thresholds
     I2C1CONbits.ACKDT = 0;      // ACK data bit
     I2C1CONbits.ACKEN = 0;      // ACK enabled
     //Baud rate
@@ -294,8 +294,8 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C1Interrupt(void) {
 
     if (I2C1STATbits.D_A == 0) {
         // device address detected
-        rx_head = 0;
-        tx_head = 0;
+        i2c1_rx_head = 0;
+        i2c1_tx_head = 0;
         UINT8 dummy;
         if (I2C1STATbits.R_W == 0) {
             // master request writing
@@ -304,7 +304,7 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C1Interrupt(void) {
         else {
             // master request reading
             dummy = I2C1RCV;  // dummy read
-            I2C1TRN = tx_buff[tx_head++];
+            I2C1TRN = i2c1_tx_buff[i2c1_tx_head++];
             int i = 0;                  // watchdog variable
             while(I2C1STATbits.TBF) {
                 //Wait till all
@@ -317,7 +317,7 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C1Interrupt(void) {
         // data byte incoming or outgoing
         if (I2C1STATbits.R_W == 0) {
             // master requests writing
-            rx_buff[rx_head++] = I2C1RCV;
+            i2c1_rx_buff[i2c1_rx_head++] = I2C1RCV;
         }
         else {
             // master request reading
@@ -326,7 +326,7 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C1Interrupt(void) {
 
             if (I2C1STATbits.ACKSTAT == 0) {
                 // master expects more bytes
-                I2C1TRN = tx_buff[tx_head++];
+                I2C1TRN = i2c1_tx_buff[i2c1_tx_head++];
                 int i = 0;
                 while(I2C1STATbits.TBF) {
                     //Wait till all

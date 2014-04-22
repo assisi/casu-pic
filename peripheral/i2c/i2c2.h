@@ -22,7 +22,7 @@
 #define WAIT_TIME 100
 #define I2C1_DEBUG 1
 
-extern UINT8 rx_buff[BUFF_SIZE], tx_buff[BUFF_SIZE];
+extern UINT8 i2c2_rx_buff[BUFF_SIZE], i2c2_tx_buff[BUFF_SIZE];
 
 UINT8 I2C2SlaveInit(UINT8 address, UINT8 int_priority);
 

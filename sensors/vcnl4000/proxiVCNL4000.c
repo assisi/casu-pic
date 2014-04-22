@@ -183,8 +183,8 @@ int VCNL4000ReadProxi(){
 
     unsigned char deviceID = 0;
     deviceID = I2C1ReadByte(VCNL4000_Address, PRODID);
-    if(deviceID != 0x11)
-        return -1;
+//    if(deviceID != 0x11)
+//        return -1;
 
     temp = I2C1ReadByte(VCNL4000_Address, COMM0);
     I2C1WriteByte(VCNL4000_Address, COMM0, temp | 0x08);  // command the sensor to perform a proximity measure

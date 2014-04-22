@@ -66,13 +66,13 @@ extern digitalPin aSlaveR;
 extern digitalPin aSlaveB;
 extern digitalPin aSlaveL;
 
-UINT8 adxl345Init(digitalPin csPin);
-UINT8 readAccX(digitalPin csPin, int *ax);
-UINT8 readAccY(digitalPin csPin, int *ay);
-UINT8 readAccZ(digitalPin csPin, int *az);
-UINT8 readAccXYZ(digitalPin csPin, int *acc);
-UINT8 adxl345readID(digitalPin csPin, UINT16 *id);
-UINT8 adxlReadReg(digitalPin csPin, UINT8 reg, UINT16 *data);
+int adxl345Init(digitalPin csPin);
+int readAccX(digitalPin csPin, int *ax);
+int readAccY(digitalPin csPin, int *ay);
+int readAccZ(digitalPin csPin, int *az);
+int readAccXYZ(digitalPin csPin, int *acc);
+int adxl345readID(digitalPin csPin, UINT16 *id);
+int adxlReadReg(digitalPin csPin, UINT8 reg, UINT16 *data);
 
 #endif	/* ADXL345_H */
 

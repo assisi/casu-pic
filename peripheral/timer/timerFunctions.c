@@ -31,3 +31,9 @@ long ticks_from_ms(int msec, int prescaler) {
     ticks = FOSC / 2 / prescaler * msec / 1000;
     return ticks;
 }
+
+long ms_from_ticks(long ticks, int prescaler) {
+    unsigned long res;
+    res = ticks * 1000 * 2 * prescaler / FOSC;
+    return res;
+}
