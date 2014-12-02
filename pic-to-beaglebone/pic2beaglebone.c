@@ -1,14 +1,17 @@
 #include "pic2beaglebone.h"
 
 /*Init variables for measured data*/
-float temp_f = 20.0, temp_b = 12.0, temp_r = -10.0, temp_l = -5.0, temp_t = 25.2;
+float temp_f = 20.0, temp_b = 12.0, temp_r = -10.0, temp_l = 22.0, temp_t = 25.2;
 float vAmp_f = 1.0 , vAmp_b = 2.0, vAmp_r = 3.0, vAmp_l = 4.0;
 UINT16 fAmp_f = 200, fAmp_b = 300, fAmp_r = 400, fAmp_l = 500;
 UINT16 proxy_f = 2500, proxy_fr = 2470, proxy_br = 2380, proxy_b = 3000, proxy_bl = 3100, proxy_fl = 3200, proxy_t = 1000;
-UINT8 ctlPeltier = 0, pwmMotor = 0, pwmR_ctl = 24, pwmG_ctl = 23, pwmB_ctl = 42, pwmR_diag = 43, pwmG_diag = 76, pwmB_diag = 80;
+UINT8  pwmMotor = 0, pwmR_ctl = 24, pwmG_ctl = 23, pwmB_ctl = 42, pwmR_diag = 43, pwmG_diag = 76, pwmB_diag = 80;
+int ctlPeltier = 0;
 
 /* Init variables for storing references and control inputs*/
-float temp_ref = 20.0;
+float temp_ref = 0.0;
+float temp_ref_old = 0.0;
+float temp_ref_cur = 0.0;
 UINT16 vibeFreq_ref = 0;
 UINT8 ctlLED_r[3] = {0};
 UINT8 diagLED_r[3] = {0};
@@ -25,6 +28,28 @@ void updateReferences() {
     else
         temp_ref = dummy / 10.0;
 
+    if (temp_ref > 20 && temp_ref < 26)
+        temp_ref = 26;
+    if (temp_ref > 50)
+        temp_ref = 50;
+
+    if ((temp_ref - temp_ref_old > 0.1) || (temp_ref - temp_ref_old <  -0.1)) {
+        // temperature reference changed
+//        if (temp_ref > temp_l)      // left temperature sensor is used as feedback
+//            PELTIER_PWM_MAX_N = 85;         // heating
+//        else if (temp_l - temp_ref > 4.5)   // cooling with high temperature difference > 4.5, reduce maximum current to 30%
+//            PELTIER_PWM_MAX_N = 30;
+//        else
+//            PELTIER_PWM_MAX_N = 60;         // cooling with low temperature difference < 4.5, increase allowed maximum current to 60%
+        temp_ref_cur = temp_l;
+    }
+    temp_ref_old = temp_ref;
+
+//    if (temp_ref < 20)
+//        temp_ref = 20;
+//    else if (temp_ref > 40)
+//        temp_ref = 40;
+
     vibeFreq_ref = i2c2_rx_buff[2] | (i2c2_rx_buff[3] << 8);
     /* scale 0 - 500*/
 
@@ -39,8 +64,6 @@ void updateReferences() {
     diagLED_r[0] = i2c2_rx_buff[7];
     diagLED_r[1] = i2c2_rx_buff[8];
     diagLED_r[2] = i2c2_rx_buff[9];
-    
-
 }
 
 /*
@@ -134,6 +157,9 @@ void updateMeasurements() {
     i2c2_tx_buff[38] = proxy_t & 0x00FF;
     i2c2_tx_buff[39] = (proxy_t & 0xFF00) >> 8;
 
+    if(ctlPeltier < 0)
+        ctlPeltier += 200;
+    
     i2c2_tx_buff[40] = ctlPeltier;
     i2c2_tx_buff[41] = pwmMotor;
 

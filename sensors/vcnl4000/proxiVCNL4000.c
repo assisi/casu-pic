@@ -27,17 +27,31 @@
 
 char VCNL4000Init(void){
 
-    unsigned char deviceID = 0;
-    deviceID = I2C1ReadByte(VCNL4000_Address, PRODID);
-    if(deviceID != 0x11)
-        return 0;
+    unsigned char deviceID;
+    char res, muxCh;
+    int i,j;
 
-    I2C1WriteByte(VCNL4000_Address, IRLED3, 20);
-    I2C1WriteByte(VCNL4000_Address, ALIGH4, 0x0F);
-    I2C1WriteByte(VCNL4000_Address, PRMEA9, 0);
-    I2C1WriteByte(VCNL4000_Address, PRMOD10, 0x81);
+    res = 0;
+    for (i = 0; i <= 6; i++) {
 
-    return 1;
+        muxCh = I2C1ChSelect(1,i);
+        //res = MuxRead();
+        deviceID = 0; j = 0;
+        while ((deviceID != 0x11)&(j < 5)) {
+            deviceID = I2C1ReadByte(VCNL4000_Address, PRODID);
+            j++;
+        }
+        
+        if (deviceID == 0x11) {
+            I2C1WriteByte(VCNL4000_Address, IRLED3, 20);
+            I2C1WriteByte(VCNL4000_Address, ALIGH4, 0x0F);
+            I2C1WriteByte(VCNL4000_Address, PRMEA9, 0);
+            I2C1WriteByte(VCNL4000_Address, PRMOD10, 0x81);
+            res++;
+        }
+    }
+
+    return res;
 }
 
 
@@ -180,11 +194,16 @@ int VCNL4000ReadProxi(){
     char data[2];
     char temp, tout;
     int proxValue;
-
     unsigned char deviceID = 0;
-    deviceID = I2C1ReadByte(VCNL4000_Address, PRODID);
-//    if(deviceID != 0x11)
-//        return -1;
+    int i;
+
+    i = 0;
+    while((deviceID != 0x11)&(i<5)){
+        deviceID = I2C1ReadByte(VCNL4000_Address, PRODID);
+        i++;
+    }
+    if(deviceID != 0x11)
+        return -1;
 
     temp = I2C1ReadByte(VCNL4000_Address, COMM0);
     I2C1WriteByte(VCNL4000_Address, COMM0, temp | 0x08);  // command the sensor to perform a proximity measure

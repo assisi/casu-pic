@@ -20,7 +20,7 @@ digitalPin aSlaveL = {&TRISBbits, &PORTBbits, 9};
  *         -1 - if device id read is different thed default (factory) id
  *         -2 - if device enabling failed
  */
-int adxl345Init(digitalPin csPin) {
+UINT8 adxl345Init(digitalPin csPin) {
 
      // check if spi2 is enabled
     if (!SPI2STATbits.SPIEN) {
@@ -34,30 +34,24 @@ int adxl345Init(digitalPin csPin) {
     UINT16 data;
     int i;
     int status;
-    int countID = 0;
     for (i = 0; i < 10; i++) {
         // add select bit function
         status = adxl345readID(csPin, &data);
         if (status <= 0) return 0;
         data = data & 0x00FF;
-        if (data == ADXL_DEVID) {
-            countID++;
+        if (data != ADXL_DEVID) {
+            return -1;
         }
-    }
-    if (countID < 5) {
-        return -1;
     }
 
     /* Enable device*/
     chipSelect(csPin);
-    delay_t1(2);
     status = spi2Write(ADXL_COMMAND(REG_POWER_CTL, ADXL_WRITE) | 0x0008);
     chipDeselect(csPin);
     if (status <= 0)    return 0;
 
     /* Check if writing was succesfull*/
     chipSelect(csPin);
-    delay_t1(2);
     status = spi2TransferWord(ADXL_COMMAND(REG_POWER_CTL, ADXL_READ), &data);
     chipDeselect(csPin);
     if (status <= 0)    return 0;
@@ -73,13 +67,11 @@ int adxl345Init(digitalPin csPin) {
  * returns: 1 - communication succeeded
  *          0 - communication failed
  */
-int adxl345readID(digitalPin csPin, UINT16 *id) {
+UINT8 adxl345readID(digitalPin csPin, UINT16 *id) {
 
     UINT8 status;
     chipSelect(csPin);
-    delay_t1(2);
-    UINT16 data = ADXL_COMMAND(REG_DEVID, ADXL_READ);
-    status = spi2TransferWord(data, id);
+    status = spi2TransferWord(ADXL_COMMAND(REG_DEVID, ADXL_READ), id);
     chipDeselect(csPin);
     if (status <= 0) return 0;
     return 1;
@@ -91,20 +83,18 @@ int adxl345readID(digitalPin csPin, UINT16 *id) {
  * returns: 1 - communication succeeded
  *          0 - communication failed
  */
-int readAccX(digitalPin csPin, int *ax) {
+UINT8 readAccX(digitalPin csPin, int *ax) {
 
    UINT16 data;
    UINT8 status;
 
    chipSelect(csPin);
-   delay_t1(2);
    status = spi2TransferWord(ADXL_COMMAND(REG_DATAX0, ADXL_READ), &data);
    chipDeselect(csPin);
    if (status <= 0 ) return 0;
    *ax = data & 0x00FF;
   
    chipSelect(csPin);
-   delay_t1(2);
    status = spi2TransferWord(ADXL_COMMAND(REG_DATAX1, ADXL_READ), &data);
    chipDeselect(csPin);
    if (status <= 0 ) return 0;
@@ -121,20 +111,18 @@ int readAccX(digitalPin csPin, int *ax) {
  * returns: 1 - communication succeeded
  *          0 - communication failed
  */
-int readAccY(digitalPin csPin, int *ay) {
+UINT8 readAccY(digitalPin csPin, int *ay) {
 
    UINT16 data;
    UINT8 status;
 
    chipSelect(csPin);
-   delay_t1(2);
    status = spi2TransferWord(ADXL_COMMAND(REG_DATAY0, ADXL_READ), &data);
    chipDeselect(csPin);
    if (status <= 0 ) return 0;
    *ay = data & 0x00FF;
 
    chipSelect(csPin);
-   delay_t1(2);
    status = spi2TransferWord(ADXL_COMMAND(REG_DATAY1, ADXL_READ), &data);
    chipDeselect(csPin);
    if (status <= 0 ) return 0;
@@ -151,20 +139,18 @@ int readAccY(digitalPin csPin, int *ay) {
  * returns: 1 - communication succeeded
  *          0 - communication failed
  */
-int readAccZ(digitalPin csPin, int *az) {
+UINT8 readAccZ(digitalPin csPin, int *az) {
 
    UINT16 data;
    UINT8 status;
 
    chipSelect(csPin);
-   delay_t1(2);
    status = spi2TransferWord(ADXL_COMMAND(REG_DATAZ0, ADXL_READ), &data);
    chipDeselect(csPin);
    if (status <= 0 ) return 0;
    *az = data & 0x00FF;
 
    chipSelect(csPin);
-   delay_t1(2);
    status = spi2TransferWord(ADXL_COMMAND(REG_DATAZ1, ADXL_READ), &data);
    chipDeselect(csPin);
    if (status <= 0 ) return 0;
@@ -182,14 +168,13 @@ int readAccZ(digitalPin csPin, int *az) {
  * returns: 1 - communication succeeded
  *          0 - communication failed
  */
-int readAccXYZ(digitalPin csPin, int *acc) {
+UINT8 readAccXYZ(digitalPin csPin, int *acc) {
    
    UINT16 data[7] = {0};
    UINT8 status;
 
    data[0] = ADXL_COMMAND(REG_DATAX0, ADXL_READ | ADXL_MB);
    chipSelect(csPin);
-   delay_t1(2);
    status = spi2TransferBuff(data, 7);
    chipDeselect(csPin);
    if (status <= 0 ) return 0;
@@ -213,10 +198,9 @@ int readAccXYZ(digitalPin csPin, int *acc) {
  * returns: 1 - communication succeeded
  *          0 - communication failed
  */
-int adxlReadReg(digitalPin csPin ,UINT8 reg, UINT16 *data) {
+UINT8 adxlReadReg(digitalPin csPin ,UINT8 reg, UINT16 *data) {
     UINT8 status;
     chipSelect(csPin);
-    delay_t1(2);
     status = spi2TransferWord(ADXL_COMMAND(reg, ADXL_READ), data);
     chipDeselect(csPin);
     if (status <= 0) return 0;

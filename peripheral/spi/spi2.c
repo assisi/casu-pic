@@ -7,10 +7,10 @@
  *         0 - initialization failed
  */
 UINT8 spi2Init(UINT8 mode, UINT8 int_en) {
-//
-//    TRISFbits.TRISF6 = 0;                    // SCLK output
-//    TRISFbits.TRISF7 = 1;                    //SDI input
-//    TRISFbits.TRISF8 = 0;                     // SDO output
+
+    //TRISFbits.TRISF6 = 0;                    // SCLK output
+    //TRISFbits.TRISF7 = 1;                    //SDI input
+    //TRISFbits.TRISF8 = 0;                     // SDO output
     
     SPI2STATbits.SPIEN = 0;                  // Disable module
     IFS2bits.SPI2IF = 0;                     // Clear the Interrupt flag
@@ -20,7 +20,7 @@ UINT8 spi2Init(UINT8 mode, UINT8 int_en) {
     SPI2CON1bits.DISSCK = 0;                 // Internal serial clock is enabled
     SPI2CON1bits.DISSDO = 0;                 // SDOx pin is controlled by the module
     SPI2CON1bits.MODE16 = 1;                 // Communication is word-wide (16 bits)
-    SPI2CON1bits.SMP = 0;                    // Input data is sampled at the end of data output time
+    SPI2CON1bits.SMP = 1;                    // Input data is sampled at the end of data output time
     SPI2CON1bits.CKE = mode & 0x01;          // 1 = Serial output data changes on transition from active clock state to Idle clock state
     SPI2CON1bits.CKP = (mode & 0x02) >> 1;   // 1 = Idle state for clock is a high-level, active is low level
     SPI2CON1bits.SSEN = 0;
@@ -36,13 +36,13 @@ UINT8 spi2Init(UINT8 mode, UINT8 int_en) {
     IEC2bits.SPI2IE = (int_en & 0x01);       // Enable or disable
 
     // write some dummy data
-    //SPI2BUF = 0x0000;                        // Write data to be transmitted
-    int i = 7;
-//    // clear rx buff full flag
-//    while(!SPI2STATbits.SPIRBF) {
-//        i++;                        // watchdog timer
-//        if (i == 1000) return 0;    // timeout, return without sending
-//    }
+    SPI2BUF = 0x0000;                        // Write data to be transmitted
+    int i = 0;
+    // clear rx buff full flag
+    while(!SPI2STATbits.SPIRBF) {
+        i++;                        // watchdog timer
+        if (i == 1000) return 0;    // timeout, return without sending
+    }
    
     // read data to clear rx buff full flag
     i = SPI2BUF;
@@ -64,16 +64,10 @@ UINT8 spi2TxBuffFull() {
  *          0 - otherwise
  */
 UINT8 spi2Write(UINT16 data) {
-    int i = 0;
-    while(SPI2STATbits.SPITBF) {
-        // wait for the buffer to send data
-        i++;
-        if (i == 1000) return 0;    // timeout, return without sending
-    }
-    i = 0;
     
     SPI2BUF = data;
 
+    int i = 0;
     /* Wait until data is transfered for ISR to RX_BUFF*/
     while(!SPI2STATbits.SPIRBF) {
         i++;                        // watchdog timer
@@ -93,22 +87,14 @@ UINT8 spi2Write(UINT16 data) {
  */
 UINT8 spi2TransferWord(UINT16 out, UINT16 *in) {
 
-    int i = 0;
-    while(SPI2STATbits.SPITBF) {
-        // wait for the buffer to send data
-        i++;
-        if (i == 1000) return 0;    // timeout, return without sending
-    }
-    i = 0;
     SPI2BUF = out;
-    
 
+    int i = 0;
     /* Wait until the data is received
         Use watchdog timer to return from deadlock*/
     while (!SPI2STATbits.SPIRBF) {
         i++;                        // watchdog timer
-        if (i == 1000)
-            return 0;    // timeout, return without sending
+        if (i == 1000) return 0;    // timeout, return without sending
     }
 
     *in = SPI2BUF;

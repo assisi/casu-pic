@@ -19,6 +19,27 @@ void delay_t1(int msec) {
         CloseTimer1();
     }
 }
+/*
+ * Function suspends program using timer1
+ * inputs:  usec - delay time in useconds
+ * returns: -1 - error
+ * Tpr = Tcyc*PRE*PR
+ * PR = Tpr/(Tcyc*PRE) = Tpr/(0.025*Pre)
+ */
+int delay_t1_us(unsigned int usec) {
+    unsigned int ticks = 5 * usec; //ticks = Fcyc/Pre*usec, PRE = 8
+    if (usec > DELAY_T1_US_MAX)
+        return -1;
+
+    ConfigIntTimer1(T1_INT_OFF);    //Disable timer interrupt
+    IFS0bits.T1IF = 0; //Clear interrupt flag
+    OpenTimer1(T1_ON | T1_PS_1_8, ticks); //Configure timer
+
+    while (!IFS0bits.T1IF); //Wait for usec
+
+    CloseTimer1();
+    return 1;
+}
 
 /*
  * Function calculates number of CPU ticks corresponding to time in milliseconds
@@ -30,10 +51,4 @@ long ticks_from_ms(int msec, int prescaler) {
     unsigned long ticks;
     ticks = FOSC / 2 / prescaler * msec / 1000;
     return ticks;
-}
-
-long ms_from_ticks(long ticks, int prescaler) {
-    unsigned long res;
-    res = ticks * 1000 * 2 * prescaler / FOSC;
-    return res;
 }

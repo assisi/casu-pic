@@ -21,35 +21,22 @@
 #endif
 #include "../../peripheral/timer/timerFunctions.h"
 #include "../../peripheral/gpio/digitalIO.h"
-
-/*Mux ports*/
-#define muxPort0 8
-#define muxPort1 9
-#define muxPort2 10
-#define muxPort3 11
-#define muxPort4 12
-#define muxPort5 13
-#define muxPort6 14
-#define muxPort7 15
-
-/*Map mux ports to proxy sensors */
-#define proxyF  muxPort1
-#define proxyFR muxPort0
-#define proxyBR muxPort7
-#define proxyB muxPort6
-#define proxyBL muxPort5
-#define proxyFl muxPort2
-#define proxyT muxPort4
+#include "../../pic-to-beaglebone/pic2beaglebone.h"
 
 extern digitalPin LED2R;
 extern digitalPin LED2G;
 extern digitalPin LED2B;
-extern digitalPin I2Crst;
 
 extern digitalPin PELTIER;   //SPI select
 extern digitalPin PELTIER_EN;
 
+extern digitalPin MUXRST;   //I2C mux
+
+extern float uOld_t, eOld_t, deOld_t, deadZone_t;
+extern float Kp_t, Ki_t;
 void setUpPorts();
+int PIDcontroller_t(float temp);
+
 
 #endif	/* INITIALIZEHARDWARE_H */
 

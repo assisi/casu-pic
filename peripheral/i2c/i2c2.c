@@ -36,7 +36,7 @@ UINT8 I2C2SlaveInit(UINT8 address, UINT8 int_priority) {
 
     _SI2C2IE = 0;               // Disable slave interrupt
     _SI2C2IF = 0;               // clear interrupt flag
-    _SI2C2IP = int_priority;               // set interrupt priority
+    _SI2C2IP = int_priority;    // set interrupt priority
     _SI2C2IE = 1;               // enable slave interrupt
 
 
@@ -51,8 +51,7 @@ UINT8 I2C2SlaveInit(UINT8 address, UINT8 int_priority) {
  */
 void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
     
-    if (I2C2STATbits.D_A == 0) {
-        // device address detected
+    if (I2C2STATbits.D_A == 0) {    // device address detected
         i2c2_rx_head = 0;
         i2c2_tx_head = 0;
         UINT8 dummy;

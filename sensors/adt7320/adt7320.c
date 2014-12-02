@@ -26,7 +26,6 @@ UINT8 adt7320Init(digitalPin csPin, UINT8 config) {
 
     digitalOutput(csPin);   // set csPin digital output
     chipDeselect(csPin);    // set csPin high, i.e. deselect slave
-    delay_t1(2);
     // check if spi2 is enabled
     if (!SPI2STATbits.SPIEN) {
         spi2Init(2, 0);     // mode 2, interrupt disabled
@@ -39,7 +38,6 @@ UINT8 adt7320Init(digitalPin csPin, UINT8 config) {
     buff[1] = 0xFFFF;
 
     chipSelect(csPin);
-    delay_t1(2);
     status = spi2TransferBuff(buff, 2);
     chipDeselect(csPin);
     if (status <= 0) return 0;
@@ -51,7 +49,6 @@ UINT8 adt7320Init(digitalPin csPin, UINT8 config) {
     for(i = 0; i <  10; i++) {
         buff[0] = ADT_COMMAND(ADT_REG_ID, ADT_READ) << 8;
         chipSelect(csPin);
-        delay_t1(2);
         status = spi2TransferBuff(buff, 1);
         chipDeselect(csPin);
         if (status <= 0) return 0;
@@ -62,7 +59,6 @@ UINT8 adt7320Init(digitalPin csPin, UINT8 config) {
     for(i = 0; i <  10; i++) {
         buff[0] = ADT_COMMAND(ADT_REG_STATUS, ADT_READ) << 8;
         chipSelect(csPin);
-        delay_t1(2);
         status = spi2TransferBuff(buff, 1);
         chipDeselect(csPin);
         if (status <= 0) return 0;
@@ -73,7 +69,6 @@ UINT8 adt7320Init(digitalPin csPin, UINT8 config) {
      // the device can now be enabled and configured
      buff[0] = (ADT_COMMAND(ADT_REG_CONFIG, ADT_WRITE) << 8) | config;
      chipSelect(csPin);
-     delay_t1(2);
      status = spi2TransferBuff(buff, 1);
      chipDeselect(csPin);
      if (status <= 0) return 0;
@@ -81,7 +76,6 @@ UINT8 adt7320Init(digitalPin csPin, UINT8 config) {
      // read config register to check changes
      buff[0] = (ADT_COMMAND(ADT_REG_CONFIG, ADT_READ) << 8);
      chipSelect(csPin);
-     delay_t1(2);
      status = spi2TransferBuff(buff, 1);
      chipDeselect(csPin);
      if (status <= 0) return 0;
@@ -104,7 +98,6 @@ UINT8 adt7320ReadTemp(digitalPin csPin, float *temp) {
 
     buff[0] = ADT_COMMAND(ADT_REG_TEMP_VAL, ADT_READ) << 8;
     chipSelect(csPin);
-    delay_t1(2);
     status = spi2TransferBuff(buff, 2);
     chipDeselect(csPin);
     if (status <= 0) return 0;
