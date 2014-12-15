@@ -83,6 +83,7 @@ int main(int argc, char** argv) {
     digitalHigh(LED2R);
 
     status = adxl345Init(aSlaveR);
+    // The ports are already set so we can not turn LEDs with digital low /high 
 //    if (status == 0) {
 //        /*
 //         * Send error message "ACC_F, SPI comm failes"
@@ -207,72 +208,6 @@ int main(int argc, char** argv) {
     
     while(1) {
 
-#ifdef TEST_AMP_BOARD
-
-        //LED testing
-        if (i == 1) {
-            LedBee(0, 0, 0);
-            //LedUser(0, 0, 0);
-        }
-        else if (i == 2) {
-            LedBee(0,100,0);
-            //LedUser(50, 0, 0);
-        }
-        else if (i == 3) {
-            //LedBee(0,100,0);
-            //LedUser(0, 50, 0);
-        }
-        else {
-            //LedBee(0, 0, 100);
-            //LedUser(0, 0, 50);
-            i = 0;
-        }
-        i++;
-
-            //Front
-//            statusProxi[0] = I2C1ChSelect(1, 0);
-//            proxy_f = VCNL4000ReadProxi();
-//            delay_t1(1);
-//            //Front right
-//            statusProxi[1] = I2C1ChSelect(1, 1);
-//            proxy_br = VCNL4000ReadProxi();
-//            delay_t1(1);
-//            //Back right
-//            statusProxi[2] = I2C1ChSelect(1, 2);
-//            proxy_fr = VCNL4000ReadProxi();
-//            delay_t1(1);
-//            //Back
-//            statusProxi[3] = I2C1ChSelect(1, 3);
-//            proxy_b = VCNL4000ReadProxi();
-//            delay_t1(1);
-//            //Back left
-//            statusProxi[4] = I2C1ChSelect(1, 4);
-//            proxy_bl = VCNL4000ReadProxi();
-//            delay_t1(1);
-//            //Front left
-//            statusProxi[5] = I2C1ChSelect(1, 5);
-//            proxy_fl = VCNL4000ReadProxi();
-//            delay_t1(1);
-//            //Top
-//            statusProxi[6] = I2C1ChSelect(1, 6);
-//            proxy_t = VCNL4000ReadProxi();
-//            adt7420ReadTemp(&temp_t);
-//
-//            status = 0;
-
-        VibrationSet(100);
-//        tmpVibra += 10;
-//        if(tmpVibra > 100)
-//            tmpVibra = 0;
-
-        //PeltierSet(PELTIER, 1, 10);
-        //tmpPeltier += 10;
-        //if(tmpPeltier > 100)
-         //   tmpPeltier = 0;
-
-        PeltierSet(PELTIER, 1, 10);
-        delay_t1(800);
-#else
         updateReferences();
         
         LedBee(ctlLED_r[0], ctlLED_r[1], ctlLED_r[2]);
@@ -468,8 +403,7 @@ int main(int argc, char** argv) {
         updateMeasurements();
         ay = 0;
         delay_t1(200);
-
-#endif
+        
         ClrWdt();   //Clear watchdog timer
     }
 

@@ -1,16 +1,15 @@
-/* 
- * File:   initializeHardware.h
- * Author: thaus
- *
- * Created on 2014. sije?anj 08, 14:34
+/*! \file initializeHardware.h
+ *  \brief Declarations of functions used for initializing devices (MCU ports, MCU peripheral devices)
  */
 
 #ifndef INITIALIZEHARDWARE_H
 #define	INITIALIZEHARDWARE_H
 
-// desired frequency Fosc, note that Fp = Fcy = Fosc /2 = 40 Mhz
+// 
+/*! Desired frequency Fosc.
+ * Note that CPU frequency Fp = Fcy = Fosc /2
+ */
 #define FOSC 80000000
-#define DEBUG_UART 0
 
 #if defined(__PIC24F__)
 #include <p24Fxxxx.h>
@@ -19,24 +18,38 @@
 #elif defined(__dsPIC33E__)
 #include <p33Exxxx.h>
 #endif
+
 #include "../../peripheral/timer/timerFunctions.h"
 #include "../../peripheral/gpio/digitalIO.h"
 #include "../../pic-to-beaglebone/pic2beaglebone.h"
 
+/*! Digital pin red LED is connected to.
+ */
 extern digitalPin LED2R;
+
+/*! Digital pin green LED is connected to.
+ */
 extern digitalPin LED2G;
+
+/*! Digital pin blue LED is connected to.
+ */
 extern digitalPin LED2B;
 
+/*! Digital pin used as SPI select pin (active low) for digital-to-analog converter (DAC) used for generating Peltier referent value.
+ */
 extern digitalPin PELTIER;   //SPI select
+
+/*! Digital pin used for disabling(low) / enabling (high) Peltier driver.
+ */
 extern digitalPin PELTIER_EN;
 
+/*! Digital pin used for reseting I2C multiplexer (active digital low)
+ */
 extern digitalPin MUXRST;   //I2C mux
 
-extern float uOld_t, eOld_t, deOld_t, deadZone_t;
-extern float Kp_t, Ki_t;
+/*! Function sets MCU ports as digital or analog. Initializes digital pins and peripheral devices (I2c, timer).
+ */
 void setUpPorts();
-int PIDcontroller_t(float temp);
-
 
 #endif	/* INITIALIZEHARDWARE_H */
 
