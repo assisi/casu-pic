@@ -89,10 +89,10 @@ void PeltierSet(digitalPin csPin, UINT8 lShdn, int set){
  *          y - feedback value
  * returns: uk
  */
-int PeltierPID(float ref, float y){
+int PeltierPID(float ref, float meas){
     float ek, uk;
 
-    ek = ref - y;
+    ek = ref - meas;
     //uk = Kp*ek + Ki*(uk1 + ek);
     uk = Kp * ek + uk1 + Ki * ek; // up + ui
 

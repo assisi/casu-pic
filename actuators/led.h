@@ -1,8 +1,5 @@
-/* 
- * File:   led.h
- * Author: Karlo
- *
- * Created on 2014. sije?anj 23, 15:58
+/*! \file led.h
+ * Declarations of functions and variables used to control Light Emitting Diodes (LEDs).
  */
 
 #ifndef LED_H
@@ -19,14 +16,31 @@
 #include <Generic.h>
 #include "../test/CASU-karlo/initializeHardware.h"
 
-
+/*! PWM input clock prescaler
+ */
 #define PWMPRE 4   //PWM input clock prescaler
+/*! PWM frequency in Hz.
+ */
 #define FPWM   20000 //PWM frequecy
 
+/*! \brief Function initializes PWM modules used to control LEDs.
+ */
 void LEDInit(void);
 
+/*!\brief Function sets PWM values of red, green and blue LED used for diagnostic purposes (User LED).
+ *
+ * @param red PWM value of red LED in range 0-100 [%].
+ * @param green PWM value of green LED in range 0-100 [%].
+ * @param blue PWM value of blue LED in range 0-100 [%].
+ */
 void LedUser(UINT8 red, UINT8 green, UINT8 blue);
 
+/*!\brief Function sets PWM values of red, green and blue LED used as bee stimulus (Bee LED).
+ *
+ * @param red PWM value of red LED in range 0-100 [%].
+ * @param green PWM value of green LED in range 0-100 [%].
+ * @param blue PWM value of blue LED in range 0-100 [%].
+ */
 void LedBee(UINT8 red, UINT8 green, UINT8 blue);
 #endif	/* LED_H */
 
