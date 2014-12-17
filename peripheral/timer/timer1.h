@@ -1,5 +1,4 @@
-/* \file timer1.h
- *
+/*! \file timer1.h
  * Declarations of functions and variables used for working with timer1.
  */
 
@@ -22,15 +21,16 @@
 /* This list contains the SFRs with default (POR) values to be used for configuring Timer 1 */
 /* The user can modify this based on the requirement */
 
-/*!Timer1 address of period value register.
+/*! Address of timer1 period value register.
 */
 #define PR1_VALUE           0xFFFF
 
-/*!Timer1 address of configuration register.
+/*! Address of timer1 configuration register.
  */
 #define T1CON_VALUE         0x0000
 
    /* T1CON: TIMER1 CONTROL REGISTER */
+
 /*! Timer1 on mask.
  */
 #define T1_ON               0x8000 /* Timer1 ON */
@@ -41,13 +41,13 @@
  */
 #define T1_OFF_ON_MASK      (~T1_ON)
 
-/*! Timer1 mask for operate during sleep option
+/*! Timer1 mask for operation during sleep option
  */
 #define T1_IDLE_STOP        0x2000 /* operate during sleep */
-/*! Timer1 mask for stop operation during sleep option
+/*! Timer1 mask for stopping operation during sleep option
  */
 #define T1_IDLE_CON         0x0000 /* stop operation during sleep */
-/*! Timer1 mask for putting on/off operation during sleep option
+/*! Timer1 mask for turning on/off operation during sleep option
  */
 #define T1_IDLE_MASK        (~T1_IDLE_STOP)
 
@@ -57,7 +57,7 @@
 /*! Timer1 mask for disabling timer gate time accumulation.
  */
 #define T1_GATE_OFF         0x0000 /* Timer Gate time accumulation disabled */
-/*! Timer1 mask for putting on/off timer gate time accumulation.
+/*! Timer1 mask for turning on/off timer gate time accumulation.
  */
 #define T1_GATE_MASK        (~T1_GATE_ON)
 
@@ -74,13 +74,13 @@
  */
 #define T1_PS_1_256         0x0030 /*         1:256 */
 
-/*! Timer1 mask for turning on synchronizing with external clock input.
+/*! Timer1 mask for turning on synchronization with external clock input.
  */
-#define T1_SYNC_EXT_ON      0x0004 /* Synch external clk input */
-/*! Timer1 mask for turning off synchronizing with external clock input.
+#define T1_SYNC_EXT_ON      0x0004
+/*! Timer1 mask for turning off synchronization with external clock input.
  */
-#define T1_SYNC_EXT_OFF     0x0000 /* Do not synch external clk input */
-/*! Timer1 mask for turning on/off synchronizing with external clock input.
+#define T1_SYNC_EXT_OFF     0x0000
+/*! Timer1 mask for turning on/off synchronization with external clock input.
  */
 #define T1_SYNC_EXT_MASK    (~T1_SYNC_EXT_ON)
 
@@ -120,29 +120,29 @@
  */
 #define T1_INT_PRIOR_7      0x0007 /* 111 = Interrupt is priority 7 */
 
-/*! Timer1 mask for turning on interrupt.
+/*! Mask for turning on timer1 interrupt.
  */
 #define T1_INT_ON           0x0008 /* Interrupt Enable */
-/*! Timer1 mask for turning off interrupt.
+/*! Mask for turning off timer1 interrupt.
  */
 #define T1_INT_OFF          0x0000 /* Interrupt Disable */
 
 
 
 /* Macros to  Enable/Disable interrupts and set Interrupt priority of Timers 1*/
-/*! Macro turns on timer1 interrupt.
+
+/*! Macro for turning on timer1 interrupt.
  */
 #define EnableIntT1                    asm("BSET IEC0,#3")
-/*! Macro turns off timer1 interrupt.
+/*! Macro for turning off timer1 interrupt.
  */
 #define DisableIntT1                   asm("BCLR IEC0,#3")
-/*! Macro set timer1 interrupt priority.
+/*! Macro for setting timer1 interrupt priority.
  */
 #define SetPriorityIntT1(priority)     (IPC0bits.T1IP = priority)
 
 /* Timer1 Function Prototypes */
 
-/* OpenTimer1 */
 /*! \brief Function configures and turns on timer1.
  *
  * @param config Value of timer configuration register.
@@ -150,33 +150,28 @@
 */
 void OpenTimer1( unsigned int config, unsigned int period);
 
-/* CloseTimer1 */
 /*! \brief Function closes timer1.
  */
 void CloseTimer1(void);
 
-/* ReadTimer1 */
-/*! \brief Function read current timer1 value.
+/*! \brief Function reads current timer1 value.
  *
- *@return Return current timer1 value.
+ *@return Returns current timer1 value.
  */
 unsigned int ReadTimer1(void);
 
-/* WriteTimer1 */
 /*! \brief Function writes value to timer1 counter register.
  *
  * @param timer Timer value to be written in timer counter register.
  */
 void WriteTimer1( unsigned int timer);
 
-/* Config Int Timer1 */
 /*! \brief Function configures timer1 interrupt settings.
  *
  * @param config Timer1 interrupt settings value. Use predefined masks for turning timer interrupt on/off and setting interrupt priority.
  */
 void ConfigIntTimer1(unsigned int config);
 
-/* Clear Int Timer 1 */
 /*! \brief Function clears timer1 interrupt flag.
  */
 void ClearIntTimer1(void);

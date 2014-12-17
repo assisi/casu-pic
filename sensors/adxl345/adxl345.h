@@ -1,8 +1,5 @@
-/* 
- * File:   adxl345.h
- * Author: thaus
- *
- * Created on 2014. sije?anj 06, 14:08
+/*! \file   adxl345.h
+ * Declaration of functions and variables used for SPI communication with ADXL345 digital accelerometer sensor.
  */
 
 #ifndef ADXL345_H
@@ -14,64 +11,133 @@
 /* Sensors are connected to spi2 */
 #include "../../peripheral/spi/spi2.h"
 
-#define ADXL_READ 0x80           // reading register
-#define ADXL_WRITE 0             // writing register
-#define ADXL_MB 0x60             // reading multiple bytes
-#define ADXL_DEVID 0xe5              // device id
+/*! Mask for reading a register.
+ */
+#define ADXL_READ 0x80
+/*! Mask for writing to a register.
+ */
+#define ADXL_WRITE 0
+/*! Mask for reading multiple bytes in single transmission.
+ */
+#define ADXL_MB 0x60
+/*! ADXL345 default device id.
+ */
+#define ADXL_DEVID 0xe5
 
-/*Read-Write command
- * Example of usage:
- *  reading single byte from reg 0 :                ADXL_COMMAND(0, ADXL_READ)
- *  reading multiple bytes/reg starting from reg 0  ADXL_COMMAND(0, ADXL_READ | ADXL_MB)
- *  writing a byte to register  0                   ADXL_COMMAND(0, ADXL_WRITE)
+/*! \brief Macro for ADXL345 command format.
+ *
+ * Example of usage: \n
+ *      reading single byte from reg 0 :                ADXL_COMMAND(0, ADXL_READ) \n
+ *      reading multiple bytes/reg starting from reg 0  ADXL_COMMAND(0, ADXL_READ | ADXL_MB) \n
+ *      writing a byte to register  0                   ADXL_COMMAND(0, ADXL_WRITE)
  */
 #define ADXL_COMMAND(reg, options)  ((reg | options) << 8)
 
+/*! ADXL345 control registers.
+ */
 enum ADXL_REGISTERS {
-    REG_DEVID = 0x00,
-    REG_THRESH_TAP = 0x1D,
-    REG_OFSX,
-    REG_OFSY,
-    REG_OFSZ,
-    REG_DUR,
-    REG_LATENT,
-    REG_WINDOW,
-    REG_THRESH_ACT,
-    REG_THRESH_INACT,
-    REG_TIME_INACT,
-    REG_ACT_INACT_CTL,
-    REG_THRESH_FF,
-    REG_TIME_FF,
-    REG_TAP_AXES,
-    REG_ACT_TAP_STATUS,
-    REG_BW_RATE,
-    REG_POWER_CTL,
-    REG_INT_ENABLE,
-    REG_INT_MAP,
-    REG_INT_SOURCE,
-    REG_DATA_FORMAT,
-    REG_DATAX0,
-    REG_DATAX1,
-    REG_DATAY0,
-    REG_DATAY1,
-    REG_DATAZ0,
-    REG_DATAZ1,
-    REG_FIFO_CTL,
-    REG_FIFO_STATUS
+    REG_DEVID = 0x00,       /*!< Device id register. */
+    REG_THRESH_TAP = 0x1D,  /*!< Tap threshold value register. */
+    REG_OFSX,               /*!< X offset value register. */
+    REG_OFSY,               /*!< Y offset value register. */
+    REG_OFSZ,               /*!< Z offset value register. */
+    REG_DUR,                /*!< Tap duration value register. */
+    REG_LATENT,             /*!< Tap latency value register. */
+    REG_WINDOW,             /*!< Tap window value register. */
+    REG_THRESH_ACT,         /*!< Activity threshold value register. */
+    REG_THRESH_INACT,       /*!< Inactivity threshold value register. */
+    REG_TIME_INACT,         /*!< Inactivity time value register. */
+    REG_ACT_INACT_CTL,      /*!< Axis enable control for activity and inactivity detection register. */
+    REG_THRESH_FF,          /*!< Free-fall threshold value register. */
+    REG_TIME_FF,            /*!< Free-fall time value register. */
+    REG_TAP_AXES,           /*!< Axis control for single tap/double tap register. */
+    REG_ACT_TAP_STATUS,     /*!< Source of single tap/double tap register. */
+    REG_BW_RATE,            /*!< Data rate and power mode control register. */
+    REG_POWER_CTL,          /*!< Power saving feature control register. */
+    REG_INT_ENABLE,         /*!< Interrupt enable control register. */
+    REG_INT_MAP,            /*!< Interrupt mapping control register. */
+    REG_INT_SOURCE,         /*!< ?ource of interrupts register. */
+    REG_DATA_FORMAT,        /*!< Data format control register. */
+    REG_DATAX0,             /*!< X axis data the least significant byte register. */
+    REG_DATAX1,             /*!< X axis data the most significant byte register. */
+    REG_DATAY0,             /*!< Y axis data the least significant byte register. */
+    REG_DATAY1,             /*!< Y axis data the most significant byte register. */
+    REG_DATAZ0,             /*!< Z axis data the least significant byte register. */
+    REG_DATAZ1,             /*!< Z axis data the most significant byte register. */
+    REG_FIFO_CTL,           /*!< FIFO control register. */
+    REG_FIFO_STATUS         /*!< FIFO status register. */
 };
 
 /* Digital pins used as chip select pins for SPI comm*/
+/*! Digital pin used as a SPI chip select pin for the front accelerometer sensor (front = front CASU side).
+ */
 extern digitalPin aSlaveF;
+/*! Digital pin used as a SPI chip select pin for the right accelerometer sensor (front = front CASU side).
+ */
 extern digitalPin aSlaveR;
+/*! Digital pin used as a SPI chip select pin for the back accelerometer sensor (front = front CASU side).
+ */
 extern digitalPin aSlaveB;
+/*! Digital pin used as a SPI chip select pin for the left accelerometer sensor (front = front CASU side).
+ */
 extern digitalPin aSlaveL;
 
+/*! \brief Function initializes and enables ADXL345 device.
+ * @param  csPin Digital pin used as a SPI chip select pin.
+ * @return  0 - Error in SPI communication. \n
+ *         -1 - Error in reading device ID. \n
+ *         -2 - Error in enabling device. \n
+ *           1 - Initialization successfully completed.
+ */
 UINT8 adxl345Init(digitalPin csPin);
+
+/*! \brief Function reads accelerometer X axis value.
+ * @param  csPin Digital pin used as a SPI chip select pin.
+ * @param  ax Memory location where data is stored.
+ * @return 1 - Communication succeeded \n
+ *         0 - Communication failed
+ */
 UINT8 readAccX(digitalPin csPin, int *ax);
+
+/*! \brief Function reads accelerometer Y axis value.
+ * @param  csPin Digital pin used as a SPI chip select pin.
+ * @param  ay Memory location where data is stored.
+ * @return 1 - Communication succeeded \n
+ *         0 - Communication failed
+ */
 UINT8 readAccY(digitalPin csPin, int *ay);
+
+/*! \brief Function reads accelerometer Z axis value.
+ * @param  csPin Digital pin used as a SPI chip select pin.
+ * @param  ax Memory location where data is stored.
+ * @return 1 - Communication succeeded \n
+ *         0 - Communication failed
+ */
 UINT8 readAccZ(digitalPin csPin, int *az);
+
+/*! \brief Function reads accelerometer X,Y,Z axis values in a single SPI transmission.
+ * @param  csPin Digital pin used as a SPI chip select pin.
+ * @param  acc Memory location where data is stored.
+ * @return 1 - Communication succeeded \n
+ *         0 - Communication failed
+ */
 UINT8 readAccXYZ(digitalPin csPin, int *acc);
+
+/*! \brief Function reads device id.
+ * @param  csPin Digital pin used as a SPI chip select pin.
+ * @param  id  Memory location where read id is saved.
+ * @return  1 - Communication succeeded. \n
+ *          0 - Communication failed.
+ */
 UINT8 adxl345readID(digitalPin csPin, UINT16 *id);
+
+/*! \brief Function reads a single device register.
+ * @param  csPin Digital pin used as a SPI chip select pin.
+ * @param  reg Address of the register.
+ * @param data Memory location where data is stored.
+ * @return 1 - Communication succeeded.
+ *         0 - Communication failed.
+ */
 UINT8 adxlReadReg(digitalPin csPin, UINT8 reg, UINT16 *data);
 
 #endif	/* ADXL345_H */

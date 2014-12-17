@@ -166,30 +166,6 @@ int VCNL4000Light(void)
     return resAmbLight;
 }
 
-//INT16 VCNL4000Light(void)
-//{
-//    INT16 resAmbLight = 0;
-//    INT16 temp = 0;
-//    temp = i2cReadByte(VCNL4000_Address, ALRES5);
-//    resAmbLight = temp<<8;  //Write high byte
-//    temp = i2cReadByte(VCNL4000_Address, ALRES6);
-//    resAmbLight += temp;  //Write low byte
-//
-//    return resAmbLight;
-//}
-
-int VCNL4000Proxi(void)
-{
-    int resProxi = 0;
-    int temp = 0;
-    temp = I2C1ReadByte(VCNL4000_Address, PRRES7);
-    resProxi = temp<<8;  //Write high byte
-    temp = I2C1ReadByte(VCNL4000_Address, PRRES8);
-    resProxi += temp;  //Write low byte
-
-    return resProxi;
-}
-
 int VCNL4000ReadProxi(){
     char data[2];
     char temp, tout;
