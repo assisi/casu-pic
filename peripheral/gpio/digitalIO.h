@@ -1,5 +1,5 @@
 /*! \file digitalIO.h
- * Declaration of functions used for controlling digital pins.
+ * \brief Declaration of functions used for controlling digital pins.
  */
 
 #ifndef DIGITALIO_H
@@ -18,13 +18,13 @@ typedef struct Pin {
     UINT8 pinNum;
 }digitalPin;
 
-/*! \brief Function sets digital pin as input pin.
+/*! \brief Function configures digital pin as input pin.
  *
  * @param pin Digital pin to be set.
  */
 void digitalInput(digitalPin pin);
 
-/*! \brief Function sets digital pin as output pin.
+/*! \brief Function configures digital pin as output pin.
  *
  * @param pin Digital pin to be set.
  */

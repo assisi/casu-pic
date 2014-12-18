@@ -1,5 +1,5 @@
 /*! \file timer1.h
- * Declarations of functions and variables used for working with timer1.
+ * \brief Declarations of functions and variables used for working with timer1.
  */
 
 #ifndef TIMER1_H
@@ -34,20 +34,20 @@
 /*! Timer1 on mask.
  */
 #define T1_ON               0x8000 /* Timer1 ON */
-/*! Timer1 off mask
+/*! Timer1 off mask.
  */
 #define T1_OFF              0x0000 /* Timer1 OFF */
-/*! Timer1 on/off mask
+/*! Timer1 on/off mask.
  */
 #define T1_OFF_ON_MASK      (~T1_ON)
 
-/*! Timer1 mask for operation during sleep option
+/*! Timer1 mask for operation during sleep option.
  */
 #define T1_IDLE_STOP        0x2000 /* operate during sleep */
-/*! Timer1 mask for stopping operation during sleep option
+/*! Timer1 mask for stopping operation during sleep option.
  */
 #define T1_IDLE_CON         0x0000 /* stop operation during sleep */
-/*! Timer1 mask for turning on/off operation during sleep option
+/*! Timer1 mask for turning on/off operation during sleep option.
  */
 #define T1_IDLE_MASK        (~T1_IDLE_STOP)
 
@@ -61,16 +61,16 @@
  */
 #define T1_GATE_MASK        (~T1_GATE_ON)
 
-/*! Timer1 prescaler value 1
+/*! Timer1 prescaler value 1.
  */
 #define T1_PS_1_1           0x0000 /* Prescaler 1:1 */
-/*! Timer1 prescaler value 8
+/*! Timer1 prescaler value 8.
  */
 #define T1_PS_1_8           0x0010 /*           1:8 */
-/*! Timer1 prescaler value 64
+/*! Timer1 prescaler value 64.
  */
 #define T1_PS_1_64          0x0020 /*          1:64 */
-/*! Timer1 prescaler value 256
+/*! Timer1 prescaler value 256.
  */
 #define T1_PS_1_256         0x0030 /*         1:256 */
 
@@ -150,7 +150,7 @@
 */
 void OpenTimer1( unsigned int config, unsigned int period);
 
-/*! \brief Function closes timer1.
+/*! \brief Function turns off timer1.
  */
 void CloseTimer1(void);
 

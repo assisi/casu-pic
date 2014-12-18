@@ -1,5 +1,5 @@
 /*! \file timerFunctions.h
- * Declarations of functions for working with timers.
+ * \brief Declarations of functions for working with timers.
  */
 
 #ifndef TIMERFUNCTIONS_H

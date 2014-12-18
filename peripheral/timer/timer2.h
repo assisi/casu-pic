@@ -1,6 +1,5 @@
 /*! \file timer2.h
- *
- * Declarations of functions and variables used for working with timer2.
+ * \brief Declarations of functions and variables used for working with timer2.
  */
 
 #ifndef TIMER2_H
@@ -36,17 +35,17 @@
 /*! Timer2 off mask.
  */
 #define T2_OFF              0x0000
-/*! Timer2 on/off mask
+/*! Timer2 on/off mask.
  */
 #define T2_OFF_ON_MASK      (~T2_ON)
 
-/*! Timer2 mask for operation during sleep option
+/*! Timer2 mask for operation during sleep option.
  */
 #define T2_IDLE_STOP        0x2000 
-/*! Timer2 mask for stopping operation during sleep option
+/*! Timer2 mask for stopping operation during sleep option.
  */
 #define T2_IDLE_CON         0x0000
-/*! Timer2 mask for putting on/off operation during sleep option
+/*! Timer2 mask for putting on/off operation during sleep option.
  */
 #define T2_IDLE_MASK        (~T2_IDLE_STOP)
 
@@ -142,7 +141,7 @@
 void OpenTimer2(unsigned int config, unsigned int period) __attribute__ ((section
 (".libperi")));
 
-/*! \brief Function closes timer2.
+/*! \brief Function turns off timer2.
  */
 void CloseTimer2(void) __attribute__ ((section (".libperi")));
 

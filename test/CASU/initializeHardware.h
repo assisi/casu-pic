@@ -1,5 +1,5 @@
 /*! \file initializeHardware.h
- *  Declarations of functions used for initializing devices (MCU ports, MCU peripheral devices)
+ *  \brief Declarations of functions used for initializing devices (MCU ports, MCU peripheral devices).
  */
 
 #ifndef INITIALIZEHARDWARE_H
@@ -7,7 +7,7 @@
 
 // 
 /*! Desired frequency Fosc.
- * Note that CPU frequency Fp = Fcy = Fosc /2
+ * Note that CPU frequency is Fp = Fcy = Fosc /2.
  */
 #define FOSC 80000000
 
@@ -23,31 +23,31 @@
 #include "../../peripheral/gpio/digitalIO.h"
 #include "../../pic-to-beaglebone/pic2beaglebone.h"
 
-/*! Digital pin red LED is connected to.
+/*! Digital pin used for controlling red LED.
  */
 extern digitalPin LED2R;
 
-/*! Digital pin green LED is connected to.
+/*! Digital pin used for controlling green LED.
  */
 extern digitalPin LED2G;
 
-/*! Digital pin blue LED is connected to.
+/*! Digital pin used for controlling blue LED.
  */
 extern digitalPin LED2B;
 
-/*! Digital pin used as SPI select pin (active low) for digital-to-analog converter (DAC) used for generating Peltier referent value.
+/*! Digital pin used as SPI select pin (active low) for digital-to-analog converter (DAC), which is used for generating Peltier referent value.
  */
-extern digitalPin PELTIER;   //SPI select
+extern digitalPin PELTIER;
 
-/*! Digital pin used for disabling(low) / enabling (high) Peltier driver.
+/*! Digital pin used for disabling/enabling (low/high) Peltier driver.
  */
 extern digitalPin PELTIER_EN;
 
-/*! Digital pin used for reseting I2C multiplexer (active digital low)
+/*! Digital pin used for reseting I2C multiplexer (active low).
  */
-extern digitalPin MUXRST;   //I2C mux
+extern digitalPin MUXRST; 
 
-/*! Function sets MCU ports as digital or analog. Initializes digital pins and peripheral devices (I2c, timer).
+/*! Function sets MCU ports as digital or analog. Initializes digital pins and peripheral devices (I2C, timer).
  */
 void setUpPorts();
 

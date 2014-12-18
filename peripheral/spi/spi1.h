@@ -1,5 +1,5 @@
-/*! \file sp1.h
- * Declaration of functions and variables used for controlling SPI1 bus.
+/*! \file spi1.h
+ * \brief Declaration of functions and variables used for controlling SPI1 bus.
  */
 
 #ifndef SPI1_H
@@ -16,11 +16,11 @@
 #include <Generic.h>
 #include "../gpio/digitalIO.h"
 
-/*! \brief Macro used to select a SPI device by putting corresponding chip select pin to digital low.
+/*! \brief Macro used for selecting a SPI device by putting corresponding chip select pin to digital low.
  */
 #define chipSelect(slave) digitalLow(slave)
 
-/*! \brief Macro used to deselect a SPI device by putting corresponding chip select pin to digital high.
+/*! \brief Macro used for deselecting a SPI device by putting corresponding chip select pin to digital high.
  */
 #define chipDeselect(slave) digitalHigh(slave)
 
@@ -48,7 +48,7 @@ UINT8 spi1TransferWord(UINT16 out, UINT16 *in);
 
 /*! \brief Function sends data stored in buffer over SPI1 bus and stores in the same buffer received data.
  *
- * @param buff Pointer to the buffer where the outgoing data is stored and where the received data is stored.
+ * @param buff Pointer to the buffer.
  * @param len Buffer size.
  * @return Returns 1 if transfer succeeded, else 0.
  */

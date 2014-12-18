@@ -1,5 +1,5 @@
 /*! \file i2c2.h
- * Declarations of functions and variables used for working with i2c2.
+ * \brief Declarations of functions and variables used for working with i2c2.
  */
  
 #ifndef I2C2_H
@@ -30,9 +30,9 @@ extern UINT8 i2c2_rx_buff[BUFF_SIZE];
  */
 extern UINT8 i2c2_tx_buff[BUFF_SIZE];
 
-/*! \brief Function initializes i2c2 as a slave device.
+/*! \brief Function initializes i2c2 module as a slave device.
  *
- * @param address Address of the i2c2 as a slave device.
+ * @param address Address of the i2c2 module used as a slave device.
  * @param int_priority Priority of i2c2 interrupt routine for exchanging data with master.
  * @return Device successfully configured and initialized.
  */

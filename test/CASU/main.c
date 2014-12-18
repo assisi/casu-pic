@@ -1,15 +1,5 @@
-/* 
- * File:   main.c
- * Author: thaus
- *
- * Created on 2014. sije?anj 06, 13:03
- */
-/* REVISION HISTORY:
- * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~;
- * Date, Author     |	Comments on this revision
- * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~;
- * 06.02.2014       |	3 Proximity sensors reading - Laussane training
- * 17.04.2014, KG   |   AMP board testing sequance is added -> #define TEST_AMP_BOARD
+/*! \file main.c
+ * \brief Main function of the CASU firmware.
  */
 
 //#define TEST_AMP_BOARD
@@ -29,17 +19,22 @@
 #include "../../peripheral/i2c/i2c1.h"
 #include "../../sensors/vcnl4000/proxiVCNL4000.h"
 
-// Select Internal FRC at POR
+/*! \brief Selects internal FRC at POR.
+*/
 _FOSCSEL(FNOSC_FRC & IESO_OFF);
-// Enable Clock Switching and Configure POSC in XT mode
+/*! \brief Enables clock switching and configures POSC in XT mode.
+*/
 _FOSC(FCKSM_CSECMD & OSCIOFNC_OFF & POSCMD_XT);
-//I2C alt pins
+/*! \brief Selects I2C1 alternate pins.
+*/
 _FPOR(ALTI2C2_OFF & ALTI2C1_ON);
-//Watchdog timer -> Twtd = PR*POST/32000 [s]
+/*! \brief Configures watchdog timer -> Twtd = PR*POST/32000 [s].
+*/
 _FWDT(FWDTEN_ON & WDTPRE_PR128 & WDTPOST_PS1024);   //Twdt ~ 4s
 
-/*
+/*! \brief Main function of the CASU firmware.
  * 
+ * Initializes oscillators, peripheral devices, sensors and actuators. Executes main while loop every ~250 ms and interrupt routine at demand for i2c communication with single-board computer (SBC). Within the main loop referent and measured values are updated and PID controllers executed.  
  */
 int main(int argc, char** argv) {
 

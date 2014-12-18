@@ -1,5 +1,5 @@
 /*! \file  proxiVCNL4000.h
- * Declaration of functions and variables used for I2C communication with VCNL4000 digital proximity sensor.
+ * \brief Declaration of functions and variables used for I2C communication with VCNL4000 digital proximity sensor.
  */
 
 #ifndef PROXIVCNL4000_H
@@ -36,16 +36,16 @@
 /*! Address of ambient light parameter register.
  */
 #define ALIGH4  0x84
-/*! Address of the ambient light result high byte register.
+/*! Address of the ambient light value the most significant byte register.
  */
 #define ALRES5  0x85
-/*! Address of the ambient light result low byte register.
+/*! Address of the ambient light value the least significant byte register.
  */
 #define ALRES6  0x86
-/*! Address of the proximity result high byte register.
+/*! Address of the proximity value the most significant byte register.
  */
 #define PRRES7  0x87
-/*! Address of the proximity result low byte register.
+/*! Address of the proximity value the least significant byte register.
  */
 #define PRRES8  0x88
 /*! Address of the proximity measurement signal frequency register.

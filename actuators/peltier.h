@@ -1,5 +1,5 @@
 /*! \file peltier.h
- * Declarations of functions and variables used for controlling Peltier device.
+ * \brief Declarations of functions and variables used for controlling Peltier device.
  */
 
 #ifndef PELTIER_H
@@ -8,15 +8,17 @@
 #include <Generic.h>
 #include "../test/CASU-karlo/initializeHardware.h"
 
-/*! Maximum output current in A
+/*! Maximal output current in A.
  */
 #define IMAX     3
 
-/*! Digital to analog converter (DAC) output gain, values: 0 - 2x, 1 - 1x
+/*! Digital to analog converter (DAC) output gain, values: \n
+ 0 - 2x \n
+ 1 - 1x
  */
 #define DAC_G    0
 
-/*! DAC maximum voltage for maximum current.
+/*! DAC maximal voltage at maximal current.
  */
 #define DMAX     IMAX*250+1500
 
@@ -26,17 +28,17 @@
 
 /*! Output multiplification factor.
  */
-#define DCOEF   (DMAX-DOFFSET)/100
+#define DCOEF   (DMAX-DOFFSET)/100  /*Check DOFFSET*/
 
-/*! Maximum pwm for positive current (heating CASU).
+/*! Maximal PWM value (heating CASU).
  */
 extern int PELTIER_PWM_MAX_P; 
 
-/*! Maximum pwm value for negative current (cooling CASU).
+/*! Minimal PWM value (cooling CASU).
  */
 extern int PELTIER_PWM_MAX_N;
 
-/*! Temperature PID controller output value from the previous time step.
+/*! Temperature PID controller output value in the previous time step.
  */
 extern float uk1;
 
@@ -48,15 +50,15 @@ extern float Kp;
  */
 extern float Ki;
 
-/*! \brief Function initializes Peltier control pins - digital pin for enabling/disabling Peltier device and digital pin used as SPI chip select of DAC.
+/*! \brief Function initializes Peltier control pins - digital pin for enabling/disabling Peltier device and digital pin used as SPI chip select for DAC. DAC is used for generating Peltier current referent value.
  *
- * @param csPin SPI chip select pin for DAC used for generating Peltier current referent value.
+ * @param csPin SPI chip select pin for DAC.
  */
 void PeltierInit(digitalPin csPin);
 
-/*! \brief Function sets PWM referent value of the Peltier device.
+/*! \brief Function sets PWM referent value for the Peltier device.
  *
- * @param csPin SPI chip select pin for DAC used for generating Peltier current referent value.
+ * @param csPin SPI chip select pin for DAC.
  * @param lShdn Enable/disable (1/0) DAC.
  * @param set PWM referent value for the Peltier device, range [-100, 100].
  */

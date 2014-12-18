@@ -1,8 +1,5 @@
-/* 
- * File:   adt7420.h
- * Author: 
-/* \file adt7320.h
- * Declaration of functions and variables used for I2C communication with ADT7420 digital temperature sensor.
+/*! \file adt7420.h
+ * \brief Declaration of functions and variables used for I2C communication with ADT7420 digital temperature sensor.
  */
 
 
@@ -19,10 +16,10 @@
 #define ADT74_ID        0xCB    
 
 /*Registers address */
-/*! Address of the register containing the most significant byte of current temperature value.
+/*! Address of the register containing the most significant byte of the current temperature value.
  */
 #define ADT74_THIGH     0x00
-/*! Address of the register containing the least significant byte of current temperature value.
+/*! Address of the register containing the least significant byte of the current temperature value.
  */
 #define ADT74_TLOW      0x01
 /*! Address of the status register.
@@ -31,22 +28,22 @@
 /*! Address of the configuration register.
  */
 #define ADT74_CONFIG    0x03
-/*! Address of the register containing the most significant byte of overtemperature value.
+/*! Address of the register containing the most significant byte of the overtemperature value.
  */
 #define ADT74_TH_HIGH   0x04    
-/*! Address of the register containing the least significant byte of overtemperature value.
+/*! Address of the register containing the least significant byte of the overtemperature value.
  */
 #define ADT74_TH_LOW    0x05
-/*! Address of the register containing the most significant byte of undertemperature value.
+/*! Address of the register containing the most significant byte of the undertemperature value.
  */
 #define ADT74_TL_HIGH   0x06   
-/*! Address of the register containing the least significant byte of undertemperature value.
+/*! Address of the register containing the least significant byte of the undertemperature value.
  */
 #define ADT74_TL_LOW    0x07
-/*! Address of the register containing the most significant byte of critical temperature value.
+/*! Address of the register containing the most significant byte of the critical temperature value.
  */
 #define ADT74_TCR_HIGH  0x08 
-/*! Address of the register containing the least significant byte of critical temperature value.
+/*! Address of the register containing the least significant byte of the critical temperature value.
  */
 #define ADT74_TCR_LOW   0x09
 /*! Address of the register containing the hysteris value of temperature (over,under,critical).
@@ -82,7 +79,7 @@
 /*! Interrupt mode flag.
  */
 #define ADT74_INT_MODE 0                 
-/*! Critical temperature mode flag.
+/*! The critical temperature mode flag.
  */
 #define ADT74_CT_MODE 0b00010000        
 /*! Interrupt pin polarity low flag.
@@ -97,16 +94,16 @@
 /*! Critical temperature pin polarity high flag.
  */
 #define ADT74_CT_HIGH 0b00000100          
-/*! One fault for raising interrupt and/or critical overtemperature interrupt.
+/*! One fault for raising interrupt and/or the critical overtemperature interrupt.
  */
 #define ADT74_FQ_1 0                    
-/*! Two faults for raising interrupt and/or critical overtemperature interrupt.
+/*! Two faults for raising interrupt and/or the critical overtemperature interrupt.
  */
 #define ADT74_FQ_2 0b00000001             
-/*! Three faults for raising interrupt and/or critical overtemperature interrupt.
+/*! Three faults for raising interrupt and/or the critical overtemperature interrupt.
  */
 #define ADT74_FQ_3 0b00000010             
-/*! Four faults for raising interrupt and/or critical overtemperature interrupt.
+/*! Four faults for raising interrupt and/or the critical overtemperature interrupt.
  */
 #define ADT74_FQ_4 0b00000011             
 
@@ -115,7 +112,7 @@
  */
 #define ADT74_TEMP_READY 0b10000000
 
-/*! \brief Function initializes ADT7420, digital temperature sensor with I2C communication.
+/*! \brief Function initializes ADT7420, digital temperature sensor with I2C interface.
  *
  * @param config Configuration register data. Use defined macros for configuring this register.
  * @return 0 - I2C communication failed. \n
@@ -127,7 +124,7 @@
  */
 UINT8 adt7420Init(UINT8 config);
 
-/*! Function for reading adt7320 temperature value.
+/*! \brief Function for reading ADT7420 temperature value.
  *
  * @param temp Memory location used for storing temperature value.
  * @return 0 - I2C communication failed. \n

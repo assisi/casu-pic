@@ -1,5 +1,5 @@
 /*! \file i2c1.h
- * Declarations of functions and variables used for working with i2c1.
+ * \brief Declarations of functions and variables used for working with i2c1.
  */
 
 #ifndef I2C1_H
@@ -39,11 +39,11 @@ extern UINT8 rx_buff[BUFF_SIZE];
  */
 extern UINT8 tx_buff[BUFF_SIZE];
 
-/*! \brief Function initiates i2c1 bus (master mode)
+/*! \brief Function initiates i2c1 bus (master mode).
  */
 void I2C1Start(void);
 
-/*! \brief Function puts i2c1 bus in idle mode (master mode)
+/*! \brief Function puts i2c1 bus in idle mode (master mode).
  *
  * @return -1 Failed to put i2c in idle mode \n
  *          1 Succesfully put i2c in idle mode 
@@ -74,19 +74,19 @@ unsigned char I2C1MasterRead(void);
 
 /*! \brief Function initializes i2c1 as a master device.
  *
- * @return 1 Device successfully configured and initialized.
+ * @return 1 - device successfully configured and initialized.
  */
 UINT8 I2C1MasterInit(void);
 
-/*! \brief Function initializes i2c1 as a slave device.
+/*! \brief Function initializes i2c1 module as a slave device.
  *
- * @param address Address of the i2c1 as a slave device.
+ * @param address Address of the i2c1 module used as a slave device.
  * @param int_priority Priority of i2c1 interrupt routine for exchanging data with master.
- * @return Device successfully configured and initialized.
+ * @return 1 - device successfully configured and initialized.
  */
 UINT8 I2C1SlaveInit(UINT8 address, UINT8 int_priority);
 
-/*! \brief Function selects channel on external i2c multiplexor (PCA9547)
+/*! \brief Function selects channel on external i2c multiplexer (PCA9547).
  *
  * @param enable Enable/disable (1/0) i2c mux.
  * @param channel Number of channel to be selected.
@@ -99,9 +99,9 @@ int I2C1ChSelect(UINT8 enable, UINT8 channel);
  */
 void muxReset();
 
-/*! \brief Function tests basic i2c multiplexer functionality (selecting and reading channel)
+/*! \brief Function tests basic i2c multiplexer functionality (selecting and reading channel).
  *
- * @return -1 - Multiplexer test failed.
+ * @return -1 - Multiplexer test failed. \n
  *         [0-7] - Number of the selected channel.
  */
 int MUXTest();
@@ -120,12 +120,11 @@ int I2C1WriteByte(UINT8 slaveAdd, UINT8 registerAdd, UINT8 data);
  *
  * @param slaveAdd Address of i2c slave device.
  * @param registerAdd Slave device register address.
- * @return 255 - Error occured during transmission. \n
- *         else - Read byte
+ * @return Returns 255 if error occured during transmission, else returns read byte.
  */
 unsigned char I2C1ReadByte(UINT8 slaveAdd, UINT8 registerAdd);
 
-/*! \brief Interrupt routing for i2c1 device. 
+/*! \brief Interrupt routine for i2c1 device. 
  */
 void __attribute__((__interrupt__, auto_psv)) _SI2C1Interrupt(void);
 

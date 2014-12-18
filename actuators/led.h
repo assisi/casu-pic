@@ -1,5 +1,5 @@
 /*! \file led.h
- * Declarations of functions and variables used to control Light Emitting Diodes (LEDs).
+ * \brief Declarations of functions and variables used for controlling Light Emitting Diodes (LEDs).
  */
 
 #ifndef LED_H
@@ -16,14 +16,14 @@
 #include <Generic.h>
 #include "../test/CASU-karlo/initializeHardware.h"
 
-/*! PWM input clock prescaler
+/*! PWM input clock prescaler.
  */
-#define PWMPRE 4   //PWM input clock prescaler
+#define PWMPRE 4   
 /*! PWM frequency in Hz.
  */
-#define FPWM   20000 //PWM frequecy
+#define FPWM 20000
 
-/*! \brief Function initializes PWM modules used to control LEDs.
+/*! \brief Function initializes PWM modules used for controlling LEDs.
  */
 void LEDInit(void);
 

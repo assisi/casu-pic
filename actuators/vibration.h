@@ -1,5 +1,5 @@
 /*! \file vibration.h
- * Declarations of functions used for controlling vibration motor.
+ * \brief Declarations of functions used for controlling vibration motor.
  */
 
 
@@ -16,13 +16,13 @@
 
 #include <Generic.h>
 
-/*! \brief Function inititalizes PWM module used for controlling vibration motor
+/*! \brief Function inititalizes PWM module used for controlling vibration motor.
  */
 void VibrationInit(void);
 
 /*! \brief Function sets PWM referent value for vibration motor.
  *
- * @param set PWM referent value, range [0-100].
+ * @param set Referent PWM value, range [0-100].
  */
 void VibrationSet(UINT8 set);
 
