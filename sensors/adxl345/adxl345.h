@@ -17,7 +17,7 @@
 /*! Mask for writing to a register.
  */
 #define ADXL_WRITE 0
-/*! Mask for reading multiple bytes in single transmission.
+/*! Mask for reading multiple bytes in s single transmission.
  */
 #define ADXL_MB 0x60
 /*! ADXL345 default device id.
@@ -27,8 +27,8 @@
 /*! \brief Macro for ADXL345 command format.
  *
  * Example of usage: \n
- *      reading single byte from reg 0:                ADXL_COMMAND(0, ADXL_READ) \n
- *      reading multiple bytes/reg starting from reg 0:  ADXL_COMMAND(0, ADXL_READ | ADXL_MB) \n
+ *      reading single byte from reg 0:                ADXL_COMMAND(0, ADXL_READ)\n
+ *      reading multiple bytes/reg starting from reg 0:  ADXL_COMMAND(0, ADXL_READ | ADXL_MB)\n
  *      writing a byte to register 0:                   ADXL_COMMAND(0, ADXL_WRITE)
  */
 #define ADXL_COMMAND(reg, options)  ((reg | options) << 8)
@@ -68,7 +68,6 @@ enum ADXL_REGISTERS {
     REG_FIFO_STATUS         /*!< FIFO status register. */
 };
 
-/* Digital pins used as chip select pins for SPI comm*/
 /*! Digital pin used as a SPI chip select pin for the front accelerometer sensor.
  */
 extern digitalPin aSlaveF;

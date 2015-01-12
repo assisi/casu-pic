@@ -1,5 +1,5 @@
 /*! \file timerFunctions.h
- * \brief Declarations of functions for working with timers.
+ * \brief Declaration of functions for working with timers.
  */
 
 #ifndef TIMERFUNCTIONS_H
@@ -19,7 +19,7 @@
  */
 void delay_t1(int msec);
 
-/*!\brief Function calculates CPU ticks (tacts) to count with timer corresponding to given time in milliseconds and timer prescaler.
+/*!\brief Function calculates CPU ticks to count with timer which correspond to a given time in milliseconds and timer prescaler.
  *
  * @param msec Time in milliseconds.
  * @param prescaler Timer prescaler. Use predefined timer prescale values: T1_PS_1_x, x = 1,8,64,256

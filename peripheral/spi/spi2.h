@@ -14,6 +14,7 @@
 #endif
 
 #include <Generic.h>
+
 #include "../gpio/digitalIO.h"
 
 /*! \brief Macro used for selecting a SPI device by putting corresponding chip select pin to digital low.
@@ -46,7 +47,7 @@ UINT8 spi2Write(UINT16 data);
  */
 UINT8 spi2TransferWord(UINT16 out, UINT16 *in);
 
-/*! \brief Function sends data stored in buffer over SPI2 bus and stores in the same buffer received data.
+/*! \brief Function sends data stored in a buffer over SPI2 bus and stores the received data in the same buffer.
  *
  * @param buff Pointer to the buffer.
  * @param len Buffer size.

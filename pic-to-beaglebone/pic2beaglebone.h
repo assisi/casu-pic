@@ -1,5 +1,5 @@
 /*! \file pic2beaglebone.h
- * \brief Declarations of functions and variables used for I2C communication with single-board computer (SBC), such as BeagleBone.
+ * \brief Declaration of functions and variables used for I2C communication with single-board computer (SBC), such as BeagleBone.
  * 
  * Sensors are labeled with respect to the CASU side they are mounted to. The front temperature sensor refers to the sensor mounted on the front CASU side and the front-right proximity sensor refers to the sensor mounted on the front-right side of the hexagonal CASU upper body part.
  */

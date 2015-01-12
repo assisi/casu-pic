@@ -1,5 +1,5 @@
 /*! \file initializeHardware.h
- *  \brief Declarations of functions used for initializing devices (MCU ports, MCU peripheral devices).
+ *  \brief Declaration of functions used for initializing devices (MCU ports, MCU peripheral devices).
  */
 
 #ifndef INITIALIZEHARDWARE_H

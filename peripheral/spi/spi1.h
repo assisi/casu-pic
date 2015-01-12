@@ -46,7 +46,7 @@ UINT8 spi1Write(UINT16 data);
  */
 UINT8 spi1TransferWord(UINT16 out, UINT16 *in);
 
-/*! \brief Function sends data stored in buffer over SPI1 bus and stores in the same buffer received data.
+/*! \brief Function sends data stored in a buffer over SPI1 bus and stores the received data in the same buffer.
  *
  * @param buff Pointer to the buffer.
  * @param len Buffer size.

@@ -50,7 +50,7 @@ extern float Kp;
  */
 extern float Ki;
 
-/*! \brief Function initializes Peltier control pins - digital pin for enabling/disabling Peltier device and digital pin used as SPI chip select for DAC. DAC is used for generating Peltier current referent value.
+/*! \brief Function initializes Peltier control pins - a digital pin for enabling/disabling Peltier device and a digital pin used as SPI chip select for DAC. DAC is used for generating Peltier current referent value.
  *
  * @param csPin SPI chip select pin for DAC.
  */

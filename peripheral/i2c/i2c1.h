@@ -1,5 +1,5 @@
 /*! \file i2c1.h
- * \brief Declarations of functions and variables used for working with i2c1.
+ * \brief Declaration of functions and variables used for working with i2c1.
  */
 
 #ifndef I2C1_H
@@ -81,12 +81,12 @@ UINT8 I2C1MasterInit(void);
 /*! \brief Function initializes i2c1 module as a slave device.
  *
  * @param address Address of the i2c1 module used as a slave device.
- * @param int_priority Priority of i2c1 interrupt routine for exchanging data with master.
+ * @param int_priority Priority of i2c1 interrupt routine used for exchanging data with master.
  * @return 1 - device successfully configured and initialized.
  */
 UINT8 I2C1SlaveInit(UINT8 address, UINT8 int_priority);
 
-/*! \brief Function selects channel on external i2c multiplexer (PCA9547).
+/*! \brief Function selects channel on the external i2c multiplexer (PCA9547).
  *
  * @param enable Enable/disable (1/0) i2c mux.
  * @param channel Number of channel to be selected.
@@ -106,7 +106,7 @@ void muxReset();
  */
 int MUXTest();
 
-/*! \brief Function writes byte to i2c slave device register.
+/*! \brief Function writes byte to an i2c slave device register.
  *
  * @param slaveAdd i2c address of the slave device.
  * @param registerAdd Slave device register address.
@@ -116,9 +116,9 @@ int MUXTest();
  */
 int I2C1WriteByte(UINT8 slaveAdd, UINT8 registerAdd, UINT8 data);
 
-/*! \brief Function reads byte from i2c slave device register.
+/*! \brief Function reads byte from an i2c slave device register.
  *
- * @param slaveAdd Address of i2c slave device.
+ * @param slaveAdd Address of the i2c slave device.
  * @param registerAdd Slave device register address.
  * @return Returns 255 if error occured during transmission, else returns read byte.
  */
