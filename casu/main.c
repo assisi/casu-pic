@@ -260,6 +260,9 @@ int main(int argc, char** argv) {
         // readings every 2.5 second
         // PID control every 10 seconds
         if (tempLoopControl >= 20) {
+            //Cooler temperature
+            adt7420ReadTemp(&temp_t);
+
             if (tempSensors > 0) {
                 // we have at least on temp sensor working
 
@@ -305,9 +308,6 @@ int main(int argc, char** argv) {
                 temp_wax = Kf1 * temp_casu + Kf2 * temp_casu1 + Kf3 * temp_wax1;
                 temp_wax1 = temp_wax;
                 temp_casu1 = temp_casu;
-
-                //Cooler temperature
-                adt7420ReadTemp(&temp_t);
 
                 if (tempLoop == 3) {
                     // 2.5 s peltier off
