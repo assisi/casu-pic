@@ -6,7 +6,7 @@
 #define	PELTIER_H
 
 #include <Generic.h>
-#include "../test/CASU-karlo/initializeHardware.h"
+#include "../casu/initializeHardware.h"
 
 #define IMAX     3          //[A] - maximum output current
 #define DAC_G    0          //DAC output gain 0 - 2x, 1 - 1x
