@@ -7,14 +7,14 @@
 ; FILE DESCRIPTION:
 ; Vibration motor firware
 ; Schematic documentation:
- * "ASSISI_controller_board_v1.3"
- * "ASSISI_CASU05_AmpBoard"
+ * "ASSISI_CASU_mainboard"
 ;
 ; REVISION HISTORY:
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~;
 ; Date, Author      |	Comments on this revision
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~;
 ; 24.01.2014        |	Implementation
+; 22.01.2015        |   Changes for new CASU hardware version V1.0
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~;
 */
 
@@ -44,7 +44,7 @@ void VibrationInit(void) {
     PWMCON2 = 0;    //Edge-aligned mode, master time base, individual duty for both channels
     PHASE2 = PTPER;
     SPHASE2 = PTPER;
-    SDC2 = 0;   //PWM1L duty
+    SDC2 = 0;   //duty
     //PWM I/O control register
     IOCON2bits.PENL = 1;
     IOCON2bits.PENH = 0;    //Not used

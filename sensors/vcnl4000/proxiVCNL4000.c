@@ -27,17 +27,33 @@
 
 char VCNL4000Init(void){
 
-    unsigned char deviceID = 0;
-    deviceID = I2C1ReadByte(VCNL4000_Address, PRODID);
-    if(deviceID != 0x11)
-        return 0;
+    unsigned char deviceID;
+    char res, muxCh;
+    int i,j;
 
-    I2C1WriteByte(VCNL4000_Address, IRLED3, 20);
-    I2C1WriteByte(VCNL4000_Address, ALIGH4, 0x0F);
-    I2C1WriteByte(VCNL4000_Address, PRMEA9, 0);
-    I2C1WriteByte(VCNL4000_Address, PRMOD10, 0x81);
+    res = 0;
+    for (i = 0; i <= 5; i++) {
 
-    return 1;
+        muxCh = I2C1ChSelect(1,i);
+        //res = MuxRead();
+        deviceID = 0; j = 0;
+        while ((deviceID != 0x21)&(j < 5)) {
+            deviceID = I2C1ReadByte(VCNL4000_Address, PRODID);
+            j++;
+        }
+        
+        if (deviceID == 0x21) {
+            I2C1WriteByte(VCNL4000_Address, IRLED3, 20);
+            I2C1WriteByte(VCNL4000_Address, ALIGH4, 0x0F);
+            I2C1WriteByte(VCNL4000_Address, PRMEA9, 0);
+            I2C1WriteByte(VCNL4000_Address, PRMOD10, 0x81);
+            res++;
+        }
+        res = I2C1ReadByte(VCNL4000_Address, IRLED3);
+        j = 0;
+    }
+
+    return res;
 }
 
 
@@ -176,14 +192,20 @@ int VCNL4000Proxi(void)
     return resProxi;
 }
 
+//VCNL4010 - deviceID = 0x21
 int VCNL4000ReadProxi(){
     char data[2];
     char temp, tout;
     int proxValue;
-
     unsigned char deviceID = 0;
-    deviceID = I2C1ReadByte(VCNL4000_Address, PRODID);
-    if(deviceID != 0x11)
+    int i;
+
+    i = 0;
+    while((deviceID != 0x21)&(i<5)){
+        deviceID = I2C1ReadByte(VCNL4000_Address, PRODID);
+        i++;
+    }
+    if(deviceID != 0x21)
         return -1;
 
     temp = I2C1ReadByte(VCNL4000_Address, COMM0);

@@ -12,52 +12,76 @@
 ;
 ; REVISION HISTORY:
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~;
-; Date, Author      |	Comments on this revision
+; Date, Author      | Comments on this revision
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~;
-; 24.01.2014        |	Implementation
+; 24.01.2014        | Implementation
+; 27.04.2014        | PI controller added and tested on CASU V0.5
+; 17.02.2015        | New board design
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~;
 */
 
 #include "peltier.h"
 #include "../peripheral/spi/spi1.h"
+#include "pwm.h"
+#include "../pic-to-beaglebone/pic2beaglebone.h"
 
-void PeltierInit(digitalPin csPin){
+//PI controller global variables and parameters
+float uk1 = 0;
 
-    spi1Init(2, 0);  // mode 2, spi interrupt disabled
 
-    digitalHigh(PELTIER_EN);    //Disable peltier driver
-    digitalOutput(csPin);   // set chip select pin as an output pin
-    chipDeselect(csPin);    // deselect device
+/* PI controller
+ * inputs:  ref - reference value
+ *          y - feedback value
+ * returns: uk
+ */
+int PeltierPID(float ref, float y){
+    float ek, uk, ui, up;
+
+    ek = ref - y;
+
+    //uk = Kp*ek + Ki*(uk1 + ek);
+    up = Kp * ek;
+    ui = uk1 + Ki * ek;
+//    if (ek < 5  && ek > -5)
+//        ui = uk1 + Ki * ek;
+//    else {
+//        ui = 0;
+//    }
+    
+    uk = up + ui;
+
+    //uk = Kp * ek + uk1 + Ki * ek; // up + ui
+    uk1 = ui;
+
+    if(uk > 100) {
+        uk = 100;
+        uk1 = uk - up;
+        if (uk1 < 0)
+            uk1 = 0;
+    }
+    else if(uk < -100) {
+        uk = -100;
+        uk1 = uk - up;
+        if (uk1 > 0)
+            uk1 = 0;
+    }
+    //uk1 = uk;// - Kp*ek;
+
+    return (int)uk;
 }
 
-/* Set peltier output current
- * inputs:  lShdn (active low) - shut down DAC -> 0 - DAC off, 1 - DAC on
- *          set - peltier current in range [-100 100]% -> Ipeltier = [-Imax Imax]
- * returns: none
- */
-void PeltierSet(digitalPin csPin, UINT8 lShdn, int set){
+int PeltierCooler(float tc){
 
-    unsigned int msg, dout;
-
-    lShdn &= 0x01;
-
-    if(set > 100)
-        set = 100;
-    if(set < -100)
-        set = -100;
-
-    set *= DCOEF;
-    //dout = DCOEF*set + 1500;
-    dout = 1500;
-    msg = (lShdn << 12) | (DAC_G << 13) | (dout & 0xFFF);
-    /* Enable device*/
-    chipSelect(csPin);
-    spi1Write(msg);
-    chipDeselect(csPin);
-
-    if(set == 0)
-        digitalLow(PELTIER_EN);    //Turn off driver
+    if(tc > 35)
+        FanCooler(100);
     else
-        digitalHigh(PELTIER_EN);     //Turn on driver
-    return;
+        FanCooler(0);
+    return 1;
+
+}
+
+void PeltierResetPID(){
+
+    uk1 = 0;
+    temp_ref_cur = temp_wax;
 }

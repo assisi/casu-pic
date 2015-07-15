@@ -57,17 +57,11 @@ enum ADT_REGISTERS {
 #define ADT_SLAVE1_ON PORTDbits.RD5 = 0
 #define ADT_SLAVE1_OFF PORTDbits.RD5 = 1
 
-/*Define chip select pins for adt7320 sensors used*/
-extern digitalPin tSlaveF;
-extern digitalPin tSlaveR;
-extern digitalPin tSlaveB;
-extern digitalPin tSlaveL;
-
 /*ADT7320 command format*/
 #define ADT_COMMAND(reg, readWrite)  ((reg << 3) | readWrite)
 
 extern UINT8 bits16Used;
-UINT8 adt7320Init(digitalPin csPin, UINT8 config);
+int adt7320Init(digitalPin csPin, UINT8 config);
 UINT8 adt7320ReadTemp(digitalPin csPin, float *temp);
 
 #endif	/* ADT7320_H */

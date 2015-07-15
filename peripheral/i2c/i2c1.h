@@ -24,14 +24,33 @@
 
 #define PCAMUX_ADD  0x70    //PCA9547 mux address
 
+#define I2C1_TIMEOUT    500    //I2C1 timeout Tout = Tcyc*Ninst*I2C1_TIMEOUT
+                                //I2C1_TIMEOUT = 500us/(0.025us*40) = 500
+
 
 extern UINT8 rx_buff[BUFF_SIZE], tx_buff[BUFF_SIZE];
+
+void I2C1Start(void);
+
+char I2C1Idle(void);
+
+void I2C1NotAck(void);
+
+void I2C1Ack(void);
+
+void I2C1Stop(void);
+
+void I2C1Restart(void);
+
+unsigned char I2C1MasterRead(void);
 
 UINT8 I2C1MasterInit(void);
 
 UINT8 I2C1SlaveInit(UINT8 address, UINT8 int_priority);
 
-int I2C1ChSelect(UINT8 enable, UINT8 channel);
+char I2C1ChSelect(UINT8 enable, UINT8 channel);
+
+void muxReset();
 
 int MUXTest();
 

@@ -7,11 +7,7 @@
  */
 UINT8 bits16Used;
 
-/*define slaves' chip select pins*/
-digitalPin tSlaveF = {&TRISBbits, &PORTBbits, 5};
-digitalPin tSlaveR = {&TRISAbits, &PORTAbits, 6};
-digitalPin tSlaveB = {&TRISAbits, &PORTAbits, 4};
-digitalPin tSlaveL = {&TRISBbits, &PORTBbits, 10};
+
 
 /* Function for initializing ADT7320, digital temperature sensor with SPI comm
  * inputs:  csPin - chip select pin for temperature sensor
@@ -22,7 +18,7 @@ digitalPin tSlaveL = {&TRISBbits, &PORTBbits, 10};
  *          1 - everything set up and ready for use
  * Example of usage: status = adt7320Init(pin, ADT_16_BIT | ADT_CONT_MODE);
  */
-UINT8 adt7320Init(digitalPin csPin, UINT8 config) {
+int adt7320Init(digitalPin csPin, UINT8 config) {
 
     digitalOutput(csPin);   // set csPin digital output
     chipDeselect(csPin);    // set csPin high, i.e. deselect slave

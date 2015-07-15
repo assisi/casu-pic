@@ -7,11 +7,7 @@
 
 #include "adxl345.h"
 
-/* Define and initialize digital pins used as chip select pins*/
-digitalPin aSlaveF = {&TRISEbits, &PORTEbits, 8};
-digitalPin aSlaveR = {&TRISGbits, &PORTGbits, 12};
-digitalPin aSlaveB = {&TRISGbits, &PORTGbits, 2};
-digitalPin aSlaveL = {&TRISBbits, &PORTBbits, 9};
+
 
 /* Function initializes and enables adxl345 device
  * inputs: csPin - digital pin used for chip select

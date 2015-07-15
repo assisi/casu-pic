@@ -4,6 +4,7 @@
  *
  * Created on 2014. sije?anj 06, 13:03
  */
+//05.02.14. - proximity sensors testing with I2C1 multiplexor -> test OK
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -49,7 +50,9 @@ int main(int argc, char** argv) {
     // Wait for PLL to lock
     while (OSCCONbits.LOCK!= 1);
 
-    int status = 0;
+    int proxiInit = 0;
+    int status = 9;
+
     //Initalization
     LEDInit();
 
@@ -66,17 +69,19 @@ int main(int argc, char** argv) {
 
     setUpPorts();
 
-    PeltierSet(PELTIER, 0, 1);
+    PeltierSet(PELTIER, 0, 1);    
 
     I2C1MasterInit();
     int ProxiLight = 1;
-    int proxi = 10;
+    int proxi = 0;
 
-    VibrationSet(100);
+    int proxiRes[7];
+    int i;
 
-    //tmp = VCNL4000Init();
+    //VibrationSet(100);
+
+    proxiInit = VCNL4000Init();
     proxi = 1;
-    //tmp = MUXTest();
 
     while (1) {
 
@@ -106,7 +111,7 @@ int main(int argc, char** argv) {
             LedBee(0, 0, 50);
             status = 0;
         }
-        //digitalHigh(LED2R);
+
         //PWM testing
         if (status == 6) {
             LedUser(ledUserR, ledUserG, ledUserB);
@@ -125,46 +130,72 @@ int main(int argc, char** argv) {
                 LedUser(ledUserR, ledUserG, ledUserB);
             }
 
-            VibrationSet(vibSet);
-            vibSet += 10;
-            if(vibSet > 100)
-                vibSet = 0;
+//            VibrationSet(vibSet);
+//            vibSet += 10;
+//            if(vibSet > 100)
+//                vibSet = 0;
 
-            //PeltierSet(PELTIER, 1, 0);
+            PeltierSet(PELTIER, 1, 1);
         }
 
         if(status == 8){
-            proxi = 10;
-            proxi = MUXTest();
-            //proxi = VCNL4000Proxi();
-            //I2C1WriteByte(VCNL4000_Address_WR, 1);
-            //ProxiLight = VCNL4000Light();
-
+            //1. samo 1. proxi senzor je priklju?en - uspje?no ?itanje svih kanala
+            for(i=0; i<7; i++){
+                tmp = I2C1ChSelect(1, i);
+                proxi = 0;
+            }
         }
 
-        //I2C MUX TESTING
-        //tMux = 0;
-        //tmp = (int) MUXTest();
-        tmp = 1;
+        if (status == 9) {
+            //I2C MUX TESTING
+            for(i=0; i<7; i++)
+                proxiRes[i] = 0;
+            
+            //Front
+            tmp = I2C1ChSelect(1, 1);
+            proxiRes[0] = VCNL4000ReadProxi();
+            proxi = 0;
+            delay_t1(1);
+            //Front right
+            tmp = I2C1ChSelect(1, 0);
+            proxiRes[1] = VCNL4000ReadProxi();
+            proxi = 0;
+            delay_t1(1);
+            //Back right
+            tmp = I2C1ChSelect(1, 7);
+            proxiRes[2] = VCNL4000ReadProxi();
+            proxi = 0;
+            delay_t1(1);
+            //Back
+            tmp = I2C1ChSelect(1, 6);
+            proxiRes[3] = VCNL4000ReadProxi();
+            proxi = 0;
+            delay_t1(1);
+            //Back left
+            proxi = I2C1ChSelect(1, 5);
+            proxiRes[4] = VCNL4000ReadProxi();
+            proxi = 0;
+            delay_t1(1);
+            //Front left
+            tmp = I2C1ChSelect(1, 2);
+            proxiRes[5] = VCNL4000ReadProxi();
+            proxi = 0;
+            delay_t1(1);
+            //Top
+            tmp = I2C1ChSelect(1, 4);
+            proxiRes[6] = VCNL4000ReadProxi();
+            proxi = 0;
 
-        tmp = MuxRead();
+            //Sensori - T -> ne radi
+            //FL ->
+        }
+        if(status == 10){
+            proxi = VCNL4000ReadProxi();
+        }
 
-        proxi = 1;
-
-        tmp = (int) VCNL4000Init();
-
-        proxi = 1;
-        //proxi = VCNL4000ReadProxi();
-//        proxi = I2C1ReadByte(VCNL4000_Address, COMM0);
-//        I2C1WriteByte(VCNL4000_Address, COMM0, proxi | 0x08);
-//        proxi = 1;
-//        proxi = I2C1ReadByte(VCNL4000_Address, COMM0);
-        //proxi = I2C1ReadByte(VCNL4000_Address, PRODID);
-        tmp  = 0;
 
 
         delay_t1(1000);
-
     }
 
     return (EXIT_SUCCESS);

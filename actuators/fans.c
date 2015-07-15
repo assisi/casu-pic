@@ -5,7 +5,7 @@
 ; Compiler:     -
 ;============================================================================;
 ; FILE DESCRIPTION:
-; CASU RGB LEDs
+; CASU fans control
 ; Schematic documentation:
  * "ASSISI_CASU_mainboard"
 ;
@@ -13,12 +13,11 @@
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~;
 ; Date, Author              |	Comments on this revision
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~;
-; 23.01.2014                |	Implementation
- * 22.01.2015               |   Changes for CASU V1.0
+; 23.01.2015                |	Implementation
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~;
 */
 
-#include "led.h"
+#include "fans.h"
 
 
 

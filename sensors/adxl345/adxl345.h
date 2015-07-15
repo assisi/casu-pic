@@ -60,11 +60,7 @@ enum ADXL_REGISTERS {
     REG_FIFO_STATUS
 };
 
-/* Digital pins used as chip select pins for SPI comm*/
-extern digitalPin aSlaveF;
-extern digitalPin aSlaveR;
-extern digitalPin aSlaveB;
-extern digitalPin aSlaveL;
+
 
 UINT8 adxl345Init(digitalPin csPin);
 UINT8 readAccX(digitalPin csPin, int *ax);
