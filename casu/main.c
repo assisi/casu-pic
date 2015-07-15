@@ -1,4 +1,3 @@
-
 /* 
  * File:   main.c
  * Author: thaus

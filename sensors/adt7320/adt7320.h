@@ -8,7 +8,6 @@
 #include "../../peripheral/spi/spi2.h"
 #include "../../peripheral/gpio/digitalIO.h"
 
-<<<<<<< HEAD
 /*! ADT7320 control registers.
  */
 enum ADT_REGISTERS {
