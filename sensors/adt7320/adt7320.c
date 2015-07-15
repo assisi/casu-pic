@@ -7,8 +7,6 @@
  */
 UINT8 bits16Used;
 
-
-
 /* Function for initializing ADT7320, digital temperature sensor with SPI comm
  * inputs:  csPin - chip select pin for temperature sensor
  *          config - configuration register content
@@ -87,7 +85,7 @@ int adt7320Init(digitalPin csPin, UINT8 config) {
  *          1 - else
  * Exaple of usage status = adt7320ReadTemp(&temp)
  */
-UINT8 adt7320ReadTemp(digitalPin csPin, float *temp) {
+int adt7320ReadTemp(digitalPin csPin, float *temp) {
 
     UINT16 buff[2] = {0};
     UINT8 status;
@@ -116,6 +114,3 @@ UINT8 adt7320ReadTemp(digitalPin csPin, float *temp) {
 
     return 1;
 }
-
-
-

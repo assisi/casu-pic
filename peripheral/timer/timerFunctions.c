@@ -20,6 +20,7 @@ void delay_t1(int msec) {
         CloseTimer1();
     }
 }
+
 /*
  * Function suspends program using timer1
  * inputs:  usec - delay time in useconds

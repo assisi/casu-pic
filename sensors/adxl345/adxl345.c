@@ -7,8 +7,6 @@
 
 #include "adxl345.h"
 
-
-
 /* Function initializes and enables adxl345 device
  * inputs: csPin - digital pin used for chip select
  * return: 1 - if everything succeeded
@@ -16,7 +14,8 @@
  *         -1 - if device id read is different thed default (factory) id
  *         -2 - if device enabling failed
  */
-UINT8 adxl345Init(digitalPin csPin) {
+
+int adxl345Init(digitalPin csPin) {
 
      // check if spi2 is enabled
     if (!SPI2STATbits.SPIEN) {

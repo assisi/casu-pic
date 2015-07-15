@@ -1,9 +1,5 @@
-/* 
- * File:   peltier.h
- * Author: Karlo
- *
- * Created on 2014. January 20, 11:06
- * Peltier firmware
+ /*! \file peltier.h
+ * \brief Declarations of functions and variables used for controlling Peltier device.
  */
 
 #ifndef PELTIER_H

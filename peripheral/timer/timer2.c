@@ -1,7 +1,5 @@
 #include "timer2.h"
 
-
-
 /********************************************************************
 *    Function Name:  OpenTimer2                                     *
 *    Description:    This routine configures the timer control      *
@@ -83,5 +81,3 @@ void ClearIntTimer2(void)
 {
     IFS0bits.T2IF = 0;
 }
-
-

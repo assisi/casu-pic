@@ -26,7 +26,7 @@
  *          1 - everything set up and ready for use
  * Example of usage: status = adt7420Init(ADT74_16_BIT | ADT74_CONT_MODE);
  */
-UINT8 adt7420Init(UINT8 config) {
+int adt7420Init(UINT8 config) {
     
     unsigned char rec = 0;
     int i = 0;
@@ -41,8 +41,8 @@ UINT8 adt7420Init(UINT8 config) {
    rec = I2C1ReadByte(ADT74_I2C_ADD, ADT74_CONFIG);
    if(rec != config)   //Reading from congfiguration register failed
         return -2;
-
-    return 1;
+        
+   return 1;
 }
 
 /* Function for reading adt7320 temperature value
@@ -52,7 +52,7 @@ UINT8 adt7420Init(UINT8 config) {
  *          1 - else
  * Exaple of usage status = adt7320ReadTemp(&temp)
  */
-UINT8 adt7420ReadTemp(float *temp) {
+int adt7420ReadTemp(float *temp) {
 
     UINT8 buffer[2];
     int res;
@@ -70,6 +70,3 @@ UINT8 adt7420ReadTemp(float *temp) {
 
     return 1;
 }
-
-
-

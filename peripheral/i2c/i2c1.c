@@ -1,5 +1,5 @@
 #include "i2c1.h"
-#include "../../casu/initializeHardware.h"
+#include "../../test/CASU/initializeHardware.h"
 
 UINT8 rx_buff[BUFF_SIZE] = {0};     // buffer for incoming data
 UINT8 rx_head = 0;                  // pointer to buffer element where new byte is to be stored
@@ -11,7 +11,8 @@ void I2C1Start(void)
      I2C1CONbits.SEN = 1;	/* initiate Start on SDA and SCL pins */
 }
 
-char I2C1Idle(void)
+int I2C1Idle(void)
+
 {
     unsigned int i = 0;
     /* Wait until I2C Bus is Inactive */
@@ -182,7 +183,7 @@ UINT8 I2C1SlaveInit(UINT8 address, UINT8 int_priority) {
  * returns: -1 - error
  *          [0 7] - No of selected channel
  */
-char I2C1ChSelect(UINT8 enable, UINT8 channel) {
+int I2C1ChSelect(UINT8 enable, UINT8 channel) {
 
     UINT8 address, data, recByte;
 
@@ -332,7 +333,7 @@ int MuxRead(void){
  * returns: 0 -> error is occurred
  *          1 -> return read data
  */
-UINT8 I2C1WriteByte(UINT8 slaveAdd, UINT8 registerAdd, UINT8 data)
+int I2C1WriteByte(UINT8 slaveAdd, UINT8 registerAdd, UINT8 data)
 {
     UINT8 address;
 
@@ -345,7 +346,7 @@ UINT8 I2C1WriteByte(UINT8 slaveAdd, UINT8 registerAdd, UINT8 data)
     {
         I2C1Stop();
         I2C1Idle();
-        return 0;
+        return -1;
     }
 
     //Send register register location
@@ -355,7 +356,7 @@ UINT8 I2C1WriteByte(UINT8 slaveAdd, UINT8 registerAdd, UINT8 data)
     {
         I2C1Stop();
         I2C1Idle();
-        return 0;
+        return -1;
     }
 
     //Send register register location
@@ -365,7 +366,7 @@ UINT8 I2C1WriteByte(UINT8 slaveAdd, UINT8 registerAdd, UINT8 data)
     {
         I2C1Stop();
         I2C1Idle();
-        return 0;
+        return -1;
     }
     I2C1Stop();
 
@@ -421,7 +422,7 @@ UINT8 I2C1WriteByte(UINT8 slaveAdd, UINT8 registerAdd, UINT8 data)
 //}
 
 
-unsigned char I2C1ReadByte(UINT8 slaveAdd, UINT8 registerAdd)
+int I2C1ReadByte(UINT8 slaveAdd, UINT8 registerAdd)
 {
     unsigned char recByte = 0;
     UINT8 address;
@@ -435,7 +436,7 @@ unsigned char I2C1ReadByte(UINT8 slaveAdd, UINT8 registerAdd)
     {
         I2C1Stop();
         I2C1Idle();
-        return 0;
+        return -1;
     }
 
     //Send register register location
@@ -445,7 +446,7 @@ unsigned char I2C1ReadByte(UINT8 slaveAdd, UINT8 registerAdd)
     {
         I2C1Stop();
         I2C1Idle();
-        return 0;
+        return -1;
     }
 
     I2C1Restart();
@@ -457,7 +458,7 @@ unsigned char I2C1ReadByte(UINT8 slaveAdd, UINT8 registerAdd)
     {
         I2C1Stop();
         I2C1Idle();
-        return 0;
+        return -1;
     }
     recByte = I2C1MasterRead();
     //I2C1NotAck();
