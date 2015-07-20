@@ -2,7 +2,7 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>assisi-dspic-fft</name>
+            <name>assisi-dspic-fft-log</name>
             <creation-uuid>be4c3c90-7bd4-4e4c-b45f-869ef2f39dde</creation-uuid>
             <make-project-type>0</make-project-type>
             <c-extensions>c</c-extensions>

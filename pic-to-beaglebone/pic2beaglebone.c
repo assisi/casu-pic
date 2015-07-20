@@ -23,6 +23,7 @@ UINT8 fanBlower_r = 0;
 UINT8 calRec = 0;
 int raw_acc[4][FFT_BUFF] = {0};
 int raw_acc_single[FFT_BUFF] = {0};
+int source_array[FFT_BUFF] = {0};
 int amplitudes[FFT_BUFF] = {0};
 
 /*
@@ -257,4 +258,29 @@ void updateMeasurements() {
     i2c2_tx_buff[56] = dummy & 0x00FF;
     i2c2_tx_buff[57] = (dummy & 0xFF00) >> 8;
     i2c2_tx_buff[58] = calRec;
+}
+
+void updateAccLog() {
+    UINT16 i, dummy ;
+
+    for (i = 0; i < FFT_BUFF; i=i+1) {
+
+        /*
+        if (source_array[i] >= 0)
+            dummy = source_array[i];
+        else {
+            dummy = source_array[i] + 65536;
+        }
+        */
+
+        if (amplitudes[i] >= 0)
+            dummy = amplitudes[i];
+        else {
+            dummy = amplitudes[i] + 65536;
+        }
+
+        i2c2_tx_buff[2*i] = dummy & 0x00FF;
+        i2c2_tx_buff[2*i+1] = (dummy & 0xFF00) >> 8;
+    }
+    i2c2_tx_ready = 1;
 }

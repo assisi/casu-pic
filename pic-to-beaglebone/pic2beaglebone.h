@@ -161,7 +161,11 @@ extern UINT8 fanBlower_r;
 
 extern int raw_acc[4][FFT_BUFF];
 extern int raw_acc_single[FFT_BUFF];
+extern int source_array[FFT_BUFF];
 extern int amplitudes[FFT_BUFF];
 
 void updateCalibrationData();
+
+void updateAccLog();
+
 #endif	/* PIC2BEAGLEBONE_H */

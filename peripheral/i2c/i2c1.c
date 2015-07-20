@@ -1,5 +1,5 @@
-#include "i2c1.h"
 #include "../../casu/initializeHardware.h"
+#include "i2c1.h"
 
 UINT8 rx_buff[BUFF_SIZE] = {0};     // buffer for incoming data
 UINT8 rx_head = 0;                  // pointer to buffer element where new byte is to be stored
