@@ -335,8 +335,6 @@ int main(int argc, char** argv) {
         // readings every 2.5 second
         // PID control every 10 seconds
 
-        ax = 0;
-
         if (vibeLoopControl >= 10) {
             // compute fft every second
             if (accSamples == FFT_BUFF) {
@@ -394,7 +392,6 @@ int main(int argc, char** argv) {
                //LedUser(0, 0, 100);
                accSamples = 0;
                vibeLoopControl = 0;
-               LedUser(0, 0, 0);
             }
 
         }
@@ -595,10 +592,7 @@ void __attribute__((__interrupt__, __auto_psv__)) _T2Interrupt(void)
         az = az - az_b[accNum];
         raw_acc_single[accSamples++] = az;
     }
-    else {
-        LedUser(0, 20, 0);
-
-        if (proxiCounter >= 240) {
+    else if (proxiCounter >= 240) {
             /* Read proximity sensors and i2c temp sensor*/
             I2C1ChSelect(1, 2);
             proxy_f = VCNL4000ReadProxi();
@@ -625,8 +619,7 @@ void __attribute__((__interrupt__, __auto_psv__)) _T2Interrupt(void)
             //delay_t1(1);
             // read pcb temperature
             adt7420ReadTemp(&temp_t);
-            proxiCounter = 0;
-        }
+            proxiCounter = 0;     
    }
-    proxiCounter++;
+   proxiCounter++;
 }

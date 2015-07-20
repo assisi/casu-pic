@@ -76,7 +76,7 @@ void updateReferences() {
     diagLED_r[2] = i2c2_rx_buff[9];
     fanBlower_r = i2c2_rx_buff[10];
 
-    //LedUser(diagLED_r[0], diagLED_r[1],diagLED_r[2]);
+    LedUser(diagLED_r[0], diagLED_r[1],diagLED_r[2]);
     VibrationSet(pwmMotor);     // this is actually motor pwm
     FanBlower(fanBlower_r);
 }
