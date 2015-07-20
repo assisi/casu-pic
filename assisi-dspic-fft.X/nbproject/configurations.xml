@@ -12,6 +12,9 @@
         <itemPath>../casu/initializeHardware.h</itemPath>
         <itemPath>../casu/error.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="fft" displayName="fft" projectFiles="true">
+        <itemPath>../fft/fft.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="peripheral" displayName="peripheral" projectFiles="true">
         <logicalFolder name="gpio" displayName="gpio" projectFiles="true">
           <itemPath>../peripheral/gpio/digitalIO.h</itemPath>
@@ -68,6 +71,9 @@
         <itemPath>../casu/main.c</itemPath>
         <itemPath>../casu/error.c</itemPath>
       </logicalFolder>
+      <logicalFolder name="fft" displayName="fft" projectFiles="true">
+        <itemPath>../fft/fft.c</itemPath>
+      </logicalFolder>
       <logicalFolder name="peripheral" displayName="peripheral" projectFiles="true">
         <logicalFolder name="gpio" displayName="gpio" projectFiles="true">
           <itemPath>../peripheral/gpio/digitalIO.c</itemPath>
@@ -120,6 +126,7 @@
     <Elem>../actuators</Elem>
     <Elem>../peripheral</Elem>
     <Elem>../sensors</Elem>
+    <Elem>../fft</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -137,6 +144,7 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
+            <linkerLibFileItem>/opt/microchip/xc16/v1.21/lib/libdsp-elf.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <loading>
@@ -156,7 +164,7 @@
       <C30>
         <property key="code-model" value="default"/>
         <property key="const-model" value="default"/>
-        <property key="data-model" value="default"/>
+        <property key="data-model" value="large-data"/>
         <property key="enable-all-warnings" value="true"/>
         <property key="enable-ansi-std" value="false"/>
         <property key="enable-ansi-warnings" value="false"/>

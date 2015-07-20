@@ -1,4 +1,5 @@
-/* 
+
+/*
  * File:   main.c
  * Author: thaus
  *
@@ -10,7 +11,7 @@
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~;
  * 06.02.2014       |	3 Proximity sensors reading - Laussane training
  * 17.04.2014, KG   |   AMP board testing sequance is added -> #define TEST_AMP_BOARD
- * 17.02.2015, KG   | CASU V1.0 
+ * 17.02.2015, KG   | CASU V1.0
  */
 
 //#define TEST_AMP_BOARD
@@ -31,6 +32,8 @@
 #include "../sensors/vcnl4000/proxiVCNL4000.h"
 #include "../actuators/pwm.h"
 #include "../actuators/peltier.h"
+#include "../peripheral/timer/timer2.h"
+#include "../fft/fft.h"
 
 // Select Internal FRC at POR
 _FOSCSEL(FNOSC_FRC & IESO_OFF);
@@ -41,8 +44,23 @@ _FPOR(ALTI2C2_OFF & ALTI2C1_ON);
 //Watchdog timer -> Twtd = PR*POST/32000 [s]
 _FWDT(FWDTEN_ON & WDTPRE_PR128 & WDTPOST_PS1024);   //Twdt ~ 4s
 
+int ax = 0, ay = 0, az = 0;
+int accSamples = 0;
+int proxiCounter = 0;
+float az_b[4] = {0};
+int statusAcc[4] = {0};
+digitalPin accPin;
+int accNum = 0;
+UINT16 accPeriod;
+
+/****FFT****/
+int k=0, str_count = 0, while_count = 0, enable_i2c2 = 0;
+static fractcomplex Twiddles_array[FFT_BUFF/2] __attribute__ ((space(xmemory), far, aligned (FFT_BUFF * 2    )));
+static fractcomplex      src_array[FFT_BUFF]   __attribute__ ((space(ymemory), far, aligned (FFT_BUFF * 2 * 2)));
+fractcomplex destination_array[FFT_BUFF] = {0};
+
 /*
- * 
+ *
  */
 int main(int argc, char** argv) {
 
@@ -55,7 +73,7 @@ int main(int argc, char** argv) {
 
     // Initiate Clock Switch to Primary Oscillator with PLL (NOSC=0b011)
     //__builtin_write_OSCCONH(0x03);
-    
+
     // tune FRC
     OSCTUN = 23;  // 23 * 0.375 = 8.625 % -> 7.37 Mhz * 1.08625 = 8.005Mhz
     // Initiate Clock Switch to external oscillator NOSC=0b011 (alternative use FRC with PLL (NOSC=0b01)
@@ -77,13 +95,14 @@ int main(int argc, char** argv) {
     int statusProxi[8];
     int statusTemp[4];      //Temperature sensors initialization status
     int tempLoopControl = 0;
+    int vibeLoopControl = 0;
     int tempNum;            //Sensors number
     int tempLoop = 0;
     int watchCounter = 0;
     int tempSensors = 0;
+    float mainLoopDelay = 99; // msec
 
     setUpPorts();
-     // configure i2c2 as a slave device and interrupt priority 1
     I2C2SlaveInit(I2C2_CASU_ADD, 1);
     delay_t1(500);
     digitalHigh(LED2R);
@@ -99,7 +118,7 @@ int main(int argc, char** argv) {
     delay_t1(5);
     status = adxl345Init(aSlaveB);
     //error = ErrorInitCheck(status);
-    
+
 
     delay_t1(5);
     statusTemp[0] = adt7320Init(tSlaveF, ADT_CONT_MODE |ADT_16_BIT);
@@ -120,7 +139,7 @@ int main(int argc, char** argv) {
 
     //Proximirty sensors initalization
     I2C1MasterInit();
-    status = VCNL4000Init();  
+    status = VCNL4000Init();
 
     //PWM intialization
     PWMInit();
@@ -152,14 +171,22 @@ int main(int argc, char** argv) {
     if (statusTemp[3] != 1)
         temp_l = -1;
 
-    vAmp_f = 0;
-    vAmp_r = 0;
-    vAmp_b = 0;
-    vAmp_l = 0;
-    fAmp_f = 0;
-    fAmp_r = 0;
-    fAmp_b = 0;
-    fAmp_l = 0;
+    vAmp_f = -1;
+    vAmp_r = -1;
+    vAmp_b = -1;
+    vAmp_l = -1;
+    fAmp_f = -1;
+    fAmp_r = -1;
+    fAmp_b = -1;
+    fAmp_l = -1;
+
+    statusAcc[ACC_F] = adxl345Init(aSlaveF);
+    delay_t1(1);
+    statusAcc[ACC_R] = adxl345Init(aSlaveR);
+    delay_t1(1);
+    statusAcc[ACC_B] = adxl345Init(aSlaveB);
+    delay_t1(1);
+    statusAcc[ACC_L] = adxl345Init(aSlaveL);
 
     //CASU ring average temperature
     temp_casu = 0;
@@ -199,9 +226,55 @@ int main(int argc, char** argv) {
         temp_casu = -1;
     temp_casu1 = temp_casu;
     temp_wax = temp_casu; temp_wax1 = temp_casu;
-    
+
+    accPin = aSlaveL;
+    status = adxl345Init(accPin);
+    accPeriod = 500; // 2 khz
+    /* Init FFT coefficients */
+    TwidFactorInit(LOG2_FFT_BUFF, &Twiddles_array[0],0);
+    // read 100 values to calculate bias
+    delay_t1(10);
+    int m;
+    for (m = 0; m < 50; m++) {
+        if (statusAcc[ACC_F] > 0) {
+            readAccZ(aSlaveF, &az);
+            az_b[ACC_F] += az;
+            accPin = aSlaveF;
+            accNum = ACC_F;
+        }
+        delay_t1(1);
+        if (statusAcc[ACC_R] > 0) {
+            readAccZ(aSlaveR, &az);
+            az_b[ACC_R] += az;
+            accPin = aSlaveR;
+            accNum = ACC_R;
+        }
+        delay_t1(1);
+        if (statusAcc[ACC_B] > 0) {
+            readAccZ(aSlaveB, &az);
+            az_b[ACC_B] += az;
+            accPin = aSlaveB;
+            accNum = ACC_B;
+        }
+        delay_t1(1);
+        if (statusAcc[ACC_L] > 0) {
+            readAccZ(aSlaveL, &az);
+            az_b[ACC_L] += az;
+            accPin = aSlaveL;
+            accNum = ACC_L;
+        }
+        delay_t1(1);
+    }
+    az_b[ACC_F] /= m;
+    az_b[ACC_R] /= m;
+    az_b[ACC_B] /= m;
+    az_b[ACC_L] /= m;
+
+    OpenTimer2(T2_ON| T2_PS_1_1, ticks_from_us(accPeriod, 1));
+    ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_2);
+
     while(1) {
-     
+
         /*
          **** Do not read acc sensors - we have to implement fft
         if (readAccX(aSlaveR, &ax) <= 0) {
@@ -229,6 +302,7 @@ int main(int argc, char** argv) {
         vAmp_l = sqrtl((double)ax * ax + (double)ay * ay + (double)az * az);
         */
          //Front
+        /*
         statusProxi[0] = I2C1ChSelect(1, 2);
         proxy_f = VCNL4000ReadProxi();
         delay_t1(1);
@@ -252,6 +326,7 @@ int main(int argc, char** argv) {
         statusProxi[5] = I2C1ChSelect(1, 1);
         proxy_fl = VCNL4000ReadProxi();
         delay_t1(1);
+        */
 
         //if((proxy_f == -1) && (proxy_fl == -1) && (proxy_bl == -1) && (proxy_b == -1) && (proxy_br == -1) && (proxy_fr == -1))
            // muxReset();
@@ -259,9 +334,83 @@ int main(int argc, char** argv) {
         //Temperature readings and control
         // readings every 2.5 second
         // PID control every 10 seconds
-        if (tempLoopControl >= 20) {
+
+        ax = 0;
+
+        if (vibeLoopControl >= 10) {
+            // compute fft every second
+            if (accSamples == FFT_BUFF) {
+                /*
+                if (statusAcc[ACC_F] > 0) {
+                    FastFourierTransform(&raw_acc[ACC_F][0], &amplitudes[0],
+                            &destination_array[0], &src_array[0], &Twiddles_array,
+                            &fAmp_f, &vAmp_f);
+                    if (vAmp_f < 40) {
+                        // if amplitude is less than 40 mg, ignore the data, since this is the noise level
+                        vAmp_f = 0;
+                        fAmp_f = 0;
+                    }
+                }
+                if (statusAcc[ACC_R] > 0) {
+                    FastFourierTransform(&raw_acc[ACC_R][0], &amplitudes[0],
+                            &destination_array[0], &src_array[0], &Twiddles_array,
+                            &fAmp_r, &vAmp_r);
+                    if (vAmp_r < 40) {
+                        // if amplitude is less than 40 mg, ignore the data, since this is the noise level
+                        vAmp_r = 0;
+                        fAmp_r = 0;
+                    }
+                }
+                if (statusAcc[ACC_B] > 0) {
+                    FastFourierTransform(&raw_acc[ACC_B][0], &amplitudes[0],
+                            &destination_array[0], &src_array[0], &Twiddles_array,
+                            &fAmp_b, &vAmp_b);
+                    if (vAmp_b < 40) {
+                        // if amplitude is less than 40 mg, ignore the data, since this is the noise level
+                        vAmp_b = 0;
+                        fAmp_b = 0;
+                    }
+                }
+                if (statusAcc[ACC_L] > 0) {
+                    FastFourierTransform(&raw_acc[ACC_L][0], &amplitudes[0],
+                            &destination_array[0], &src_array[0], &Twiddles_array,
+                            &fAmp_l, &vAmp_l);
+                    if (vAmp_l < 40) {
+                        // if amplitude is less than 40 mg, ignore the data, since this is the noise level
+                        vAmp_l = 0;
+                        fAmp_l = 0;
+                    }
+                }
+                */
+                // For now we only compute fft for a single sensor
+               FastFourierTransform(&raw_acc_single[0], &amplitudes[0],
+                            &destination_array[0], &src_array[0], &Twiddles_array,
+                            &fAmp_f, &vAmp_f);
+               if (vAmp_f < 40) {
+                       // if amplitude is less than 40 mg, ignore the data, since this is the noise level
+                   vAmp_f = 0;
+                   fAmp_f = 0;
+               }
+               //LedUser(0, 0, 100);
+               accSamples = 0;
+               vibeLoopControl = 0;
+               LedUser(0, 0, 0);
+            }
+
+        }
+        else
+            vibeLoopControl++;
+
+
+        if (tempLoopControl >= 25) {
+            /*
+            OpenTimer2(T2_OFF | T2_PS_1_1, ticks_from_us(accPeriod, 1));
+            ConfigIntTimer2(T2_INT_OFF | T2_INT_PRIOR_2);
             //Cooler temperature
             adt7420ReadTemp(&temp_t);
+            OpenTimer2(T2_ON | T2_PS_1_1, ticks_from_us(accPeriod, 1));
+            ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_2);
+            */
 
             if (tempSensors > 0) {
                 // we have at least on temp sensor working
@@ -352,7 +501,7 @@ int main(int argc, char** argv) {
 
                             }
                         }
-  
+
                     }
                     else {
                         // temp control is off -> propagate reference to the output
@@ -379,13 +528,15 @@ int main(int argc, char** argv) {
                 temp_wax = -1;
                 PeltierSetOut2(0);
             }
-
+            //countLoop = 0;
             tempLoopControl = 0;
+            mainLoopDelay = 97;
         }
         else {
             tempLoopControl++;
+            mainLoopDelay = 99;
         }
-        
+
         if (fanCtlOn == 1) {
             if (temp_t >= 30 && fanCooler == 0)
                 fanCooler = 100;
@@ -401,10 +552,81 @@ int main(int argc, char** argv) {
         FanCooler(fanCooler);
 
         updateMeasurements();
-        delay_t1(100);
+        delay_t1(mainLoopDelay);
 
         ClrWdt(); //Clear watchdog timer
     }
 
     return (EXIT_SUCCESS);
+}
+
+// Timer 2 interrupt service for reading acc measurements at exactly 1 KHz
+void __attribute__((__interrupt__, __auto_psv__)) _T2Interrupt(void)
+{
+    // Clear Timer 2 interrupt flag
+    IFS0bits.T2IF = 0;
+
+    if (accSamples < FFT_BUFF) {
+        // for now we read only single sensor
+        /*
+        if (statusAcc[ACC_F] > 0) {
+            readAccZ(aSlaveF, &az);
+            az = az - az_b[ACC_F];
+            raw_acc[ACC_F][mainLoopCount] = az;
+        }
+        if (statusAcc[ACC_R] > 0) {
+            readAccZ(aSlaveR, &az);
+            az = az - az_b[ACC_R];
+            raw_acc[ACC_R][mainLoopCount] = az;
+        }
+        if (statusAcc[ACC_B] > 0) {
+            readAccZ(aSlaveB, &az);
+            az = az - az_b[ACC_B];
+            raw_acc[ACC_B][mainLoopCount] = az;
+        }
+        if (statusAcc[ACC_L] > 0) {
+            readAccZ(aSlaveL, &az);
+            az = az - az_b[ACC_L];
+            raw_acc[ACC_L][mainLoopCount] = az;
+        }
+         mainLoopCount++;
+        */
+        readAccZ(accPin, &az);
+        az = az - az_b[accNum];
+        raw_acc_single[accSamples++] = az;
+    }
+    else {
+        LedUser(0, 20, 0);
+
+        if (proxiCounter >= 240) {
+            /* Read proximity sensors and i2c temp sensor*/
+            I2C1ChSelect(1, 2);
+            proxy_f = VCNL4000ReadProxi();
+            //delay_t1(1);
+            //Front right
+            I2C1ChSelect(1, 3);
+            proxy_fr = VCNL4000ReadProxi();
+            //delay_t1(1);
+            //Back right
+            I2C1ChSelect(1, 4);
+            proxy_br = VCNL4000ReadProxi();
+            //delay_t1(1);
+            //Back
+            I2C1ChSelect(1, 5);
+            proxy_b = VCNL4000ReadProxi();
+            //delay_t1(1);
+            //Back left
+            I2C1ChSelect(1, 0);
+            proxy_bl = VCNL4000ReadProxi();
+            //delay_t1(1);
+            //Front left
+            I2C1ChSelect(1, 1);
+            proxy_fl = VCNL4000ReadProxi();
+            //delay_t1(1);
+            // read pcb temperature
+            adt7420ReadTemp(&temp_t);
+            proxiCounter = 0;
+        }
+   }
+    proxiCounter++;
 }

@@ -14,7 +14,6 @@
  *         -1 - if device id read is different thed default (factory) id
  *         -2 - if device enabling failed
  */
-
 int adxl345Init(digitalPin csPin) {
 
      // check if spi2 is enabled
@@ -50,9 +49,39 @@ int adxl345Init(digitalPin csPin) {
     status = spi2TransferWord(ADXL_COMMAND(REG_POWER_CTL, ADXL_READ), &data);
     chipDeselect(csPin);
     if (status <= 0)    return 0;
-    data = data & 0x00FF;
+    /*data = data & 0x00FF;
     if (data != 0x08) return -2;
-    
+    */
+    /* Set bandwidth*/
+    chipSelect(csPin);
+    status = spi2Write(ADXL_COMMAND(REG_BW_RATE, ADXL_WRITE) | 0x0F);  // set 3.2 khz output rate
+    chipDeselect(csPin);
+    if (status <= 0)    return 0;
+
+    /* Check if writing was succesfull*/
+    chipSelect(csPin);
+    status = spi2TransferWord(ADXL_COMMAND(REG_BW_RATE, ADXL_READ), &data);
+    chipDeselect(csPin);
+    if (status <= 0)    return 0;
+    /*
+    data = data & 0x00FF;
+    if (data != 0x0C) return -2;
+    */
+    /* Set range and full resolution*/
+    chipSelect(csPin);
+    status = spi2Write(ADXL_COMMAND(REG_DATA_FORMAT, ADXL_WRITE) | 0b00001000);  // set 2g and full resolution
+    chipDeselect(csPin);
+    if (status <= 0)    return 0;
+
+    /* Check if the writing was succesfull*/
+    chipSelect(csPin);
+    status = spi2TransferWord(ADXL_COMMAND(REG_DATA_FORMAT, ADXL_READ), &data);
+    chipDeselect(csPin);
+    if (status <= 0)    return 0;
+    /*
+    data = data & 0x00FF;
+    if (data != 0b00001000) return -2;
+    */
     return 1;
 }
 
@@ -88,7 +117,7 @@ UINT8 readAccX(digitalPin csPin, int *ax) {
    chipDeselect(csPin);
    if (status <= 0 ) return 0;
    *ax = data & 0x00FF;
-  
+
    chipSelect(csPin);
    status = spi2TransferWord(ADXL_COMMAND(REG_DATAX1, ADXL_READ), &data);
    chipDeselect(csPin);
@@ -96,7 +125,7 @@ UINT8 readAccX(digitalPin csPin, int *ax) {
    *ax = *ax + 256 * (data & 0x00FF);
 
    if (*ax < 32767) *ax = *ax - 65536;
-   
+
    return 1;
 }
 
@@ -163,26 +192,28 @@ UINT8 readAccZ(digitalPin csPin, int *az) {
  * returns: 1 - communication succeeded
  *          0 - communication failed
  */
-UINT8 readAccXYZ(digitalPin csPin, int *acc) {
-   
+UINT8 readAccXYZ(digitalPin csPin, int *ax, int *ay, int *az) {
+
    UINT16 data[7] = {0};
    UINT8 status;
 
    data[0] = ADXL_COMMAND(REG_DATAX0, ADXL_READ | ADXL_MB);
    chipSelect(csPin);
-   status = spi2TransferBuff(data, 7);
+   status = spi2TransferBuff(data, 4);
    chipDeselect(csPin);
    if (status <= 0 ) return 0;
 
-   acc[0] = data[1] + 256 * data[2];
-   if (acc[0] <= 32767) acc[0] = acc[0] - 65536;
+   *ax = (data[0] & 0x00FF) | (data[1] & 0xFF00);
+   if (*ax > 32767) *ax = *ax - 65536;
 
-   acc[1] = data[3] + 256 * data[4];
-   if (acc[1] <= 32767) acc[1] = acc[1] - 65536;
+   *ay = (data[1] & 0x00FF) | (data[2] & 0xFF00);
+   if (*ay > 32767) *ay = *ay - 65536;
 
-   acc[2] = data[5] + 256 * data[6];
-   if (acc[2] <= 32767) acc[2] = acc[2] - 65536;
-   
+   *az = (data[2] & 0x00FF) | (data[3] & 0xFF00);
+   if (*az > 32767) *az = *az - 65536;
+
+   status = 1;
+
    return 1;
 }
 

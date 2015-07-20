@@ -24,6 +24,11 @@
 #include "../peripheral/gpio/digitalIO.h"
 #include "../pic-to-beaglebone/pic2beaglebone.h"
 
+#define ACC_F 0
+#define ACC_R 1
+#define ACC_B 2
+#define ACC_L 3
+
 extern digitalPin LED2R;
 extern digitalPin LED2G;
 extern digitalPin LED2B;

@@ -213,7 +213,7 @@ int VCNL4000ReadProxi(){
     
     temp = 0; tout = 0;
     while(temp != 0x20) {
-        delay_t1(1);
+        //delay_t1(1);
         temp = I2C1ReadByte(VCNL4000_Address,COMM0);
         temp &= 0x20;
         tout++;

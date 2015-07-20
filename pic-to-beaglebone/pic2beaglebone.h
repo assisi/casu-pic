@@ -11,6 +11,7 @@
 #include "../peripheral/i2c/i2c2.h"
 #include <Generic.h>
 #include "../actuators/peltier.h"
+#include "../fft/fft.h"
 
 /*Variables for measured data*/
 
@@ -52,16 +53,16 @@ extern float vAmp_l;
 
 /*! Frequency of vibration in Hz measured by the front accelerometer.
  */
-extern UINT16 fAmp_f;
+extern float fAmp_f;
 /*! Frequency of vibration in Hz measured by the back accelerometer.
  */
-extern UINT16 fAmp_b;
+extern float fAmp_b;
 /*! Frequency of vibration in Hz measured by the right accelerometer.
  */
-extern UINT16 fAmp_r;
+extern float fAmp_r;
 /*! Frequency of vibration in Hz measured by the left accelerometer.
  */
-extern UINT16 fAmp_l;
+extern float fAmp_l;
 
 /*! The front proximity sensor value in bits, range [0-65535].
  */
@@ -157,6 +158,10 @@ extern float Kp, Ki;
 /* Variables for storing references and control inputs*/
 extern UINT16 motPwm_ref;
 extern UINT8 fanBlower_r;
+
+extern int raw_acc[4][FFT_BUFF];
+extern int raw_acc_single[FFT_BUFF];
+extern int amplitudes[FFT_BUFF];
 
 void updateCalibrationData();
 #endif	/* PIC2BEAGLEBONE_H */
