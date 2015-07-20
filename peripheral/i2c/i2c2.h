@@ -17,7 +17,7 @@
 
 /*! I2C address of the dsPIC 
  */
-#define I2C2_CASU_ADD 0x11
+#define I2C2_CASU_ADD 0x13
 
 /*! Size of the buffers used for transmitting (tx) and receiving data (rx). 
  */

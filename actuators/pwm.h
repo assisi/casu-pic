@@ -22,7 +22,7 @@ extern "C" {
 
 #include <Generic.h>
 #define PWMPRE 1   //PWM input clock prescaler
-#define FPWM   10000 //PWM frequecy
+#define FPWM   60000 //PWM frequecy
 
 #define PELTIER_PWM_MAX_P 60 //60    //Peltier max pwm output
 #define PELTIER_PWM_MAX_N 60 //30    //Peltier min pwm output
@@ -45,11 +45,21 @@ void VibrationSet(UINT8 set);
 
 void PeltierSetPwm(int set);
 
+void PeltierSetPwm2(int set);
+
 int PeltierSetOut(int set);
 
 void PeltierOff();
 
 void PeltierOn(int direction);
+
+void SpeakerOn();
+
+void SpeakerOff();
+
+void PeltierSetPwmCh1(int set);
+
+void PeltierSetPwmCh2(int set);
 
 
 #ifdef	__cplusplus

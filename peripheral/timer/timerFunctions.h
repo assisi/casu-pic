@@ -26,9 +26,11 @@ void delay_t1(int msec);
  * @param prescaler Timer prescaler. Use predefined timer prescale values: T1_PS_1_x, x = 1,8,64,256
  * @return Number of CPU ticks to be counted with timer.
  */
-unsigned long ticks_from_ms(int msec, int prescaler);
+unsigned long ticks_from_ms(float msec, int prescaler);
 
 unsigned long ticks_from_s(float sec, int prescaler);
+
+unsigned long ticks_from_us(float usec, int prescaler);
 
 #endif	/* TIMERFUNCTIONS_H */
 

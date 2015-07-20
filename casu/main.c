@@ -1,4 +1,5 @@
-/* 
+
+/*
  * File:   main.c
  * Author: thaus
  *
@@ -10,7 +11,7 @@
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~;
  * 06.02.2014       |	3 Proximity sensors reading - Laussane training
  * 17.04.2014, KG   |   AMP board testing sequance is added -> #define TEST_AMP_BOARD
- * 17.02.2015, KG   | CASU V1.0 
+ * 17.02.2015, KG   | CASU V1.0
  */
 
 //#define TEST_AMP_BOARD
@@ -31,6 +32,7 @@
 #include "../sensors/vcnl4000/proxiVCNL4000.h"
 #include "../actuators/pwm.h"
 #include "../actuators/peltier.h"
+#include "../peripheral/timer/timer2.h"
 
 // Select Internal FRC at POR
 _FOSCSEL(FNOSC_FRC & IESO_OFF);
@@ -41,8 +43,17 @@ _FPOR(ALTI2C2_OFF & ALTI2C1_ON);
 //Watchdog timer -> Twtd = PR*POST/32000 [s]
 _FWDT(FWDTEN_ON & WDTPRE_PR128 & WDTPOST_PS1024);   //Twdt ~ 4s
 
+#define PI 3.14159265359
+int dt = 0;
+float vibe_period = 5000.0; // in usec
+float dt_f = 0;
+float t_f = 0;
+int N = 100;
+int pwm_i[100];
+
+
 /*
- * 
+ *
  */
 int main(int argc, char** argv) {
 
@@ -55,7 +66,7 @@ int main(int argc, char** argv) {
 
     // Initiate Clock Switch to Primary Oscillator with PLL (NOSC=0b011)
     //__builtin_write_OSCCONH(0x03);
-    
+
     // tune FRC
     OSCTUN = 23;  // 23 * 0.375 = 8.625 % -> 7.37 Mhz * 1.08625 = 8.005Mhz
     // Initiate Clock Switch to external oscillator NOSC=0b011 (alternative use FRC with PLL (NOSC=0b01)
@@ -79,15 +90,16 @@ int main(int argc, char** argv) {
     int tempLoopControl = 0;
     int tempNum;            //Sensors number
     int tempLoop = 0;
-    int watchCounter = 0;
+    int mainLoopCounter = 0;
     int tempSensors = 0;
 
     setUpPorts();
-     // configure i2c2 as a slave device and interrupt priority 1
+    digitalHigh(LED2R);
+     // configure i2c2 as a slave device with address 0x0b and interrupt priority 1
     I2C2SlaveInit(I2C2_CASU_ADD, 1);
     delay_t1(500);
-    digitalHigh(LED2R);
-
+    digitalLow(LED2R);
+    /*
     status = adxl345Init(aSlaveF);
     //error = ErrorInitCheck(status);
     delay_t1(5);
@@ -99,9 +111,14 @@ int main(int argc, char** argv) {
     delay_t1(5);
     status = adxl345Init(aSlaveB);
     //error = ErrorInitCheck(status);
-    
 
     delay_t1(5);
+    */
+    PWMInit();
+    LedUser(0, 0, 0);
+    PeltierSetPwm2(50); // Complementary mode
+
+    /*
     statusTemp[0] = adt7320Init(tSlaveF, ADT_CONT_MODE |ADT_16_BIT);
     delay_t1(5);
     statusTemp[1] = adt7320Init(tSlaveR, ADT_CONT_MODE |ADT_16_BIT);
@@ -120,17 +137,17 @@ int main(int argc, char** argv) {
 
     //Proximirty sensors initalization
     I2C1MasterInit();
-    status = VCNL4000Init();  
-
+    status = VCNL4000Init();
+    ax =0 ;
     //PWM intialization
-    PWMInit();
-
+    ax = 0;
     //ADT7420 sensors initalization
-    status = adt7420Init(0);
-
-    PeltierSetOut2(0);
+    //status = adt7420Init(0);
+    */
 
     //Estimation initializaction
+
+    /*
     for (i = 0; i < 50; i++) {
         adt7320ReadTemp(tSlaveF, &temp_f); delay_t1(5);
         adt7320ReadTemp(tSlaveL, &temp_l); delay_t1(5);
@@ -184,7 +201,7 @@ int main(int argc, char** argv) {
 //        }
 //        delay_t1(5);
 //    }
-
+/*
     for (i = 0; i < 4; i++) {
         if (statusTemp[i] == 1 && tempBridge[i] > 20 && tempBridge[i] < 60) {
             tempNum++;
@@ -199,212 +216,93 @@ int main(int argc, char** argv) {
         temp_casu = -1;
     temp_casu1 = temp_casu;
     temp_wax = temp_casu; temp_wax1 = temp_casu;
-    
+*/
+    float pwm_f;
+    i = 0;
+    for (i = 0; i < N; i++) {
+        pwm_f = sin(2.0 * PI * i / N);
+        pwm_i[i] = (pwm_f * 50 + 100) / 2.0 ;
+    }
+    dt_f = vibe_period / N;
+    OpenTimer2(T2_OFF | T2_PS_1_1, ticks_from_us(dt_f, 1));
+    ConfigIntTimer2(T2_INT_OFF | T2_INT_PRIOR_2);
+
     while(1) {
-     
-        /*
-         **** Do not read acc sensors - we have to implement fft
-        if (readAccX(aSlaveR, &ax) <= 0) {
-            ax = 0;
-        }
-        if (readAccY(aSlaveR, &ay) <= 0) {
-              ay = 0;
-        }
-        if (readAccZ(aSlaveR, &az) <= 0) {
-              az = 0;
-        }
 
-        vAmp_r = sqrtl((double)ax * ax + (double)ay * ay + (double)az * az);
-        delay_t1(1);
 
-        if (readAccX(aSlaveL, &ax) <= 0) {
-            ax = 0;
-        }
-        if (readAccY(aSlaveL, &ay) <= 0) {
-              ay = 0;
-        }
-        if (readAccZ(aSlaveL, &az) <= 0) {
-              az = 0;
-        }
-        vAmp_l = sqrtl((double)ax * ax + (double)ay * ay + (double)az * az);
-        */
-         //Front
-        statusProxi[0] = I2C1ChSelect(1, 2);
-        proxy_f = VCNL4000ReadProxi();
-        delay_t1(1);
-        //Front right
-        statusProxi[2] = I2C1ChSelect(1, 3);
-        proxy_fr = VCNL4000ReadProxi();
-        delay_t1(1);
-        //Back right
-        statusProxi[1] = I2C1ChSelect(1, 4);
-        proxy_br = VCNL4000ReadProxi();
-        delay_t1(1);
-        //Back
-        statusProxi[3] = I2C1ChSelect(1, 5);
-        proxy_b = VCNL4000ReadProxi();
-        delay_t1(1);
-        //Back left
-        statusProxi[4] = I2C1ChSelect(1, 0);
-        proxy_bl = VCNL4000ReadProxi();
-        delay_t1(1);
-        //Front left
-        statusProxi[5] = I2C1ChSelect(1, 1);
-        proxy_fl = VCNL4000ReadProxi();
-        delay_t1(1);
-
-        //if((proxy_f == -1) && (proxy_fl == -1) && (proxy_bl == -1) && (proxy_b == -1) && (proxy_br == -1) && (proxy_fr == -1))
-           // muxReset();
-
-        //Temperature readings and control
-        // readings every 2.5 second
-        // PID control every 10 seconds
-        if (tempLoopControl >= 20) {
-            //Cooler temperature
-            adt7420ReadTemp(&temp_t);
-
-            if (tempSensors > 0) {
-                // we have at least on temp sensor working
-
-                // peltier controlled
-                    //diagLED_r[0] = 50;
-                if (statusTemp[0] == 1)
-                    adt7320ReadTemp(tSlaveF, &temp_f);
-                else
-                    temp_f = -1;
-                if (statusTemp[1] == 1)
-                    adt7320ReadTemp(tSlaveR, &temp_r);
-                else
-                    temp_r = -1;
-                if (statusTemp[2] == 1)
-                    adt7320ReadTemp(tSlaveB, &temp_b);
-                else
-                    temp_b = -1;
-                if (statusTemp[3] == 1)
-                    adt7320ReadTemp(tSlaveL, &temp_l);
-                else
-                    temp_l = -1;
-
-                tempBridge[0] = temp_f; tempBridge[1] = temp_r;
-                tempBridge[2] = temp_b; tempBridge[3] = temp_l;
-
-                //CASU ring average temperature
-                temp_casu = 0;
-                tempNum = 0;
-                for(i=0;i<4;i++){
-                    if (statusTemp[i] == 1 && tempBridge[i] > 20 && tempBridge[i] < 60){
-                        tempNum++;
-                        temp_casu += tempBridge[i];
-                    }
-                }
-                //temp_casu = temp_casu - temp_f; // front sensor mounted on wax
-                if (tempNum > 0)
-                    temp_casu /= tempNum;
-                else
-                    temp_casu = temp_casu1;
-
-                //Wax temperature estimation - PT1, Tustin discretizaion:
-                // y(k) = Kf1 * y(k-1) + Kf2 * u(k) + Kf3 * u(k-1)
-                temp_wax = Kf1 * temp_casu + Kf2 * temp_casu1 + Kf3 * temp_wax1;
-                temp_wax1 = temp_wax;
-                temp_casu1 = temp_casu;
-
-                if (tempLoop == 3) {
-                    // 2.5 s peltier off
-                    //diagLED_r[0] = 0;
-                    PeltierOff();
-                    tempLoop = 0;
-                    //LedUser(100, 0, 0);
-
-                }
-                else {
-
-                    if (tempCtlOn == 1) {
-
-                        if ((temp_casu > 45) || (temp_t > 45)){
-
-                            // casu if overheating, turn off everything
-                            ctlPeltier = 0;
-                            PeltierSetOut2(ctlPeltier);
-                        }
-                        else {
-
-                            if(temp_ref <= temp_ref_l){     // temp_ref < 26 , turn off
-                                ctlPeltier = 0;
-                                PeltierResetPID();
-                                PeltierSetOut2(ctlPeltier);
-                            }
-                            else{
-                                // temp control is on -> calculate PID output every 10 seconds
-                                if (tempLoop == 0) {
-                                    // increase reference by 0.5°C every 10 sec
-                                    //LedUser(0, 100, 0);
-                                    if (temp_ref - temp_ref_cur > 0.5)
-                                        temp_ref_cur += 0.5;
-                                    else if (temp_ref - temp_ref_cur < -0.5)
-                                        temp_ref_cur -= 0.5;
-                                    else
-                                        temp_ref_cur = temp_ref;
-                                    ctlPeltier = PeltierPID(temp_ref_cur, temp_wax);//PeltierPID(temp_ref_cur, temp_l);
-                                    PeltierSetOut2(ctlPeltier);
-
-                                }
-
-                            }
-                        }
-  
-                    }
-                    else {
-                        // temp control is off -> propagate reference to the output
-                        // ref is in the range [25, 45] -> transform to [-100, 100]
-                        if (tempLoop == 0) {
-                            if (temp_ref < 35) {
-                                // [25 - 35] - > [0, 100]
-                                ctlPeltier = 10 * temp_ref - 250;
-                            }
-                            else {
-                                //[35-45] -> [0--100]
-                                ctlPeltier = -10.0 * temp_ref + 350;
-                            }
-                            PeltierSetOut2(ctlPeltier);
-                        }
-                    }
-
-                    tempLoop++;
-
-                }
+        if (msg_status == MSG_REF_ID) {
+            updateReferences();
+            msg_status = 0;
+            if (vibeFreq_ref == 0 || vibeAmp_ref == 0) {
+                //LedUser(0, 10, 0);
+                PeltierSetPwm2(50);
+                OpenTimer2(T2_OFF | T2_PS_1_1, ticks_from_us(0.1, 1));
+                ConfigIntTimer2(T2_INT_OFF | T2_INT_PRIOR_2);
+                vibe_period = 0 ;
+                SpeakerOff();
+                vibeFreq_ref = 0;
+                vibeAmp_ref = 0;
+                vibeFreq_old = vibeFreq_ref;
             }
-            else {
-                temp_casu = -1;
-                temp_wax = -1;
-                PeltierSetOut2(0);
+            else if (vibeFreq_old != vibeFreq_ref)
+            {
+                SpeakerOn();
+                //LedUser(0, 0 , 10);
+                vibeFreq_old = vibeFreq_ref;
+                vibe_period = 1000000.0 / vibeFreq_ref; // in usec
+                dt_f = vibe_period / N; // 2 ms
+                OpenTimer2(T2_ON | T2_PS_1_1, ticks_from_us(dt_f, 1));
+                ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_2);
             }
-
-            tempLoopControl = 0;
         }
-        else {
-            tempLoopControl++;
-        }
-        
-        if (fanCtlOn == 1) {
-            if (temp_t >= 30 && fanCooler == 0)
-                fanCooler = 100;
-            else if (temp_t <= 29 && fanCooler == 100)
-                fanCooler = 0;
-        }
-        else if (fanCtlOn == 2) {
-            fanCooler = 100;
-        }
-        else {
-            fanCooler = 0;
-        }
-        FanCooler(fanCooler);
 
         updateMeasurements();
-        delay_t1(100);
+        delay_t1(10);
 
         ClrWdt(); //Clear watchdog timer
     }
 
     return (EXIT_SUCCESS);
+}
+
+void __attribute__((__interrupt__, __auto_psv__)) _T2Interrupt(void)
+{
+    int pwm_int;
+    float pwm_fl;
+    IFS0bits.T2IF = 0;
+    /*
+    pwm_fl = sinf(2 * PI * dt / vibe_period);
+
+    // scale pwm_int 25->75
+    pwm_int = (pwm_fl * 50 + 100) / 2 ;
+    if (pwm_int > 75) {
+        pwm_int  = 75;
+    }
+    else if (pwm_int < 25) {
+        pwm_int = 25;
+    }
+    dt = dt + 100;
+    if (dt >= vibe_period) {
+        dt = 0;
+    }
+
+    // scale pwm int according to given amplitude
+    //pwm_int = pwm_int * vibeAmp_ref / 100.0;
+    */
+    PeltierSetPwm2(vibeAmp_ref * pwm_i[dt] / 100);
+
+    dt = dt + 1;
+    /*
+    t_f = t_f + dt_f;
+    if (t_f >= vibe_period) {
+        dt = 0;
+        t_f = 0;
+    }
+    */
+    if (dt == N) {
+        dt = 0;
+        /*
+        LedUser(10, 0, 0);
+         * */
+    }
 }

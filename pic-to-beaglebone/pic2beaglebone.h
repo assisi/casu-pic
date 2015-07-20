@@ -155,8 +155,10 @@ extern float temp_ref_l, temp_ref_h;
 extern float Kp, Ki;
 
 /* Variables for storing references and control inputs*/
-extern UINT16 motPwm_ref;
-extern UINT8 fanBlower_r;
+extern UINT16 vibeFreq_ref;
+extern UINT16 vibeFreq_old;
+extern UINT16 vibeAmp_ref;
+extern UINT16 vibeAmp_ref;extern UINT8 fanBlower_r;
 
 void updateCalibrationData();
 #endif	/* PIC2BEAGLEBONE_H */

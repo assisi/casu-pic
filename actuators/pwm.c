@@ -32,19 +32,30 @@ void PWMInit(void) {
     PTCONbits.PTEN = 0;     //PWM module disable
     unsigned long period = ((unsigned long) FOSC/((unsigned long)FPWM*PWMPRE));
     //Primary Master Time Base
-    PTCON2bits.PCLKDIV = 0;     //PWM presceler = 4
+    PTCON2bits.PCLKDIV = 0b000;     //PWM prescaler = 1
     PTPER = (int) period;
 
     //PWM1 Generator Initialization
+    DTR1 = 50;
+    ALTDTR1 = 50;
     PWMCON1 = 0;    //Edge-aligned mode, master time base, individual duty for both channels
     PHASE1 = PTPER;
     SPHASE1 = PTPER;
     PDC1 = 0;   //PWM1H duty
     SDC1 = 0;   //PWM1L duty
     //PWM I/O control register
-    IOCON1bits.PENL = 0;
-    IOCON1bits.PENH = 0;
-    IOCON1bits.PMOD = 0b11; //Independent PWM mode
+    IOCON1bits.PMOD = 0b00; //Complementary PWM mod
+    PWMCON1bits.TRGSTAT = 0;
+    PWMCON1bits.FLTSTAT = 0;
+    PWMCON1bits.CLSTAT = 0;
+    IOCON1bits.PENL = 1;
+    IOCON1bits.PENH = 1;
+    PTCONbits.SEIEN = 0; // disable special event primary master time base interrupt
+    IFS5bits.PWM1IF = 0;
+    IPC23bits.PWM1IP = 3; // priority 3
+    TRIG1 = period;
+    IEC5bits.PWM1IE = 0;
+    PWMCON1bits.TRGIEN = 0; // a trigger event generates an interrupt request
 
     //PWM2 Generator Initialization - Vibration motor
     PWMCON2 = 0;    //Edge-aligned mode, master time base, individual duty for both channels
@@ -247,6 +258,34 @@ void PeltierSetPwm(int set){
     
     return;
 }
+
+void PeltierSetPwm2(int set){
+    PDC1 = PTPER / 100 * set;
+}
+
+void SpeakerOff() {
+    PTCONbits.PTEN = 0;     //PWM module disable
+    IOCON5bits.PENL = 0;
+    IOCON5bits.PENH = 0;
+}
+void SpeakerOn() {
+    PWMInit();
+    PDC1 = PTPER / 2;
+    //IOCON5bits.PENL = 1;
+    //IOCON5bits.PENH = 1;
+    //PTCONbits.PTEN = 1;     //PWM module enable
+}
+
+void PeltierSetPwmCh1(int set){
+    PDC1 = PTPER / 100 * set;
+    SDC1 = 0;
+}
+
+void PeltierSetPwmCh2(int set){
+    SDC1 = PTPER / 100 * set;
+    PDC1 = 0;
+}
+
 
 int PeltierSetOut(int set){
 

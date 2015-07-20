@@ -20,7 +20,6 @@ void delay_t1(int msec) {
         CloseTimer1();
     }
 }
-
 /*
  * Function suspends program using timer1
  * inputs:  usec - delay time in useconds
@@ -49,9 +48,15 @@ int delay_t1_us(unsigned int usec) {
  * int msec - time in milliseconds
  * int prescaler - prescaler used for corresponding timer
  */
-unsigned long ticks_from_ms(int msec, int prescaler) {
+unsigned long ticks_from_ms(float msec, int prescaler) {
     unsigned long ticks;
-    ticks = FOSC / 2 / prescaler * msec / 1000;
+    ticks = FOSC / 2 / prescaler * msec / 1000.0;
+    return ticks;
+}
+
+unsigned long ticks_from_us(float usec, int prescaler) {
+    unsigned long ticks;
+    ticks = FOSC / 2.0 / prescaler * usec / 1000000.0;
     return ticks;
 }
 
