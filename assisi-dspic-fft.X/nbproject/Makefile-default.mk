@@ -45,17 +45,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=../actuators/peltier.c ../actuators/pwm.c ../casu/initizializeHardware.c ../casu/main.c ../casu/error.c ../fft/fft.c ../peripheral/gpio/digitalIO.c ../peripheral/i2c/i2c2.c ../peripheral/i2c/i2c1.c ../peripheral/spi/spi1.c ../peripheral/spi/spi2.c ../peripheral/timer/timer2.c ../peripheral/timer/timer45.c ../peripheral/timer/timer1.c ../peripheral/timer/timerFunctions.c ../pic-to-beaglebone/pic2beaglebone.c ../sensors/adt7320/adt7320.c ../sensors/adt7420/adt7420.c ../sensors/adxl345/adxl345.c ../sensors/vcnl4000/proxiVCNL4000.c ../sensors/proximity.c
+SOURCEFILES_QUOTED_IF_SPACED=../actuators/peltier.c ../actuators/pwm.c ../casu/initizializeHardware.c ../casu/main.c ../casu/error.c ../peripheral/gpio/digitalIO.c ../peripheral/i2c/i2c2.c ../peripheral/i2c/i2c1.c ../peripheral/spi/spi1.c ../peripheral/spi/spi2.c ../peripheral/timer/timer2.c ../peripheral/timer/timer45.c ../peripheral/timer/timer1.c ../peripheral/timer/timerFunctions.c ../pic-to-beaglebone/pic2beaglebone.c ../sensors/adt7320/adt7320.c ../sensors/adt7420/adt7420.c ../sensors/adxl345/adxl345.c ../sensors/vcnl4000/proxiVCNL4000.c ../sensors/proximity.c ../fft/fft.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/470364171/peltier.o ${OBJECTDIR}/_ext/470364171/pwm.o ${OBJECTDIR}/_ext/761110993/initizializeHardware.o ${OBJECTDIR}/_ext/761110993/main.o ${OBJECTDIR}/_ext/761110993/error.o ${OBJECTDIR}/_ext/1360924389/fft.o ${OBJECTDIR}/_ext/290349517/digitalIO.o ${OBJECTDIR}/_ext/1099012534/i2c2.o ${OBJECTDIR}/_ext/1099012534/i2c1.o ${OBJECTDIR}/_ext/1099024072/spi1.o ${OBJECTDIR}/_ext/1099024072/spi2.o ${OBJECTDIR}/_ext/399099551/timer2.o ${OBJECTDIR}/_ext/399099551/timer45.o ${OBJECTDIR}/_ext/399099551/timer1.o ${OBJECTDIR}/_ext/399099551/timerFunctions.o ${OBJECTDIR}/_ext/383178330/pic2beaglebone.o ${OBJECTDIR}/_ext/1728059366/adt7320.o ${OBJECTDIR}/_ext/1728060327/adt7420.o ${OBJECTDIR}/_ext/1733332440/adxl345.o ${OBJECTDIR}/_ext/1035759892/proxiVCNL4000.o ${OBJECTDIR}/_ext/299869866/proximity.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/470364171/peltier.o.d ${OBJECTDIR}/_ext/470364171/pwm.o.d ${OBJECTDIR}/_ext/761110993/initizializeHardware.o.d ${OBJECTDIR}/_ext/761110993/main.o.d ${OBJECTDIR}/_ext/761110993/error.o.d ${OBJECTDIR}/_ext/1360924389/fft.o.d ${OBJECTDIR}/_ext/290349517/digitalIO.o.d ${OBJECTDIR}/_ext/1099012534/i2c2.o.d ${OBJECTDIR}/_ext/1099012534/i2c1.o.d ${OBJECTDIR}/_ext/1099024072/spi1.o.d ${OBJECTDIR}/_ext/1099024072/spi2.o.d ${OBJECTDIR}/_ext/399099551/timer2.o.d ${OBJECTDIR}/_ext/399099551/timer45.o.d ${OBJECTDIR}/_ext/399099551/timer1.o.d ${OBJECTDIR}/_ext/399099551/timerFunctions.o.d ${OBJECTDIR}/_ext/383178330/pic2beaglebone.o.d ${OBJECTDIR}/_ext/1728059366/adt7320.o.d ${OBJECTDIR}/_ext/1728060327/adt7420.o.d ${OBJECTDIR}/_ext/1733332440/adxl345.o.d ${OBJECTDIR}/_ext/1035759892/proxiVCNL4000.o.d ${OBJECTDIR}/_ext/299869866/proximity.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/470364171/peltier.o ${OBJECTDIR}/_ext/470364171/pwm.o ${OBJECTDIR}/_ext/761110993/initizializeHardware.o ${OBJECTDIR}/_ext/761110993/main.o ${OBJECTDIR}/_ext/761110993/error.o ${OBJECTDIR}/_ext/290349517/digitalIO.o ${OBJECTDIR}/_ext/1099012534/i2c2.o ${OBJECTDIR}/_ext/1099012534/i2c1.o ${OBJECTDIR}/_ext/1099024072/spi1.o ${OBJECTDIR}/_ext/1099024072/spi2.o ${OBJECTDIR}/_ext/399099551/timer2.o ${OBJECTDIR}/_ext/399099551/timer45.o ${OBJECTDIR}/_ext/399099551/timer1.o ${OBJECTDIR}/_ext/399099551/timerFunctions.o ${OBJECTDIR}/_ext/383178330/pic2beaglebone.o ${OBJECTDIR}/_ext/1728059366/adt7320.o ${OBJECTDIR}/_ext/1728060327/adt7420.o ${OBJECTDIR}/_ext/1733332440/adxl345.o ${OBJECTDIR}/_ext/1035759892/proxiVCNL4000.o ${OBJECTDIR}/_ext/299869866/proximity.o ${OBJECTDIR}/_ext/1360924389/fft.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/470364171/peltier.o.d ${OBJECTDIR}/_ext/470364171/pwm.o.d ${OBJECTDIR}/_ext/761110993/initizializeHardware.o.d ${OBJECTDIR}/_ext/761110993/main.o.d ${OBJECTDIR}/_ext/761110993/error.o.d ${OBJECTDIR}/_ext/290349517/digitalIO.o.d ${OBJECTDIR}/_ext/1099012534/i2c2.o.d ${OBJECTDIR}/_ext/1099012534/i2c1.o.d ${OBJECTDIR}/_ext/1099024072/spi1.o.d ${OBJECTDIR}/_ext/1099024072/spi2.o.d ${OBJECTDIR}/_ext/399099551/timer2.o.d ${OBJECTDIR}/_ext/399099551/timer45.o.d ${OBJECTDIR}/_ext/399099551/timer1.o.d ${OBJECTDIR}/_ext/399099551/timerFunctions.o.d ${OBJECTDIR}/_ext/383178330/pic2beaglebone.o.d ${OBJECTDIR}/_ext/1728059366/adt7320.o.d ${OBJECTDIR}/_ext/1728060327/adt7420.o.d ${OBJECTDIR}/_ext/1733332440/adxl345.o.d ${OBJECTDIR}/_ext/1035759892/proxiVCNL4000.o.d ${OBJECTDIR}/_ext/299869866/proximity.o.d ${OBJECTDIR}/_ext/1360924389/fft.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/_ext/470364171/peltier.o ${OBJECTDIR}/_ext/470364171/pwm.o ${OBJECTDIR}/_ext/761110993/initizializeHardware.o ${OBJECTDIR}/_ext/761110993/main.o ${OBJECTDIR}/_ext/761110993/error.o ${OBJECTDIR}/_ext/1360924389/fft.o ${OBJECTDIR}/_ext/290349517/digitalIO.o ${OBJECTDIR}/_ext/1099012534/i2c2.o ${OBJECTDIR}/_ext/1099012534/i2c1.o ${OBJECTDIR}/_ext/1099024072/spi1.o ${OBJECTDIR}/_ext/1099024072/spi2.o ${OBJECTDIR}/_ext/399099551/timer2.o ${OBJECTDIR}/_ext/399099551/timer45.o ${OBJECTDIR}/_ext/399099551/timer1.o ${OBJECTDIR}/_ext/399099551/timerFunctions.o ${OBJECTDIR}/_ext/383178330/pic2beaglebone.o ${OBJECTDIR}/_ext/1728059366/adt7320.o ${OBJECTDIR}/_ext/1728060327/adt7420.o ${OBJECTDIR}/_ext/1733332440/adxl345.o ${OBJECTDIR}/_ext/1035759892/proxiVCNL4000.o ${OBJECTDIR}/_ext/299869866/proximity.o
+OBJECTFILES=${OBJECTDIR}/_ext/470364171/peltier.o ${OBJECTDIR}/_ext/470364171/pwm.o ${OBJECTDIR}/_ext/761110993/initizializeHardware.o ${OBJECTDIR}/_ext/761110993/main.o ${OBJECTDIR}/_ext/761110993/error.o ${OBJECTDIR}/_ext/290349517/digitalIO.o ${OBJECTDIR}/_ext/1099012534/i2c2.o ${OBJECTDIR}/_ext/1099012534/i2c1.o ${OBJECTDIR}/_ext/1099024072/spi1.o ${OBJECTDIR}/_ext/1099024072/spi2.o ${OBJECTDIR}/_ext/399099551/timer2.o ${OBJECTDIR}/_ext/399099551/timer45.o ${OBJECTDIR}/_ext/399099551/timer1.o ${OBJECTDIR}/_ext/399099551/timerFunctions.o ${OBJECTDIR}/_ext/383178330/pic2beaglebone.o ${OBJECTDIR}/_ext/1728059366/adt7320.o ${OBJECTDIR}/_ext/1728060327/adt7420.o ${OBJECTDIR}/_ext/1733332440/adxl345.o ${OBJECTDIR}/_ext/1035759892/proxiVCNL4000.o ${OBJECTDIR}/_ext/299869866/proximity.o ${OBJECTDIR}/_ext/1360924389/fft.o
 
 # Source Files
-SOURCEFILES=../actuators/peltier.c ../actuators/pwm.c ../casu/initizializeHardware.c ../casu/main.c ../casu/error.c ../fft/fft.c ../peripheral/gpio/digitalIO.c ../peripheral/i2c/i2c2.c ../peripheral/i2c/i2c1.c ../peripheral/spi/spi1.c ../peripheral/spi/spi2.c ../peripheral/timer/timer2.c ../peripheral/timer/timer45.c ../peripheral/timer/timer1.c ../peripheral/timer/timerFunctions.c ../pic-to-beaglebone/pic2beaglebone.c ../sensors/adt7320/adt7320.c ../sensors/adt7420/adt7420.c ../sensors/adxl345/adxl345.c ../sensors/vcnl4000/proxiVCNL4000.c ../sensors/proximity.c
+SOURCEFILES=../actuators/peltier.c ../actuators/pwm.c ../casu/initizializeHardware.c ../casu/main.c ../casu/error.c ../peripheral/gpio/digitalIO.c ../peripheral/i2c/i2c2.c ../peripheral/i2c/i2c1.c ../peripheral/spi/spi1.c ../peripheral/spi/spi2.c ../peripheral/timer/timer2.c ../peripheral/timer/timer45.c ../peripheral/timer/timer1.c ../peripheral/timer/timerFunctions.c ../pic-to-beaglebone/pic2beaglebone.c ../sensors/adt7320/adt7320.c ../sensors/adt7420/adt7420.c ../sensors/adxl345/adxl345.c ../sensors/vcnl4000/proxiVCNL4000.c ../sensors/proximity.c ../fft/fft.c
 
 
 CFLAGS=
@@ -113,13 +113,6 @@ ${OBJECTDIR}/_ext/761110993/error.o: ../casu/error.c  nbproject/Makefile-${CND_C
 	@${RM} ${OBJECTDIR}/_ext/761110993/error.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ../casu/error.c  -o ${OBJECTDIR}/_ext/761110993/error.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/761110993/error.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1  -omf=elf -mlarge-data -O0 -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/_ext/761110993/error.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
-${OBJECTDIR}/_ext/1360924389/fft.o: ../fft/fft.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/_ext/1360924389 
-	@${RM} ${OBJECTDIR}/_ext/1360924389/fft.o.d 
-	@${RM} ${OBJECTDIR}/_ext/1360924389/fft.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../fft/fft.c  -o ${OBJECTDIR}/_ext/1360924389/fft.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/1360924389/fft.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1  -omf=elf -mlarge-data -O0 -msmart-io=1 -Wall -msfr-warn=off
-	@${FIXDEPS} "${OBJECTDIR}/_ext/1360924389/fft.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 ${OBJECTDIR}/_ext/290349517/digitalIO.o: ../peripheral/gpio/digitalIO.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/_ext/290349517 
@@ -226,6 +219,13 @@ ${OBJECTDIR}/_ext/299869866/proximity.o: ../sensors/proximity.c  nbproject/Makef
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ../sensors/proximity.c  -o ${OBJECTDIR}/_ext/299869866/proximity.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/299869866/proximity.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1  -omf=elf -mlarge-data -O0 -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/_ext/299869866/proximity.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
+${OBJECTDIR}/_ext/1360924389/fft.o: ../fft/fft.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/_ext/1360924389 
+	@${RM} ${OBJECTDIR}/_ext/1360924389/fft.o.d 
+	@${RM} ${OBJECTDIR}/_ext/1360924389/fft.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../fft/fft.c  -o ${OBJECTDIR}/_ext/1360924389/fft.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/1360924389/fft.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1  -omf=elf -mlarge-data -O0 -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/_ext/1360924389/fft.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
 else
 ${OBJECTDIR}/_ext/470364171/peltier.o: ../actuators/peltier.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/_ext/470364171 
@@ -261,13 +261,6 @@ ${OBJECTDIR}/_ext/761110993/error.o: ../casu/error.c  nbproject/Makefile-${CND_C
 	@${RM} ${OBJECTDIR}/_ext/761110993/error.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ../casu/error.c  -o ${OBJECTDIR}/_ext/761110993/error.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/761110993/error.o.d"      -g -omf=elf -mlarge-data -O0 -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/_ext/761110993/error.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
-${OBJECTDIR}/_ext/1360924389/fft.o: ../fft/fft.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/_ext/1360924389 
-	@${RM} ${OBJECTDIR}/_ext/1360924389/fft.o.d 
-	@${RM} ${OBJECTDIR}/_ext/1360924389/fft.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../fft/fft.c  -o ${OBJECTDIR}/_ext/1360924389/fft.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/1360924389/fft.o.d"      -g -omf=elf -mlarge-data -O0 -msmart-io=1 -Wall -msfr-warn=off
-	@${FIXDEPS} "${OBJECTDIR}/_ext/1360924389/fft.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 ${OBJECTDIR}/_ext/290349517/digitalIO.o: ../peripheral/gpio/digitalIO.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/_ext/290349517 
@@ -373,6 +366,13 @@ ${OBJECTDIR}/_ext/299869866/proximity.o: ../sensors/proximity.c  nbproject/Makef
 	@${RM} ${OBJECTDIR}/_ext/299869866/proximity.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ../sensors/proximity.c  -o ${OBJECTDIR}/_ext/299869866/proximity.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/299869866/proximity.o.d"      -g -omf=elf -mlarge-data -O0 -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/_ext/299869866/proximity.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/_ext/1360924389/fft.o: ../fft/fft.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/_ext/1360924389 
+	@${RM} ${OBJECTDIR}/_ext/1360924389/fft.o.d 
+	@${RM} ${OBJECTDIR}/_ext/1360924389/fft.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  ../fft/fft.c  -o ${OBJECTDIR}/_ext/1360924389/fft.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/1360924389/fft.o.d"      -g -omf=elf -mlarge-data -O0 -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/_ext/1360924389/fft.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 endif
 
