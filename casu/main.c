@@ -8,12 +8,8 @@
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~;
  * Date, Author     |	Comments on this revision
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~;
- * 06.02.2014       |	3 Proximity sensors reading - Laussane training
- * 17.04.2014, KG   |   AMP board testing sequance is added -> #define TEST_AMP_BOARD
- * 17.02.2015, KG   | CASU V1.0 
+ * 06.02.2014       |	Comment
  */
-
-//#define TEST_AMP_BOARD
 
 #include <stdio.h>
 #include <stdlib.h>
