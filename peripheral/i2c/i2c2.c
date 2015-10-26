@@ -89,7 +89,6 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
                 if (msg_id == MSG_REF_ID && msg_rec_bytes == IN_REF_DATA_NUM) {
                     msg_status = MSG_REF_ID;
                     updateReferences();
-                    msg_status = 0;
                 }
                 if (msg_id == MSG_CAL_ID && msg_rec_bytes == IN_CAL_DATA_NUM) {
                     // immediatelly process calibration data

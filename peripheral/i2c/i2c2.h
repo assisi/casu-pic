@@ -17,7 +17,7 @@
 
 /*! I2C address of the dsPIC 
  */
-#define I2C2_CASU_ADD 0x13
+#define I2C2_CASU_ADD 0x12
 
 /*! Size of the buffers used for transmitting (tx) and receiving data (rx). 
  */
@@ -27,7 +27,7 @@
 #define WAIT_TIME 100
 
 #define I2C1_DEBUG 1
-#define IN_REF_DATA_NUM 12
+#define IN_REF_DATA_NUM 5
 #define IN_CAL_DATA_NUM 13
 #define OUT_MEAS_DATA_NUM 55
 

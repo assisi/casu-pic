@@ -259,8 +259,8 @@ void PeltierSetPwm(int set){
     return;
 }
 
-void PeltierSetPwm2(int set){
-    PDC1 = PTPER / 100 * set;
+void SpeakerSetPwm(int set){
+    PDC1 = PTPER / 200 * (set+100);
 }
 
 void SpeakerOff() {
