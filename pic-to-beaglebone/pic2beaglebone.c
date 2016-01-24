@@ -1,7 +1,8 @@
 #include "pic2beaglebone.h"
 
 /*Init variables for measured data*/
-float temp_f = -1, temp_b = -1, temp_r = -1, temp_l = -1, temp_t = -1, temp_casu = 25, temp_casu1 = 25, temp_wax = 25, temp_wax1 = 25;
+float temp_f = -1, temp_b = -1, temp_r = -1, temp_l = -1, temp_t = -1, 
+        temp_casu = 25, temp_casu1 = 25, temp_wax = 25, temp_wax1 = 25, temp_flexPCB = -1;
 float vAmp_f = -1 , vAmp_b = -1, vAmp_r = -1, vAmp_l = -1;
 UINT16 fAmp_f = 0, fAmp_b = 0, fAmp_r = 0, fAmp_l = 0;
 UINT16 proxy_f = 0, proxy_fr = 0, proxy_br = 0, proxy_b = 0, proxy_bl = 0, proxy_fl = 0, proxy_t = 0;
@@ -250,4 +251,11 @@ void updateMeasurements() {
     i2c2_tx_buff[56] = dummy & 0x00FF;
     i2c2_tx_buff[57] = (dummy & 0xFF00) >> 8;
     i2c2_tx_buff[58] = calRec;
+
+    if (temp_flexPCB >= 0)
+        dummy = (temp_flexPCB * 10);
+    else
+        dummy = (int)(temp_flexPCB * 10) + 65536;
+    i2c2_tx_buff[59] = dummy & 0x00FF;
+    i2c2_tx_buff[60] = (dummy & 0xFF00) >> 8;
 }

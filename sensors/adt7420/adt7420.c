@@ -20,25 +20,26 @@
 
 /* Function for initializing ADT7420, digital temperature sensor with I2C comm
  * inputs:  config - configuration register content
+ *          address - i2c address
  * returns: 0 - if I2C comm failed
  *          -1 - if reading device id failed
  *          -2 - if reading device config register, after setting it, failed
  *          1 - everything set up and ready for use
  * Example of usage: status = adt7420Init(ADT74_16_BIT | ADT74_CONT_MODE);
  */
-int adt7420Init(UINT8 config) {
+int adt7420Init(UINT8 config, UINT8 address) {
     
     unsigned char rec = 0;
     int i = 0;
     
     while((ADT74_ID != rec) && (i<5)){    //Address failed
-         rec = I2C1ReadByte(ADT74_I2C_ADD, ADT74_ID_REG);
+         rec = I2C1ReadByte(address, ADT74_ID_REG);
          i++;
     }
 
     //Set configuration register - uncomment if you want to change configuration register
-   I2C1WriteByte(ADT74_I2C_ADD, ADT74_CONFIG, config);
-   rec = I2C1ReadByte(ADT74_I2C_ADD, ADT74_CONFIG);
+   I2C1WriteByte(address, ADT74_CONFIG, config);
+   rec = I2C1ReadByte(address, ADT74_CONFIG);
    if(rec != config)   //Reading from congfiguration register failed
         return -2;
         
@@ -52,13 +53,13 @@ int adt7420Init(UINT8 config) {
  *          1 - else
  * Exaple of usage status = adt7320ReadTemp(&temp)
  */
-int adt7420ReadTemp(float *temp) {
+int adt7420ReadTemp(float *temp, UINT8 address) {
 
     UINT8 buffer[2];
     int res;
 
-    buffer[0] = I2C1ReadByte(ADT74_I2C_ADD, ADT74_TLOW);
-    buffer[1] = I2C1ReadByte(ADT74_I2C_ADD, ADT74_THIGH);
+    buffer[0] = I2C1ReadByte(address, ADT74_TLOW);
+    buffer[1] = I2C1ReadByte(address, ADT74_THIGH);
   
     res = (buffer[0] & 0xFF) + (buffer[1] << 8);
     res >>= 3;  //Results is stored on [15:3] position

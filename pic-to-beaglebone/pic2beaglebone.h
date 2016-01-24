@@ -32,7 +32,7 @@ extern float temp_r;
 extern float temp_l;
 /*! The top temperature sensor value.
  */
-extern float temp_t;
+extern float temp_t, temp_flexPCB;
 
 extern float temp_casu, temp_casu1, temp_wax, temp_wax1;    // temperature
 

@@ -9,7 +9,8 @@
 
 /*! AD7420 device I2C address.
  */
-#define ADT74_I2C_ADD   0x48
+#define ADT74_I2C_ADD_mainBoard   0x48
+#define ADT74_I2C_ADD_flexPCB     0x49
 /*! AD7420 device ID number.
  */
 #define ADT74_ID        0xCB    
@@ -126,7 +127,7 @@
 
  * Example of usage: status = adt7420Init(ADT74_16_BIT | ADT74_CONT_MODE);
  */
-int adt7420Init(UINT8 config);
+int adt7420Init(UINT8 config, UINT8 address);
 
 /*! \brief Function for reading ADT7420 temperature value.
  *
@@ -136,6 +137,6 @@ int adt7420Init(UINT8 config);
  *
  * Example of usage: status = adt7420ReadTemp(&temp)
  */
-int adt7420ReadTemp(float *temp);
+int adt7420ReadTemp(float *temp, UINT8 address);
 
 #endif	/* ADT7420_H */

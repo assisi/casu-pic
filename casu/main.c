@@ -77,6 +77,7 @@ int main(int argc, char** argv) {
     int tempLoop = 0;
     int watchCounter = 0;
     int tempSensors = 0;
+    char muxCh;
 
     setUpPorts();
      // configure i2c2 as a slave device and interrupt priority 1
@@ -122,7 +123,10 @@ int main(int argc, char** argv) {
     PWMInit();
 
     //ADT7420 sensors initalization
-    status = adt7420Init(0);
+    status = adt7420Init(0, ADT74_I2C_ADD_mainBoard);
+    delay_t1(1);
+    muxCh = I2C1ChSelect(1,6);
+    status = adt7420Init(0, ADT74_I2C_ADD_flexPCB);   
 
     PeltierSetOut2(0);
 
@@ -248,6 +252,11 @@ int main(int argc, char** argv) {
         statusProxi[5] = I2C1ChSelect(1, 1);
         proxy_fl = VCNL4000ReadProxi();
         delay_t1(1);
+        
+        
+        
+        
+        
 
         //if((proxy_f == -1) && (proxy_fl == -1) && (proxy_bl == -1) && (proxy_b == -1) && (proxy_br == -1) && (proxy_fr == -1))
            // muxReset();
@@ -257,8 +266,10 @@ int main(int argc, char** argv) {
         // PID control every 10 seconds
         if (tempLoopControl >= 20) {
             //Cooler temperature
-            adt7420ReadTemp(&temp_t);
-
+            adt7420ReadTemp(&temp_t, ADT74_I2C_ADD_mainBoard);
+            muxCh = I2C1ChSelect(1,6);
+            adt7420ReadTemp(&temp_flexPCB, ADT74_I2C_ADD_flexPCB);
+            
             if (tempSensors > 0) {
                 // we have at least on temp sensor working
 
