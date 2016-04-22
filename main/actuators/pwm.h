@@ -51,6 +51,8 @@ void PeltierOff();
 
 void PeltierOn(int direction);
 
+void PeltierVoltageSet(int setVoltage);
+
 
 #ifdef	__cplusplus
 }

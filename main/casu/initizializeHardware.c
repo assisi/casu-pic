@@ -5,9 +5,9 @@
 #include "../sensors/adt7320/adt7320.h"
 #include "../peripheral/timer/timer2.h"
 
-digitalPin LED2R = {&TRISCbits, &PORTCbits, 3};
+digitalPin LED2R = {&TRISEbits, &PORTEbits, 6};
 digitalPin LED2G = {&TRISCbits, &PORTCbits, 2};
-digitalPin LED2B = {&TRISEbits, &PORTEbits, 4};
+digitalPin LED2B = {&TRISCbits, &PORTCbits, 3};
 
 /* Define and initialize digital pins used as chip select pins*/
 digitalPin aSlaveR = {&TRISEbits, &PORTEbits, 8};
@@ -16,10 +16,12 @@ digitalPin aSlaveB = {&TRISDbits, &PORTDbits, 5};
 digitalPin aSlaveL = {&TRISBbits, &PORTBbits, 9};
 
 /*define slaves' chip select pins*/
-digitalPin tSlaveR = {&TRISBbits, &PORTBbits, 5};
-digitalPin tSlaveF = {&TRISAbits, &PORTAbits, 6};
+digitalPin tSlaveF = {&TRISBbits, &PORTBbits, 5};
+digitalPin tSlaveL = {&TRISAbits, &PORTAbits, 6};
 digitalPin tSlaveB = {&TRISAbits, &PORTAbits, 4};
-digitalPin tSlaveL = {&TRISBbits, &PORTBbits, 10};
+digitalPin tSlaveR = {&TRISBbits, &PORTBbits, 10};
+digitalPin slaveVib = {&TRISDbits, &PORTDbits, 4};
+
 
 //I2C1 mux reset pin
 digitalPin MUXRST = {&TRISAbits, &PORTAbits, 15};
@@ -36,6 +38,11 @@ void setUpPorts() {
     digitalOutput(LED2R);
     digitalOutput(LED2G);
     digitalOutput(LED2B);
+    digitalHigh(LED2R);
+    digitalHigh(LED2G);
+    digitalHigh(LED2B);
+    
+    
     // configure accelerometer SPI chip select ports as outputs
     digitalOutput(aSlaveF);
     digitalHigh(aSlaveF);
@@ -55,7 +62,10 @@ void setUpPorts() {
     digitalHigh(tSlaveB);
     digitalOutput(tSlaveL);
     digitalHigh(tSlaveL);
+    digitalOutput(slaveVib);
+    digitalHigh(slaveVib);
 
+    
     //I2C1 mux reset pin
     digitalOutput(MUXRST);
 

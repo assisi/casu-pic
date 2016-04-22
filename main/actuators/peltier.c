@@ -41,16 +41,12 @@ int PeltierPID(float ref, float y){
 
     //uk = Kp*ek + Ki*(uk1 + ek);
     up = Kp * ek;
-    ui = uk1 + Ki * ek;
-//    if (ek < 5  && ek > -5)
-//        ui = uk1 + Ki * ek;
-//    else {
-//        ui = 0;
-//    }
+    if (Ki <= 0.00001)
+        ui = 0;
+    else
+        ui = uk1 + Ki * ek;
     
     uk = up + ui;
-
-    //uk = Kp * ek + uk1 + Ki * ek; // up + ui
     uk1 = ui;
 
     if(uk > 100) {

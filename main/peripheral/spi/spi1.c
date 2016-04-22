@@ -7,9 +7,13 @@
  *         0 - initialization failed
  */
 UINT8 spi1Init(UINT8 mode, UINT8 int_en) {
+    
+    
+    
 
-    RPOR8bits.RP98R = 0b000110;             //SPI1_CLK
-    RPOR11bits.RP104R = 0b000101;           //SPI1_DO
+    RPOR0bits.RP65R = 0b000110;             //SPI1_CLK
+    RPOR1bits.RP67R = 0b000101;           //SPI1_DO
+    RPINR20bits.SDI1R = 0b1000010;
 
     SPI1STATbits.SPIEN = 0;                  // Disable module
     IFS0bits.SPI1IF = 0;                     // Clear the Interrupt flag
@@ -119,10 +123,13 @@ UINT8 spi1TransferBuff(UINT16 *buff, UINT16 len) {
         Use watchdog timer to return from deadlock*/
         while (!SPI1STATbits.SPIRBF) {
             j++;                        // watchdog timer
-            if (j == 1000) return 0;    // timeout, return without sending
+            if (j == 1000) 
+                return 0;    // timeout, return without sending
         }
 
         buff[i] = SPI1BUF;
     }
+    
+    
     return 1;
 }

@@ -8,9 +8,13 @@
 #ifndef PIC2BEAGLEBONE_H
 #define	PIC2BEAGLEBONE_H
 
+#define FAN_COOLER_ON 0
+#define FAN_COOLER_OFF 100
+
 #include "../peripheral/i2c/i2c2.h"
 #include <Generic.h>
 #include "../actuators/peltier.h"
+#include "../peripheral/spi/spi2.h"
 
 /*Variables for measured data*/
 
@@ -32,7 +36,7 @@ extern float temp_r;
 extern float temp_l;
 /*! The top temperature sensor value.
  */
-extern float temp_t, temp_flexPCB;
+extern float temp_pcb, temp_flexPCB;
 
 extern float temp_casu, temp_casu1, temp_wax, temp_wax1;    // temperature
 
@@ -95,6 +99,14 @@ extern UINT16 proxy_t;
 extern UINT8 pwmMotor;
 /*! Control PWM value of red LED used as bee stimulus, range [0,100].
  */
+
+
+extern UINT16 speakerAmp_ref;
+
+
+extern UINT16 speakerFreq_ref;
+
+
 extern UINT8 pwmR_ctl;
 /*! Control PWM value of green LED used as bee stimulus, range [0,100].
  */
@@ -151,7 +163,7 @@ extern int fanCooler;
 extern UINT8 calRec;
 extern UINT8 tempCtlOn, fanCtlOn;
 extern float Kf1, Kf2, Kf3;
-extern float temp_ref_l, temp_ref_h;
+extern float temp_ref_l, temp_ref_h, temp_ref_shutdown;
 extern float Kp, Ki;
 
 /* Variables for storing references and control inputs*/

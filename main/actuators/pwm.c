@@ -33,18 +33,20 @@ void PWMInit(void) {
     unsigned long period = ((unsigned long) FOSC/((unsigned long)FPWM*PWMPRE));
     //Primary Master Time Base
     PTCON2bits.PCLKDIV = 0;     //PWM presceler = 4
-    PTPER = (int) period;
+    PTPER = (int) period/10;
 
     //PWM1 Generator Initialization
+    DTR1 = 15;
+    ALTDTR1 = 15;
     PWMCON1 = 0;    //Edge-aligned mode, master time base, individual duty for both channels
     PHASE1 = PTPER;
     SPHASE1 = PTPER;
-    PDC1 = 0;   //PWM1H duty
-    SDC1 = 0;   //PWM1L duty
+    PDC1 = PTPER/2;   //PWM1H duty
+    //SDC1 = PTPER/2;   //PWM1L duty
     //PWM I/O control register
-    IOCON1bits.PENL = 0;
-    IOCON1bits.PENH = 0;
-    IOCON1bits.PMOD = 0b11; //Independent PWM mode
+    IOCON1bits.PENL = 1;
+    IOCON1bits.PENH = 1;
+    IOCON1bits.PMOD = 0b00; //Complementary PWM mod
 
     //PWM2 Generator Initialization - Vibration motor
     PWMCON2 = 0;    //Edge-aligned mode, master time base, individual duty for both channels
@@ -52,7 +54,7 @@ void PWMInit(void) {
     SPHASE2 = PTPER;
     SDC2 = 0;   //duty
     //PWM I/O control register
-    IOCON2bits.PENL = 1;
+    IOCON2bits.PENL = 0;
     IOCON2bits.PENH = 0;    //Not used
     IOCON2bits.PMOD = 0b11; //Independent PWM mode
 
@@ -71,33 +73,39 @@ void PWMInit(void) {
     PWMCON4 = 0;    //Edge-aligned mode, master time base, individual duty for both channels
     PHASE4 = PTPER;
     SPHASE4 = PTPER;
+    DTR4 = 0;
+    ALTDTR4 =0;
     PDC4 = 0;   //PWM4H duty
-    SDC4 = 0;   //PWM4L duty
+    SDC4 = PTPER;   //PWM4L duty
     //PWM I/O control register
-    IOCON4bits.PENL = 1;
-    IOCON4bits.PENH = 1;
+    IOCON4bits.PENL = 0;
+    IOCON4bits.PENH = 0;
     IOCON4bits.PMOD = 0b11; //Independent PWM mode
 
     //PWM5 Generator Initialization
     PWMCON5 = 0;    //Edge-aligned mode, master time base, individual duty for both channels
     PHASE5 = PTPER;
     SPHASE5 = PTPER;
-    PDC5 = 0;   //PWM1H duty
+    DTR5 = 0;
+    ALTDTR5 =0;
+    PDC5 = PTPER;   //PWM1H duty
     SDC5 = 0;   //PWM1L duty
     //PWM I/O control register
-    IOCON5bits.PENL = 1;
-    IOCON5bits.PENH = 1;
+    IOCON5bits.PENL = 0;
+    IOCON5bits.PENH = 0;
     IOCON5bits.PMOD = 0b11; //Independent PWM mode
 
     //PWM6 Generator Initialization
     PWMCON6 = 0;    //Edge-aligned mode, master time base, individual duty for both channels
     PHASE6 = PTPER;
     SPHASE6 = PTPER;
+    DTR6 = 0;
+    ALTDTR6 =0;
     PDC6 = 0;   //PWM1H duty
-    SDC6 = 0;   //PWM1L duty
+    SDC6 = PTPER;   //PWM1L duty
     //PWM I/O control register
-    IOCON6bits.PENL = 1;
-    IOCON6bits.PENH = 1;
+    IOCON6bits.PENL = 0;
+    IOCON6bits.PENH = 0;
     IOCON6bits.PMOD = 0b11; //Independent PWM mode
 
     //Time base control register
@@ -117,16 +125,33 @@ void LedUser(UINT8 red, UINT8 green, UINT8 blue)
 
     //Red
     if(red > 100) red = 100;
-    SDC6 = Kled*(unsigned int)red;
+    if(red == 0) 
+        IOCON4bits.PENL = 0;
+    else    {
+        IOCON4bits.PENL = 1;
+        SDC4 = Kled*(unsigned int)(100-red);
+    }
+    
 
     //Green
     if(green > 100) green = 100;
-    PDC5 = Kled*(unsigned int)green;
-
+    
+    if(green == 0) 
+        IOCON5bits.PENH = 0;
+    else    { 
+        IOCON5bits.PENH = 1;
+        PDC5 = Kled*(unsigned int)(100-green);
+    }
     //Blue
-    if(blue > 100) blue = 100;
-    SDC4 = Kled*(unsigned int)blue;
 
+    if(blue > 100) blue = 100;
+    
+    if(blue == 0) 
+        IOCON6bits.PENL = 0;
+    else    {     
+        IOCON6bits.PENL = 1;
+        SDC6 = Kled*(unsigned int)(100-blue);
+    }
     return;
 }
 
@@ -205,14 +230,38 @@ void VibrationSet(UINT8 set)
 
     SDC2 = K*(unsigned int)set;
 
+    
     return;
 }
 
+
 /* Set peltier pwm output current
- * inputs:  lShdn (active low) - shut down DAC -> 0 - DAC off, 1 - DAC on
- *          set - peltier current in range [-100 100]% -> Ipeltier = [-Imax Imax]
+ * inputs:  setVoltage - output voltage in range [-100 100]%
  * returns: none
  */
+void PeltierVoltageSet(int setVoltage){
+
+    int VabsMax = 80;
+    if (setVoltage>VabsMax) 
+        setVoltage = VabsMax;
+    else if(setVoltage<-VabsMax)
+        setVoltage = -VabsMax;
+    
+    PDC1 = PTPER * (setVoltage+100.0) / 200.0;
+    return;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 void PeltierSetPwm(int set){
 
     unsigned int K = PTPER/100;

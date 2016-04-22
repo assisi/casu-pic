@@ -55,6 +55,12 @@ unsigned long ticks_from_ms(int msec, int prescaler) {
     return ticks;
 }
 
+float ms_from_ticks(UINT16 ticks, int prescaler) {
+    float res;
+    res = ticks * 1000.0 * 2 * prescaler / FOSC;
+    return res;
+}
+
 /*
  * Function calculates number of CPU ticks corresponding to time in seconds
  * This function is used together with the timer functions for setting values in timer registers
@@ -66,3 +72,5 @@ unsigned long ticks_from_s(float sec, int prescaler) {
     ticks = FOSC / 2 / prescaler * sec;
     return ticks;
 }
+
+

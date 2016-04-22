@@ -39,6 +39,9 @@ extern digitalPin tSlaveF;
 extern digitalPin tSlaveR;
 extern digitalPin tSlaveB;
 extern digitalPin tSlaveL;
+extern digitalPin slaveVib;
+
+
 
 extern digitalPin MUXRST;   //I2C mux
 
