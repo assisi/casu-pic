@@ -12,13 +12,7 @@
 extern "C" {
 #endif
 
-#if defined(__PIC24F__)
-#include <p24Fxxxx.h>
-#elif defined(__dsPIC33F__)
-#include <p33Fxxxx.h>
-#elif defined(__dsPIC33E__)
-#include <p33Exxxx.h>
-#endif
+#include "p33FJ06GS101.h"
 
 #include <Generic.h>
 #define PWMPRE 1   //PWM input clock prescaler

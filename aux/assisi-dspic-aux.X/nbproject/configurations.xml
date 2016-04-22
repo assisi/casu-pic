@@ -10,6 +10,10 @@
       <logicalFolder name="f2" displayName="casu" projectFiles="true">
         <itemPath>../casu/initializeHardware.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="timer" displayName="timer" projectFiles="true">
+        <itemPath>../peripheral/timer/timer2.h</itemPath>
+        <itemPath>../peripheral/timer/timerFunctions.h</itemPath>
+      </logicalFolder>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -18,8 +22,17 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <logicalFolder name="actuators" displayName="actuators" projectFiles="true">
+        <itemPath>../actuators/pwm.c</itemPath>
+      </logicalFolder>
       <logicalFolder name="casu" displayName="casu" projectFiles="true">
         <itemPath>../casu/main.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="peripheral" displayName="peripheral" projectFiles="true">
+        <logicalFolder name="timer" displayName="timer" projectFiles="true">
+          <itemPath>../peripheral/timer/timer2.c</itemPath>
+          <itemPath>../peripheral/timer/timerFunctions.c</itemPath>
+        </logicalFolder>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -31,6 +44,7 @@
   <sourceRootList>
     <Elem>../casu</Elem>
     <Elem>../actuators</Elem>
+    <Elem>../peripheral</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -42,7 +56,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>ICD3PlatformTool</platformTool>
         <languageToolchain>XC16</languageToolchain>
-        <languageToolchainVersion>1.24</languageToolchainVersion>
+        <languageToolchainVersion>1.21</languageToolchainVersion>
         <platform>2</platform>
       </toolsSet>
       <compileType>
@@ -68,7 +82,7 @@
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
       <C30>
-        <property key="code-model" value="default"/>
+        <property key="code-model" value="large-code"/>
         <property key="const-model" value="default"/>
         <property key="data-model" value="default"/>
         <property key="disable-instruction-scheduling" value="false"/>
@@ -201,7 +215,7 @@
                   value="Press to browse for a specific firmware version"/>
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="UART 1" value="true"/>
-        <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="debugoptions.useswbreakpoints" value="true"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="false"/>
