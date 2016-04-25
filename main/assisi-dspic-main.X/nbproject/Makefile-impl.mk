@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=assisi-dspic-main.x
+PROJECTNAME=assisi-dspic-main.X
 
 # Active Configuration
 DEFAULTCONF=default
