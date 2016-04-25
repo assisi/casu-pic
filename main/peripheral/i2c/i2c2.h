@@ -27,14 +27,22 @@
 #define WAIT_TIME 100
 
 #define I2C1_DEBUG 1
-#define IN_REF_DATA_NUM 12
-#define IN_CAL_DATA_NUM 13
+
 #define OUT_MEAS_DATA_NUM 55
 
 // msg ids
 #define MSG_RESET_ID 1
 #define MSG_CAL_ID 2
-#define MSG_REF_ID 3
+#define MSG_REF_VIBE_ID 3
+#define MSG_REF_LED_ID 4
+#define MSG_REF_TEMP_ID 5
+
+#define IN_RESET_DATA_NUM 2
+#define IN_CAL_DATA_NUM 13
+#define IN_VIBE_REF_DATA_NUM 4
+#define IN_LED_REF_DATA_NUM 4
+#define IN_TEMP_REF_DATA_NUM 3
+
 
 extern UINT8 msg_id;
 extern UINT16 msg_rec_bytes;

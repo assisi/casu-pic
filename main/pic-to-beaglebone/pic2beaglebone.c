@@ -41,7 +41,6 @@ void updateReferences() {
     else
         temp_ref = dummy / 10.0;
     
-
 //    if ((temp_ref - temp_ref_old > 0.1) || (temp_ref - temp_ref_old <  -0.1)) {
 //        // temperature reference changed
 ////        if (temp_ref > temp_l)      // left temperature sensor is used as feedback
@@ -57,7 +56,6 @@ void updateReferences() {
 //        temp_ref_cur = temp_wax;
 //    }
 //    temp_ref_old = temp_ref;
-
 
     motPwm_ref = i2c2_rx_buff[2] | (i2c2_rx_buff[3] << 8);
     /* scale 0 - 500*/

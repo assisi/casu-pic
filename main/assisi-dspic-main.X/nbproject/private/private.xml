@@ -6,6 +6,7 @@
         <group>
             <file>file:/home/tomislav/development/assisi/casu-pic-fw/main/peripheral/i2c/i2c2.c</file>
             <file>file:/home/tomislav/development/assisi/casu-pic-fw/main/casu/main.c</file>
+            <file>file:/home/tomislav/development/assisi/casu-pic-fw/main/pic-to-beaglebone/pic2beaglebone.c</file>
             <file>file:/home/tomislav/development/assisi/casu-pic-fw/main/peripheral/i2c/i2c2.h</file>
         </group>
     </open-files>

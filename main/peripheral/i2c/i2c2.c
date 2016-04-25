@@ -86,12 +86,22 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
                 else
                     i2c2_rx_buff[i2c2_rx_head++] = I2C2RCV;
 
-                if (msg_id == MSG_REF_ID && msg_rec_bytes == IN_REF_DATA_NUM) {
-                    msg_status = MSG_REF_ID;
+                if (msg_id == MSG_REF_VIBE_ID && msg_rec_bytes == IN_VIBE_REF_DATA_NUM) {
+                    msg_status = MSG_REF_VIBE_ID;
+                    updateReferences();  //TODO update this function, use msg_status variable as as parameter.
+                    msg_status = 0;
+                }
+                else if (msg_id == MSG_REF_LED_ID && msg_rec_bytes == IN_LED_REF_DATA_NUM) {
+                    msg_status = MSG_REF_LED_ID;
                     updateReferences();
                     msg_status = 0;
                 }
-                if (msg_id == MSG_CAL_ID && msg_rec_bytes == IN_CAL_DATA_NUM) {
+                else if (msg_id == MSG_REF_TEMP_ID && msg_rec_bytes == IN_TEMP_REF_DATA_NUM) {
+                    msg_status = MSG_REF_TEMP_ID;
+                    updateReferences();
+                    msg_status = 0;
+                }
+                else if (msg_id == MSG_CAL_ID && msg_rec_bytes == IN_CAL_DATA_NUM) {
                     // immediatelly process calibration data
                     updateCalibrationData();
                     msg_status = 0;
