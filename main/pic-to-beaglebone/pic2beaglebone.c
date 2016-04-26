@@ -6,13 +6,13 @@ float temp_f = -1, temp_b = -1, temp_r = -1, temp_l = -1, temp_pcb = -1,
 float vAmp_f = -1 , vAmp_b = -1, vAmp_r = -1, vAmp_l = -1;
 UINT16 fAmp_f = 0, fAmp_b = 0, fAmp_r = 0, fAmp_l = 0;
 UINT16 proxy_f = 0, proxy_fr = 0, proxy_br = 0, proxy_b = 0, proxy_bl = 0, proxy_fl = 0, proxy_t = 0;
-UINT8  pwmMotor = 0;
 int ctlPeltier = 0, fanCooler = 0;
 UINT8 tempCtlOn = 0, fanCtlOn = 0;
 float Kf1 = 0.1428, Kf2 = 0.1428, Kf3 = 0.7101;
 float Kp = 20, Ki = 0.9;
 float temp_ref_shutdown = 25;
 float temp_ref_l = 26, temp_ref_h = 45;
+UINT8 pwmMotor = 0;
 
 /* Init variables for storing references and control inputs*/
 float temp_ref = 25.0;
@@ -31,90 +31,53 @@ UINT16 speakerFreq_ref_old = 0;
  * Function updates references (temperature, motor, LED1, LED2) transfered from beaglebone.
  * It takes data from rx_buff used in i2c communication with beaglebone
  */
-void updateReferences() {
+void updateReferences(UINT8 msg_id) {
     UINT16 dummy;
     int status = 0;
 
-    dummy = i2c2_rx_buff[0] | (i2c2_rx_buff[1] << 8);
-    if (dummy > 32767)
-        temp_ref = (dummy - 65536) / 10.0;
-    else
-        temp_ref = dummy / 10.0;
-    
-//    if ((temp_ref - temp_ref_old > 0.1) || (temp_ref - temp_ref_old <  -0.1)) {
-//        // temperature reference changed
-////        if (temp_ref > temp_l)      // left temperature sensor is used as feedback
-////            PELTIER_PWM_MAX_N = 85;         // heating
-////        else if (temp_l - temp_ref > 4.5)   // cooling with high temperature difference > 4.5, reduce maximum current to 30%
-////            PELTIER_PWM_MAX_N = 30;
-////        else
-////            PELTIER_PWM_MAX_N = 60;         // cooling with low temperature difference < 4.5, increase allowed maximum current to 60%
-//        if ((temp_ref - temp_ref_old) * ctlPeltier < -0.1) {  // changing heating/cooling direction
-//            PeltierResetPID();
-//        }
-//
-//        temp_ref_cur = temp_wax;
-//    }
-//    temp_ref_old = temp_ref;
-
-    motPwm_ref = i2c2_rx_buff[2] | (i2c2_rx_buff[3] << 8);
-    /* scale 0 - 500*/
-
-    if (motPwm_ref > 100)
-        motPwm_ref = 100;
-    if (motPwm_ref < 0)
-        motPwm_ref = 0;
-    pwmMotor = motPwm_ref;
-    /*
-    ctlLED_r[0] = i2c2_rx_buff[4];
-    ctlLED_r[1] = i2c2_rx_buff[5];
-    ctlLED_r[2] = i2c2_rx_buff[6];
-    */
-    
-    speakerAmp_ref = i2c2_rx_buff[4];
-    if (speakerAmp_ref > 100)
+    if (msg_id == MSG_REF_VIBE_ID) {
+        
+        speakerAmp_ref = i2c2_rx_buff[0];
+        if (speakerAmp_ref > 100)
             speakerAmp_ref = 100;
-    else if (speakerAmp_ref < 0)
-        speakerAmp_ref = 0;
-    speakerFreq_ref = i2c2_rx_buff[5];
-    speakerFreq_ref = speakerFreq_ref<<8;
-    speakerFreq_ref = speakerFreq_ref + i2c2_rx_buff[6];
-    if (speakerFreq_ref > 500)
-        speakerFreq_ref = 500;
-    else if (speakerFreq_ref <= 50)
-        speakerFreq_ref = 50;
-    
-    diagLED_r[0] = i2c2_rx_buff[7];
-    diagLED_r[1] = i2c2_rx_buff[8];
-    diagLED_r[2] = i2c2_rx_buff[9];
-    fanBlower_r = i2c2_rx_buff[10];
+        else if (speakerAmp_ref < 0)
+            speakerAmp_ref = 0;
+        
+        speakerFreq_ref = i2c2_rx_buff[1] | (i2c2_rx_buff[2] << 8);
+        if (speakerFreq_ref > 500)
+            speakerFreq_ref = 500;
+        else if (speakerFreq_ref < 1)
+            speakerFreq_ref = 1;
+        
+        if (speakerAmp_ref != speakerAmp_ref_old) {
+            chipSelect(slaveVib);
+            status = spi1TransferWord(speakerAmp_ref, &dummy);
+            chipDeselect(slaveVib);
+            speakerAmp_ref_old = speakerAmp_ref;
+        }
 
-    LedUser(diagLED_r[0], diagLED_r[1],diagLED_r[2]);
-    VibrationSet(pwmMotor);     // this is actually motor pwm
-    FanBlower(fanBlower_r);
-    if (speakerAmp_ref != speakerAmp_ref_old) {
-        speakerAmp_ref_old = speakerAmp_ref;
-        //dummyData = pwmMotor;
-        chipSelect(slaveVib);
-
-        UINT16 crap;
-        status = spi1TransferWord(speakerAmp_ref, &crap);
-        //status = spi1TransferWord(30, &crap);
-        chipDeselect(slaveVib);
-        //delay_t1(1);
+        if (speakerFreq_ref != speakerFreq_ref_old) {
+            chipSelect(slaveVib);
+            status = spi1TransferWord(speakerFreq_ref+150, &dummy);
+            chipDeselect(slaveVib);
+            speakerFreq_ref_old = speakerFreq_ref;
+        }
     }
-
-    if (speakerFreq_ref != speakerFreq_ref_old) {
-        speakerFreq_ref_old = speakerFreq_ref;
-        //dummyData = pwmMotor;
-        chipSelect(slaveVib);
-
-        UINT16 crap;
-        status = spi1TransferWord(speakerFreq_ref+150, &crap);
-        //status = spi1TransferWord(30, &crap);
-        chipDeselect(slaveVib);
-
+    else if (msg_id == MSG_REF_LED_ID) {
+        diagLED_r[0] = i2c2_rx_buff[0];
+        diagLED_r[1] = i2c2_rx_buff[1];
+        diagLED_r[2] = i2c2_rx_buff[2];
+        LedUser(diagLED_r[0], diagLED_r[1],diagLED_r[2]);
     }
+    else if (msg_id == MSG_REF_TEMP_ID) {
+        dummy = i2c2_rx_buff[0] | (i2c2_rx_buff[1] << 8);
+        if (dummy > 32767)
+            temp_ref = (dummy - 65536) / 10.0;
+        else
+            temp_ref = dummy / 10.0;
+        if (temp_ref < 26)
+            temp_ref = 0.0;
+    } 
 }
 
 /*
@@ -265,10 +228,7 @@ void updateMeasurements() {
         dummy = (temp_casu * 10);
     else
         dummy = (int)(temp_casu * 10) + 65536;
-//    if (temp_ref_cur >= 0)
-//        dummy = (temp_ref_cur * 10);
-//    else
-//        dummy = (int)(temp_ref_cur * 10) + 65536;
+
     i2c2_tx_buff[50] = dummy & 0x00FF;
     i2c2_tx_buff[51] = (dummy & 0xFF00) >> 8;
 

@@ -17,7 +17,7 @@
 
 /*! I2C address of the dsPIC 
  */
-#define I2C2_CASU_ADD 0x14
+#define I2C2_CASU_ADD 0x11
 
 /*! Size of the buffers used for transmitting (tx) and receiving data (rx). 
  */
@@ -47,6 +47,7 @@
 extern UINT8 msg_id;
 extern UINT16 msg_rec_bytes;
 extern UINT8 msg_status;
+extern UINT8 i2cStarted;
 
 /*! Buffer for incoming data (rx buffer).
  */

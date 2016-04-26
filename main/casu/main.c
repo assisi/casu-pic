@@ -80,6 +80,7 @@ int main(int argc, char** argv) {
     int watchCounter = 0;
     int tempSensors = 0;
     UINT16 timerVal = 0;
+    UINT16 dummy;
     float timeElapsed = 0.0;
     char muxCh;
     extern UINT8 pwmMotor;
@@ -131,9 +132,25 @@ int main(int argc, char** argv) {
     PWMInit();
     LedUser(100, 0, 0);
     delay_t1(500);
-    //LedUser(0, 0, 0);
     
-    //PeltierVoltageSet(1);
+    // Peltier initialization - set to 0
+    ctlPeltier = 0;
+    PeltierVoltageSet(ctlPeltier);    
+    
+    // Speaker initialization - set to 0,1
+    speakerAmp_ref = 0;
+    speakerFreq_ref = 1;
+    
+    chipSelect(slaveVib);
+    status = spi1TransferWord(speakerAmp_ref, &dummy);
+    chipDeselect(slaveVib);
+    delay_t1(1);
+    speakerAmp_ref_old = speakerAmp_ref;
+    
+    chipSelect(slaveVib);
+    status = spi1TransferWord(speakerFreq_ref+150, &dummy);
+    chipDeselect(slaveVib);
+    speakerFreq_ref_old = speakerFreq_ref;
 
     //ADT7420 sensors initalization
     status = adt7420Init(0, ADT74_I2C_ADD_mainBoard);
@@ -141,13 +158,9 @@ int main(int argc, char** argv) {
     muxCh = I2C1ChSelect(1,6);
     status = adt7420Init(0, ADT74_I2C_ADD_flexPCB);
     UINT16 dummyData[2] = {0};
+   
     spi1Init(2, 0);
-    //chipSelect(slaveVib);
-    //tempstatus = spi1TransferBuff(dummyData, 3);
-    //chipDeselect(slaveVib);
-    
-    //PeltierSetOut2(0);
-
+  
     //Estimation initializaction
     for (i = 0; i < 50; i++) {
         adt7320ReadTemp(tSlaveF, &temp_f); delay_t1(5);
@@ -182,26 +195,6 @@ int main(int argc, char** argv) {
     //CASU ring average temperature
     temp_casu = 0;
     tempNum = 0;
-//    while (tempNum == 0) {
-//        for (i = 0; i < 4; i++) {
-//            if (statusTemp[i] == 1 && tempBridge[i] > 20 && tempBridge[i] < 60) {
-//                tempNum++;
-//                temp_casu += tempBridge[i];
-//            }
-//        }
-//
-//        if (tempNum > 0)
-//            break;
-//        watchCounter++;
-//        // if after 100 round we still don't have temp measurements - break
-//        if (watchCounter == 100) {
-//            for (i = 0; i < 4; i++) {
-//                statusTemp[i] = -1;
-//            }
-//            break;
-//        }
-//        delay_t1(5);
-//    }
 
     for (i = 0; i < 4; i++) {
         if (statusTemp[i] == 1 && tempBridge[i] > 20 && tempBridge[i] < 60) {
@@ -218,17 +211,23 @@ int main(int argc, char** argv) {
     temp_casu1 = temp_casu;
     temp_wax = temp_casu; temp_wax1 = temp_casu;
     
+    diagLED_r[0] = 0;
+    diagLED_r[1] = 0;
+    diagLED_r[2] = 0;
     
+    while (i2cStarted == 0) {
+        delay_t1(200);
+        ClrWdt();
+    }
     
+    LedUser(diagLED_r[0], diagLED_r[1],diagLED_r[2]);
+   
     while(1) {
         
         ConfigIntTimer2(T1_INT_OFF);    //Disable timer interrupt
         IFS0bits.T2IF = 0; //Clear interrupt flag
         OpenTimer2(T1_ON | T1_PS_1_256, 30000); //Configure timer
         
-        /*    
-        continue;         
-        */
         /*
          **** Do not read acc sensors - we have to implement fft
         if (readAccX(aSlaveR, &ax) <= 0) {
@@ -280,10 +279,6 @@ int main(int argc, char** argv) {
         statusProxi[5] = I2C1ChSelect(1, 1);
         proxy_fl = VCNL4000ReadProxi();
         delay_t1(1);
-        
-        
-        //if((proxy_f == -1) && (proxy_fl == -1) && (proxy_bl == -1) && (proxy_b == -1) && (proxy_br == -1) && (proxy_fr == -1))
-           // muxReset();
         
         //Temperature readings and control
         // readings every 2 second
@@ -364,23 +359,10 @@ int main(int argc, char** argv) {
                     }
                     
                     if ((temp_casu > 45) || (temp_pcb > 45)) { //Check limits
-                        ctlPeltier = 0; // casu if overheating, turn off everything
+                        ctlPeltier = 0;
                     }
                     PeltierVoltageSet(-ctlPeltier);
-
-                    //PeltierSetOut2(ctlPeltier); //Set PWM output
-
-
-                    // propagate reference to the output
-                    // ref is in the range [25, 45] -> transform to [-100, 100]
-    //                if (temp_ref < 35) {
-    //                    // [25 - 35] - > [0, 100]
-    //                    ctlPeltier = 10 * temp_ref - 250;
-    //                } else {
-    //                    //[35-45] -> [0--100]
-    //                    ctlPeltier = -10.0 * temp_ref + 350;
-    //                }
-                    //PeltierSetOut2(ctlPeltier);
+                    
                 }
                 else {
                     ctlPeltier = (temp_ref * 5) - 150;
@@ -395,75 +377,9 @@ int main(int argc, char** argv) {
             tempLoopControl = 0;
 
         } else {
+            
             tempLoopControl++;
-        }
-
-        
-
-//                if (tempLoop == 3) {
-//                    // 2.5 s peltier off
-//                    //diagLED_r[0] = 0;
-//                    PeltierOff();
-//                    tempLoop = 0;
-//                    //LedUser(100, 0, 0);
-//
-//                }
-//                else {
-//
-//                    if (tempCtlOn == 1) {
-//
-//                        if ((temp_casu > 45) || (temp_t > 45)){
-//
-//                            // casu if overheating, turn off everything
-//                            ctlPeltier = 0;
-//                            //PeltierSetOut2(ctlPeltier);
-//                        }
-//                        else {
-//
-//                            if(temp_ref <= temp_ref_l){     // temp_ref < 26 , turn off
-//                                ctlPeltier = 0;
-//                                PeltierResetPID();
-//                                //PeltierSetOut2(ctlPeltier);
-//                            }
-//                            else{
-//                                // temp control is on -> calculate PID output every 10 seconds
-//                                if (tempLoop == 0) {
-//                                    // increase reference by 0.5°C every 10 sec
-//                                    //LedUser(0, 100, 0);
-//                                    if (temp_ref - temp_ref_cur > 0.5)
-//                                        temp_ref_cur += 0.5;
-//                                    else if (temp_ref - temp_ref_cur < -0.5)
-//                                        temp_ref_cur -= 0.5;
-//                                    else
-//                                        temp_ref_cur = temp_ref;
-//                                    ctlPeltier = PeltierPID(temp_ref_cur, temp_wax);//PeltierPID(temp_ref_cur, temp_l);
-//                                    //PeltierSetOut2(ctlPeltier);
-//
-//                                }
-//
-//                            }
-//                        }
-//
-//                    }
-//                    else {
-//                        // temp control is off -> propagate reference to the output
-//                        // ref is in the range [25, 45] -> transform to [-100, 100]
-//                        if (tempLoop == 0) {
-//                            if (temp_ref < 35) {
-//                                // [25 - 35] - > [0, 100]
-//                                ctlPeltier = 10 * temp_ref - 250;
-//                            }
-//                            else {
-//                                //[35-45] -> [0--100]
-//                                ctlPeltier = -10.0 * temp_ref + 350;
-//                            }
-//                            //PeltierSetOut2(ctlPeltier);
-//                        }
-//                    }
-//                    } else {
-//        tempLoopControl++;
-//    }
-/******************************************************************************/
+        }  
 
 //# COOLER FAN CONTROL
         if (fanCtlOn == 1) {

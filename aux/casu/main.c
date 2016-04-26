@@ -96,9 +96,9 @@ int main()
     ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_2);
     
     while(1) {
-        if (vibeFreq_ref != vibeFreq_ref_old)  {
-            vibeFreq_ref_old = vibeFreq_ref;
+        if (vibeFreq_ref != vibeFreq_ref_old) {
             dt_f = 35333.0/(float)vibeFreq_ref; // 2 ms
+            vibeFreq_ref_old = vibeFreq_ref;
             //CloseTimer2();
             OpenTimer2(T2_ON | T2_PS_1_1, ticks_from_us(dt_f, 1));  
         }
@@ -248,12 +248,10 @@ void __attribute__((__interrupt__, __auto_psv__)) _T2Interrupt(void)
   }
   else    {
       vibeFreq_ref = buffer-150;
-      if (vibeFreq_ref == 0)
+      if (vibeFreq_ref < 1)
           vibeFreq_ref = 1;
       //dt_f = 35333.0/(float)vibeFreq_ref; // 2 ms
       //OpenTimer2(T2_ON | T2_PS_1_1, ticks_from_us(dt_f, 1));
-      
-      
   }
       
       /*

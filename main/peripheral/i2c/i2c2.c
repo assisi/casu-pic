@@ -7,6 +7,7 @@ UINT8 i2c2_tx_head = 0;                  // pointer to a buffer element which wi
 UINT8 msg_id = 0;
 UINT16 msg_rec_bytes = 0;
 UINT8 msg_status = 0;
+UINT8 i2cStarted = 0;
 
 /*
  * Function initializes i2c2 module as a slave device
@@ -22,7 +23,7 @@ UINT8 I2C2SlaveInit(UINT8 address, UINT8 int_priority) {
     I2C2ADD = address;          // set up the address
 
     /*check*/
-    I2C2CONbits.STREN = 1;      // Enable software or receive clock streching;
+    I2C2CONbits.STREN = 1;      // Enable software or receive clock stretching;
     I2C2CONbits.GCEN = 0;       // General call address disabled
     I2C2CONbits.SMEN = 0;       // Disable SMBus input thresholds
     I2C2CONbits.DISSLW = 0;     // Slew rate control enabled
@@ -67,6 +68,7 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
             // master request reading
             dummy = I2C2RCV;  // dummy read
             I2C2TRN = i2c2_tx_buff[i2c2_tx_head++];
+            i2cStarted = 1;
             int i = 0;                  // watchdog variable
             while(I2C2STATbits.TBF) {
                 //Wait till all
@@ -88,21 +90,20 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
 
                 if (msg_id == MSG_REF_VIBE_ID && msg_rec_bytes == IN_VIBE_REF_DATA_NUM) {
                     msg_status = MSG_REF_VIBE_ID;
-                    updateReferences();  //TODO update this function, use msg_status variable as as parameter.
+                    updateReferences(msg_status);  //TODO update this function, use msg_status variable as as parameter.
                     msg_status = 0;
                 }
                 else if (msg_id == MSG_REF_LED_ID && msg_rec_bytes == IN_LED_REF_DATA_NUM) {
                     msg_status = MSG_REF_LED_ID;
-                    updateReferences();
+                    updateReferences(msg_status);
                     msg_status = 0;
                 }
                 else if (msg_id == MSG_REF_TEMP_ID && msg_rec_bytes == IN_TEMP_REF_DATA_NUM) {
                     msg_status = MSG_REF_TEMP_ID;
-                    updateReferences();
+                    updateReferences(msg_status);
                     msg_status = 0;
                 }
                 else if (msg_id == MSG_CAL_ID && msg_rec_bytes == IN_CAL_DATA_NUM) {
-                    // immediatelly process calibration data
                     updateCalibrationData();
                     msg_status = 0;
                 }

@@ -93,18 +93,13 @@ extern UINT16 proxy_t;
 
 /* Variables for storing references and control inputs*/
 
-/*! Control PWM value of the vibration motor, range [0,100].
-
- */
-extern UINT8 pwmMotor;
-/*! Control PWM value of red LED used as bee stimulus, range [0,100].
- */
-
-
 extern UINT16 speakerAmp_ref;
 
+extern UINT16 speakerAmp_ref_old;
 
 extern UINT16 speakerFreq_ref;
+
+extern UINT16 speakerFreq_ref_old;
 
 
 extern UINT8 pwmR_ctl;
@@ -154,7 +149,7 @@ extern UINT8 diagLED_r[3];
 /*! \brief Function updates referent values of each stimuli. Referent values are received through I2C communication with SBC.
 
  */
-void updateReferences();
+void updateReferences(UINT8 msg_id);
 /*! \brief Function measured values of each sensor. Measured values are sent through I2C communication to SBC.
  */
 void updateMeasurements();
