@@ -28,6 +28,8 @@
 #include "../actuators/pwm.h"
 #include "../actuators/peltier.h"
 
+#define MAIN_LOOP_DUR 80 
+
 // Select Internal FRC at POR
 _FOSCSEL(FNOSC_FRC & IESO_OFF);
 // Enable Clock Switching and Configure POSC in XT mode
@@ -131,7 +133,6 @@ int main(int argc, char** argv) {
     //PWM intialization
     PWMInit();
     LedUser(100, 0, 0);
-    delay_t1(500);
     
     // Peltier initialization - set to 0
     ctlPeltier = 0;
@@ -139,6 +140,14 @@ int main(int argc, char** argv) {
     
     // Speaker initialization - set to 0,1
     spi1Init(2, 0);
+    
+    // wait for everything to initialize
+    // it seems that it takes few seconds for voltage to settle down after power on
+    for (i = 0; i < 13; i++) {
+        delay_t1(200);
+        ClrWdt();
+    }
+    
     speakerAmp_ref = 0;
     speakerAmp_ref_old = 10;
     speakerFreq_ref = 1;
@@ -160,6 +169,7 @@ int main(int argc, char** argv) {
     while (speakerAmp_ref != speakerAmp_ref_old) {
         if (count > 5 ) {
             // Error !
+            //LedUser(100,0,0);
             break;
         }
         
@@ -189,6 +199,7 @@ int main(int argc, char** argv) {
         
         if (count > 5 ) {
             // Error !
+            //LedUser(0,100,0);
             break;
         }
 
@@ -231,15 +242,6 @@ int main(int argc, char** argv) {
         temp_b = -1;
     if (statusTemp[3] != 1)
         temp_l = -1;
-
-    vAmp_f = 0;
-    vAmp_r = 0;
-    vAmp_b = 0;
-    vAmp_l = 0;
-    fAmp_f = 0;
-    fAmp_r = 0;
-    fAmp_b = 0;
-    fAmp_l = 0;
     
     //CASU ring average temperature
     temp_casu = 0;
@@ -333,7 +335,7 @@ int main(int argc, char** argv) {
         //Temperature readings and control
         // readings every 2 second
         // PID control every 2 seconds
-        if (tempLoopControl >= 20) {
+        if (tempLoopControl >= 25) {
             
             //Cooler temperature
             adt7420ReadTemp(&temp_pcb, ADT74_I2C_ADD_mainBoard);
@@ -450,8 +452,8 @@ int main(int argc, char** argv) {
         timerVal = ReadTimer2();
         CloseTimer2();
         timeElapsed = ms_from_ticks(timerVal, 256);
-        if (timeElapsed < 100)
-            delay_t1(100 - timeElapsed);
+        if (timeElapsed < MAIN_LOOP_DUR)
+            delay_t1(MAIN_LOOP_DUR - timeElapsed);
         
         ClrWdt(); //Clear watchdog timer
     }   

@@ -42,30 +42,15 @@ extern float temp_casu, temp_casu1, temp_wax, temp_wax1;    // temperature
 
 /*! Amplitude of vibration in g (g = 9.81 m/s2) measured by the front accelerometer.
  */
-extern float vAmp_f;
-/*! Amplitude of vibration in g measured by the back accelerometer.
+extern float vAmp_m[4];
+/*! Amplitude of vibration in g measured by the accelerometer for 4 dominant frequencies.
  */
-extern float vAmp_b;
-/*! Amplitude of vibration in g measured by the right accelerometer.
 
+/*! Frequency of vibration in Hz measured by the acceleromer. This array contains the first 4 dominant frequencies.
  */
-extern float vAmp_r;
-/*! Amplitude of vibration in g measured by the left accelerometer.
- */
-extern float vAmp_l;
-
-/*! Frequency of vibration in Hz measured by the front accelerometer.
- */
-extern UINT16 fAmp_f;
+extern UINT16 fAmp_m[4];
 /*! Frequency of vibration in Hz measured by the back accelerometer.
  */
-extern UINT16 fAmp_b;
-/*! Frequency of vibration in Hz measured by the right accelerometer.
- */
-extern UINT16 fAmp_r;
-/*! Frequency of vibration in Hz measured by the left accelerometer.
- */
-extern UINT16 fAmp_l;
 
 /*! The front proximity sensor value in bits, range [0-65535].
  */

@@ -20,9 +20,9 @@ void InitializeSPI(void);
 void _ISRFAST _SPI1Interrupt(void);
 
 
-UINT16 vibeFreq_ref = 300;
+UINT16 vibeFreq_ref = 1;
 UINT16 vibeFreq_ref_old = 1;
-UINT16 vibeAmp_ref = 100;
+UINT16 vibeAmp_ref = 0;
 float vibe_period = 5000.0; // in usec
 volatile float dt_f = 0;
 int N = 18;
@@ -89,8 +89,8 @@ int main()
         pwm_i[i] = sin(0.5 * PI * i / N) ;
     }
     
-    vibe_period = 1000000.0 / vibeFreq_ref; // in usec
-    dt_f = 200.0; // 2 ms
+    //vibe_period = 1000000.0 / vibeFreq_ref; // in usec
+    dt_f = 35333.0/(float)vibeFreq_ref; // 2 ms
     //CloseTimer2();
     OpenTimer2(T2_ON | T2_PS_1_1, ticks_from_us(dt_f, 1));
     ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_2);

@@ -3,8 +3,8 @@
 /*Init variables for measured data*/
 float temp_f = -1, temp_b = -1, temp_r = -1, temp_l = -1, temp_pcb = -1,
         temp_casu = 25, temp_casu1 = 25, temp_wax = 25, temp_wax1 = 25, temp_flexPCB = -1;
-float vAmp_f = -1 , vAmp_b = -1, vAmp_r = -1, vAmp_l = -1;
-UINT16 fAmp_f = 0, fAmp_b = 0, fAmp_r = 0, fAmp_l = 0;
+float vAmp_m[4] = {-1.0};
+UINT16 fAmp_m[4] = {-1.0};
 UINT16 proxy_f = 0, proxy_fr = 0, proxy_br = 0, proxy_b = 0, proxy_bl = 0, proxy_fl = 0, proxy_t = 0;
 int ctlPeltier = 0, fanCooler = 0;
 UINT8 tempCtlOn = 0, fanCtlOn = 0;
@@ -53,6 +53,7 @@ void updateReferences(UINT8 msg_id) {
         while (speakerAmp_ref != speakerAmp_ref_old) {
             if (count > 5 ) {
                 // Error !
+                //LedUser(100,0,0);
                 break;
             }
             UINT16 inBuff[2] = {0};
@@ -73,6 +74,7 @@ void updateReferences(UINT8 msg_id) {
         while (speakerFreq_ref != speakerFreq_ref_old) {
             if (count > 5 ) {
                 // Error !
+                //LedUser(0,100,0);
                 break;
             }
             UINT16 inBuff[2] = {0};
@@ -169,127 +171,111 @@ void updateMeasurements() {
         dummy = (int)(temp_l * 10) + 65536;
     i2c2_tx_buff[6] = dummy & 0x00FF;
     i2c2_tx_buff[7] = (dummy & 0xFF00) >> 8;
+    
+     if (temp_flexPCB >= 0)
+        dummy = (temp_flexPCB * 10);
+    else
+        dummy = (int)(temp_flexPCB * 10) + 65536;
+    i2c2_tx_buff[8] = dummy & 0x00FF;
+    i2c2_tx_buff[9] = (dummy & 0xFF00) >> 8;
 
     if (temp_pcb >= 0)
         dummy = (temp_pcb * 10);
     else
         dummy = (int)(temp_pcb * 10) + 65536;
-    i2c2_tx_buff[8] = dummy & 0x00FF;
-    i2c2_tx_buff[9] = (dummy & 0xFF00) >> 8;
-
-    dummy = vAmp_f * 10;
     i2c2_tx_buff[10] = dummy & 0x00FF;
     i2c2_tx_buff[11] = (dummy & 0xFF00) >> 8;
-
-    dummy = vAmp_r * 10;
-    i2c2_tx_buff[12] = dummy & 0x00FF;
-    i2c2_tx_buff[13] = (dummy & 0xFF00) >> 8;
-
-    dummy = vAmp_b * 10;
-    i2c2_tx_buff[14] = dummy & 0x00FF;
-    i2c2_tx_buff[15] = (dummy & 0xFF00) >> 8;
-
-    dummy = vAmp_l * 10;
-    i2c2_tx_buff[16] = dummy & 0x00FF;
-    i2c2_tx_buff[17] = (dummy & 0xFF00) >> 8;
-
-    i2c2_tx_buff[18] = fAmp_f & 0x00FF;
-    i2c2_tx_buff[19] = (fAmp_f & 0xFF00) >> 8;
-
-    i2c2_tx_buff[20] = fAmp_r & 0x00FF;
-    i2c2_tx_buff[21] = (fAmp_r & 0xFF00) >> 8;
-
-    i2c2_tx_buff[22] = fAmp_b & 0x00FF;
-    i2c2_tx_buff[23] = (fAmp_b& 0xFF00) >> 8;
-
-    i2c2_tx_buff[24] = fAmp_l & 0x00FF;
-    i2c2_tx_buff[25] = (fAmp_l & 0xFF00) >> 8;
-
-    i2c2_tx_buff[26] = proxy_f & 0x00FF;
-    i2c2_tx_buff[27] = (proxy_f & 0xFF00) >> 8;
-
-    i2c2_tx_buff[28] = proxy_fr & 0x00FF;
-    i2c2_tx_buff[29] = (proxy_fr & 0xFF00) >> 8;
-
-    i2c2_tx_buff[30] = proxy_br & 0x00FF;
-    i2c2_tx_buff[31] = (proxy_br & 0xFF00) >> 8;
-
-    i2c2_tx_buff[32] = proxy_b & 0x00FF;
-    i2c2_tx_buff[33] = (proxy_b & 0xFF00) >> 8;
-
-    i2c2_tx_buff[34] = proxy_bl & 0x00FF;
-    i2c2_tx_buff[35] = (proxy_bl & 0xFF00) >> 8;
-
-    i2c2_tx_buff[36] = proxy_fl & 0x00FF;
-    i2c2_tx_buff[37] = (proxy_fl & 0xFF00) >> 8;
-
-    i2c2_tx_buff[38] = proxy_t & 0x00FF;
-    i2c2_tx_buff[39] = (proxy_t & 0xFF00) >> 8;
-
-    if(ctlPeltier < 0)
-        dummy1 = ctlPeltier + 201;
-    else
-        dummy1 = ctlPeltier;
     
-    i2c2_tx_buff[40] = dummy1;
-    i2c2_tx_buff[41] = pwmMotor;
-
-    // send back what you received
-    i2c2_tx_buff[42] = speakerAmp_ref_old;
-    i2c2_tx_buff[43] = speakerFreq_ref_old & 0x00FF;
-    i2c2_tx_buff[44] = (speakerFreq_ref_old & 0xFF00) >> 8;
-    
-    i2c2_tx_buff[45] = speakerAmp_ref;
-    i2c2_tx_buff[46] = speakerFreq_ref & 0x00FF;
-    i2c2_tx_buff[47] = (speakerFreq_ref & 0xFF00) >> 8;
-        /*
-    i2c2_tx_buff[45] = diagLED_r[0];
-    i2c2_tx_buff[46] = diagLED_r[1];
-    i2c2_tx_buff[47] = diagLED_r[2];
-    */
-
-    i2c2_tx_buff[48] = fanBlower_r;
-    if (fanCooler == FAN_COOLER_ON)
-        i2c2_tx_buff[49] = 100;
-    else
-        i2c2_tx_buff[49] = 0;
-
-    //CASU ring temperature
+      //CASU ring temperature
     if (temp_casu >= 0)
         dummy = (temp_casu * 10);
     else
         dummy = (int)(temp_casu * 10) + 65536;
 
-    i2c2_tx_buff[50] = dummy & 0x00FF;
-    i2c2_tx_buff[51] = (dummy & 0xFF00) >> 8;
+    i2c2_tx_buff[12] = dummy & 0x00FF;
+    i2c2_tx_buff[13] = (dummy & 0xFF00) >> 8;
 
     //CASU wax temperature estimated value
     if (temp_wax >= 0)
         dummy = (temp_wax * 10);
     else
         dummy = (int)(temp_wax * 10) + 65536;
-    i2c2_tx_buff[52] = dummy & 0x00FF;
-    i2c2_tx_buff[53] = (dummy & 0xFF00) >> 8;
+    i2c2_tx_buff[14] = dummy & 0x00FF;
+    i2c2_tx_buff[15] = (dummy & 0xFF00) >> 8;
     
     if (temp_ref >= 0)
         dummy = (temp_ref * 10);
     else
         dummy = (int)(temp_ref * 10) + 65536;
-    i2c2_tx_buff[54] = dummy & 0x00FF;
-    i2c2_tx_buff[55] = (dummy & 0xFF00) >> 8;
-    
-    if (temp_ref_cur >= 0)
-        dummy = (temp_ref_cur * 10);
-    else
-        dummy = (int)(temp_ref_cur * 10) + 65536;
-    i2c2_tx_buff[56] = dummy & 0x00FF;
-    i2c2_tx_buff[57] = (dummy & 0xFF00) >> 8;
-    i2c2_tx_buff[58] = calRec;
+    i2c2_tx_buff[16] = dummy & 0x00FF;
+    i2c2_tx_buff[17] = (dummy & 0xFF00) >> 8;
 
-    if (temp_flexPCB >= 0)
-        dummy = (temp_flexPCB * 10);
+    dummy = vAmp_m[0] * 10;
+    i2c2_tx_buff[18] = dummy & 0x00FF;
+    i2c2_tx_buff[19] = (dummy & 0xFF00) >> 8;
+
+    dummy = vAmp_m[1] * 10;
+    i2c2_tx_buff[20] = dummy & 0x00FF;
+    i2c2_tx_buff[21] = (dummy & 0xFF00) >> 8;
+
+    dummy = vAmp_m[2] * 10;
+    i2c2_tx_buff[22] = dummy & 0x00FF;
+    i2c2_tx_buff[23] = (dummy & 0xFF00) >> 8;
+
+    dummy = vAmp_m[3] * 10;
+    i2c2_tx_buff[24] = dummy & 0x00FF;
+    i2c2_tx_buff[25] = (dummy & 0xFF00) >> 8;
+
+    i2c2_tx_buff[26] = fAmp_m[0] & 0x00FF;
+    i2c2_tx_buff[27] = (fAmp_m[0] & 0xFF00) >> 8;
+
+    i2c2_tx_buff[28] = fAmp_m[1] & 0x00FF;
+    i2c2_tx_buff[29] = (fAmp_m[1] & 0xFF00) >> 8;
+
+    i2c2_tx_buff[30] = fAmp_m[2] & 0x00FF;
+    i2c2_tx_buff[31] = (fAmp_m[2] & 0xFF00) >> 8;
+
+    i2c2_tx_buff[32] = fAmp_m[3] & 0x00FF;
+    i2c2_tx_buff[33] = (fAmp_m[3] & 0xFF00) >> 8;
+    
+     // send back what you received
+    i2c2_tx_buff[34] = speakerAmp_ref_old;
+    i2c2_tx_buff[35] = speakerFreq_ref_old & 0x00FF;
+    i2c2_tx_buff[36] = (speakerFreq_ref_old & 0xFF00) >> 8;
+
+    i2c2_tx_buff[37] = proxy_f & 0x00FF;
+    i2c2_tx_buff[38] = (proxy_f & 0xFF00) >> 8;
+
+    i2c2_tx_buff[39] = proxy_fr & 0x00FF;
+    i2c2_tx_buff[40] = (proxy_fr & 0xFF00) >> 8;
+
+    i2c2_tx_buff[41] = proxy_br & 0x00FF;
+    i2c2_tx_buff[42] = (proxy_br & 0xFF00) >> 8;
+
+    i2c2_tx_buff[43] = proxy_b & 0x00FF;
+    i2c2_tx_buff[44] = (proxy_b & 0xFF00) >> 8;
+
+    i2c2_tx_buff[45] = proxy_bl & 0x00FF;
+    i2c2_tx_buff[46] = (proxy_bl & 0xFF00) >> 8;
+
+    i2c2_tx_buff[47] = proxy_fl & 0x00FF;
+    i2c2_tx_buff[48] = (proxy_fl & 0xFF00) >> 8;
+
+    if(ctlPeltier < 0)
+        dummy1 = ctlPeltier + 201;
     else
-        dummy = (int)(temp_flexPCB * 10) + 65536;
-    i2c2_tx_buff[59] = dummy & 0x00FF;
-    i2c2_tx_buff[60] = (dummy & 0xFF00) >> 8;
+        dummy1 = ctlPeltier;
+    
+    i2c2_tx_buff[49] = dummy1;
+
+    i2c2_tx_buff[50] = diagLED_r[0];
+    i2c2_tx_buff[51] = diagLED_r[1];
+    i2c2_tx_buff[52] = diagLED_r[2];
+
+    if (fanCooler == FAN_COOLER_ON)
+        i2c2_tx_buff[53] = 100;
+    else
+        i2c2_tx_buff[53] = 0;
+    
+    i2c2_tx_buff[54] = calRec;
 }
