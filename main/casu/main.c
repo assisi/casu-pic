@@ -91,9 +91,14 @@ int main(int argc, char** argv) {
     
     setUpPorts();
      // configure i2c2 as a slave device and interrupt priority 1
+    // wait for everything to initialize
+    // it seems that it takes few seconds for voltage to settle down after power on
+    for (i = 0; i < 13; i++) {
+        delay_t1(200);
+        ClrWdt();
+    }
+    
     I2C2SlaveInit(I2C2_CASU_ADD, 1);
-    delay_t1(500);
-    LedUser(0, 0, 0);
     
     status = adxl345Init(aSlaveF);
     //error = ErrorInitCheck(status);
@@ -140,13 +145,6 @@ int main(int argc, char** argv) {
     
     // Speaker initialization - set to 0,1
     spi1Init(2, 0);
-    
-    // wait for everything to initialize
-    // it seems that it takes few seconds for voltage to settle down after power on
-    for (i = 0; i < 13; i++) {
-        delay_t1(200);
-        ClrWdt();
-    }
     
     speakerAmp_ref = 0;
     speakerAmp_ref_old = 10;
