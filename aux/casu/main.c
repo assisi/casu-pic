@@ -59,6 +59,8 @@ int main()
 	
 	while(ACLKCONbits.APLLCK != 1);			/* Wait for Auxiliary PLL to Lock */
     
+    int init_delay = 0;
+    int dummy;
     
     init_PWM();
     
@@ -81,6 +83,9 @@ int main()
     RPOR1bits.RP3R    = 0b00000111;
     RPINR21bits.SS1R  = 0b00000000;
     
+    for (init_delay = 0; init_delay < 32000; init_delay++) {
+        dummy++;
+    }
     InitializeSPI();
     
     int i = 0;
