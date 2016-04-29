@@ -52,7 +52,7 @@ UINT8 spi1TransferWord(UINT16 out, UINT16 *in);
  * @param len Buffer size.
  * @return Returns 1 if transfer succeeded, else 0.
  */
-UINT8 spi1TransferBuff(UINT16 *buff, UINT16 len);
+UINT8 spi1TransferBuff(UINT16 *inBuff, UINT16 *outBuff, UINT16 len);
 
 /*! \brief Function checks if SPI1 transmit (tx) buffer is full.
  *

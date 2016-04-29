@@ -129,5 +129,6 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
     if (I2C2CONbits.SCLREL == 0) {
         I2C2CONbits.SCLREL = 1;	// Release SCL1 line
     }
+    
     _SI2C2IF = 0;
 }

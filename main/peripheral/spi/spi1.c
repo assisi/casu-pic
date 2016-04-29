@@ -112,11 +112,11 @@ UINT8 spi1TransferWord(UINT16 out, UINT16 *in) {
  * returns: 1 - transfer succeeded
  *          0 - otherwise
  */
-UINT8 spi1TransferBuff(UINT16 *buff, UINT16 len) {
+UINT8 spi1TransferBuff(UINT16 *inBuff, UINT16 *outBuff,  UINT16 len) {
 
     int i,j;
     for(i = 0; i < len; i++) {
-        SPI1BUF = buff[i];
+        SPI1BUF = inBuff[i];
 
         j = 0;
         /* Wait until the data is received
@@ -127,7 +127,7 @@ UINT8 spi1TransferBuff(UINT16 *buff, UINT16 len) {
                 return 0;    // timeout, return without sending
         }
 
-        buff[i] = SPI1BUF;
+        outBuff[i] = SPI1BUF;
     }
     
     

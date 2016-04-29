@@ -48,20 +48,46 @@ void updateReferences(UINT8 msg_id) {
             speakerFreq_ref = 500;
         else if (speakerFreq_ref < 1)
             speakerFreq_ref = 1;
+          
+        int count = 0;
+        while (speakerAmp_ref != speakerAmp_ref_old) {
+            if (count > 5 ) {
+                // Error !
+                break;
+            }
+            UINT16 inBuff[2] = {0};
+            UINT16 outBuff[2] = {0};
+            inBuff[0] = (speakerAmp_ref & 0x0FFF) | 0x1000;
+            chipSelect(slaveVib);
+            status = spi1TransferWord(inBuff[0], outBuff);
+            chipDeselect(slaveVib);
+            
+            //delay_t1(1);
+            chipSelect(slaveVib);
+            status = spi1TransferWord(inBuff[0], &speakerAmp_ref_old);
+            chipDeselect(slaveVib);
+            count++;
+        }
         
-        if (speakerAmp_ref != speakerAmp_ref_old) {
+        count = 0;
+        while (speakerFreq_ref != speakerFreq_ref_old) {
+            if (count > 5 ) {
+                // Error !
+                break;
+            }
+            UINT16 inBuff[2] = {0};
+            UINT16 outBuff[2] = {0};
+            inBuff[0] = (speakerFreq_ref & 0x0FFF) | 0x2000;
             chipSelect(slaveVib);
-            status = spi1TransferWord(speakerAmp_ref, &dummy);
+            status = spi1TransferWord(inBuff[0], outBuff);
             chipDeselect(slaveVib);
-            speakerAmp_ref_old = speakerAmp_ref;
-        }
 
-        if (speakerFreq_ref != speakerFreq_ref_old) {
             chipSelect(slaveVib);
-            status = spi1TransferWord(speakerFreq_ref+150, &dummy);
+            status = spi1TransferWord(inBuff[0], &speakerFreq_ref_old);
             chipDeselect(slaveVib);
-            speakerFreq_ref_old = speakerFreq_ref;
+            count++;
         }
+         
     }
     else if (msg_id == MSG_REF_LED_ID) {
         diagLED_r[0] = i2c2_rx_buff[0];
@@ -209,13 +235,18 @@ void updateMeasurements() {
     i2c2_tx_buff[41] = pwmMotor;
 
     // send back what you received
-    i2c2_tx_buff[42] = speakerAmp_ref;
-    i2c2_tx_buff[43] = speakerFreq_ref & 0x00FF;
-    i2c2_tx_buff[44] = (speakerFreq_ref & 0xFF00) >> 8;
-
+    i2c2_tx_buff[42] = speakerAmp_ref_old;
+    i2c2_tx_buff[43] = speakerFreq_ref_old & 0x00FF;
+    i2c2_tx_buff[44] = (speakerFreq_ref_old & 0xFF00) >> 8;
+    
+    i2c2_tx_buff[45] = speakerAmp_ref;
+    i2c2_tx_buff[46] = speakerFreq_ref & 0x00FF;
+    i2c2_tx_buff[47] = (speakerFreq_ref & 0xFF00) >> 8;
+        /*
     i2c2_tx_buff[45] = diagLED_r[0];
     i2c2_tx_buff[46] = diagLED_r[1];
     i2c2_tx_buff[47] = diagLED_r[2];
+    */
 
     i2c2_tx_buff[48] = fanBlower_r;
     if (fanCooler == FAN_COOLER_ON)

@@ -21,7 +21,7 @@ void _ISRFAST _SPI1Interrupt(void);
 
 
 UINT16 vibeFreq_ref = 300;
-UINT16 vibeFreq_ref_old = 300;
+UINT16 vibeFreq_ref_old = 1;
 UINT16 vibeAmp_ref = 100;
 float vibe_period = 5000.0; // in usec
 volatile float dt_f = 0;
@@ -30,6 +30,7 @@ float pwm_i[25];
 int dt = 0;
 int temp;
 int SPI1counter = 0, tempVibeAmp = 0, tempVibeFreq = 0;
+UINT8 wordsRec = 0;
 
 int main()
 {
@@ -82,7 +83,6 @@ int main()
     
     InitializeSPI();
     
-    
     int i = 0;
     for (i = 0; i < N; i++) {
         
@@ -96,12 +96,25 @@ int main()
     ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_2);
     
     while(1) {
+        
+        if (vibeAmp_ref > 100)
+            vibeAmp_ref = 100;
+        else if (vibeAmp_ref < 0)
+            vibeAmp_ref = 0;
+        
+        if (vibeFreq_ref > 500) 
+            vibeFreq_ref = 500;
+        else if (vibeFreq_ref < 1)
+            vibeFreq_ref = 1;
+        
         if (vibeFreq_ref != vibeFreq_ref_old) {
             dt_f = 35333.0/(float)vibeFreq_ref; // 2 ms
             vibeFreq_ref_old = vibeFreq_ref;
             //CloseTimer2();
             OpenTimer2(T2_ON | T2_PS_1_1, ticks_from_us(dt_f, 1));  
         }
+        
+        ClrWdt();
     }
 
 }
@@ -216,11 +229,9 @@ void __attribute__((__interrupt__, __auto_psv__)) _T2Interrupt(void)
     
 }
 
-
  void InitializeSPI(void) {
     SPI1BUF = 0;                     //Datasheet specifies the following order for setting SPI2 in slave mode
     IFS0bits.SPI1IF = 0;             //Clear interrupt flag (no interrupt)
-    IEC0bits.SPI1IE = 1;          //Enable SPI2 interrupts
     IPC2bits.SPI1IP = 6;             //Set SPI2 interrupt priority pretty high, higher than all other user interrupts
     SPI1CON1 = 0b0000011011011010;   //Setup for slave (0,0) mode with SS2 enabled.
     SPI1CON2 = 0b0100000000000000;   //Do not used framed SPI
@@ -231,34 +242,24 @@ void __attribute__((__interrupt__, __auto_psv__)) _T2Interrupt(void)
     SPI1CON1bits.SSEN = 1;           //SS2 enabled
     SPI1STATbits.SPIROV = 0;         //Make sure no errors
     SPI1STATbits.SPIEN = 1;          //Start SPI
+    
+    IFS0bits.SPI1IF = 0;          //Clear interrupt flag (no interrupt)
+    IEC0bits.SPI1IE = 1;             //Enable SPI2 interrupts
  }
- 
  
  void _ISRFAST _SPI1Interrupt(void)
  {
-  UINT16 buffer;
-  buffer = (UINT16) SPI1BUF;
-
-  if (buffer<101) {
-    vibeAmp_ref = buffer;
-    if (vibeAmp_ref > 100)
-        vibeAmp_ref = 100;
-    else if (vibeAmp_ref < 0)
-        vibeAmp_ref = 0;
-  }
-  else    {
-      vibeFreq_ref = buffer-150;
-      if (vibeFreq_ref < 1)
-          vibeFreq_ref = 1;
-      //dt_f = 35333.0/(float)vibeFreq_ref; // 2 ms
-      //OpenTimer2(T2_ON | T2_PS_1_1, ticks_from_us(dt_f, 1));
-  }
-      
-      /*
-   * if (buffer == 0xAA)
-    vibeAmp_ref = 0;
-  */
-    
-  IFS0bits.SPI1IF = 0;             //Clear the interrupt flag
-  SPI1STATbits.SPIROV = 0;
+    UINT16 buffer;
+    buffer = (UINT16) SPI1BUF;
+    if ((buffer & 0xF000) == 0x1000) {
+        vibeAmp_ref =  buffer & 0x0FFF;
+        SPI1BUF = vibeAmp_ref;
+    }
+    else if ((buffer & 0xF000) == 0x2000) {
+        vibeFreq_ref = buffer & 0x0FFF;
+        SPI1BUF = vibeFreq_ref;
+    }
+   
+    IFS0bits.SPI1IF = 0;             //Clear the interrupt flag
+    SPI1STATbits.SPIROV = 0;
  }

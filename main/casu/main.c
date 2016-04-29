@@ -138,19 +138,70 @@ int main(int argc, char** argv) {
     PeltierVoltageSet(ctlPeltier);    
     
     // Speaker initialization - set to 0,1
+    spi1Init(2, 0);
     speakerAmp_ref = 0;
+    speakerAmp_ref_old = 10;
     speakerFreq_ref = 1;
+    speakerFreq_ref_old = 10;
+    int count = 0;
+    
+    UINT16 inBuff[2] = {0};
+    UINT16 outBuff[2] = {0};
+    
+    inBuff[0] = (speakerAmp_ref & 0x0FFF) | 0x1000;
+    chipSelect(slaveVib);
+    status = spi1TransferWord(inBuff[0], outBuff);
+    chipDeselect(slaveVib);
     
     chipSelect(slaveVib);
-    status = spi1TransferWord(speakerAmp_ref, &dummy);
+    status = spi1TransferWord(inBuff[0], &speakerAmp_ref_old);
     chipDeselect(slaveVib);
-    delay_t1(1);
-    speakerAmp_ref_old = speakerAmp_ref;
     
+    while (speakerAmp_ref != speakerAmp_ref_old) {
+        if (count > 5 ) {
+            // Error !
+            break;
+        }
+        
+        inBuff[0] = (speakerAmp_ref & 0x0FFF) | 0x1000;
+        chipSelect(slaveVib);
+        status = spi1TransferWord(inBuff[0], outBuff);
+        chipDeselect(slaveVib);
+
+        //delay_t1(1);
+        chipSelect(slaveVib);
+        status = spi1TransferWord(inBuff[0], &speakerAmp_ref_old);
+        chipDeselect(slaveVib);
+        count++;
+    }
+        
+    count = 0;
+    inBuff[0] = (speakerFreq_ref & 0x0FFF) | 0x2000;
     chipSelect(slaveVib);
-    status = spi1TransferWord(speakerFreq_ref+150, &dummy);
+    status = spi1TransferWord(inBuff[0], outBuff);
     chipDeselect(slaveVib);
-    speakerFreq_ref_old = speakerFreq_ref;
+
+    chipSelect(slaveVib);
+    status = spi1TransferWord(inBuff[0], &speakerFreq_ref_old);
+    chipDeselect(slaveVib);
+    
+    while (speakerFreq_ref != speakerFreq_ref_old) {
+        
+        if (count > 5 ) {
+            // Error !
+            break;
+        }
+
+        inBuff[0] = (speakerFreq_ref & 0x0FFF) | 0x2000;
+        chipSelect(slaveVib);
+        status = spi1TransferWord(inBuff[0], outBuff);
+        chipDeselect(slaveVib);
+
+        chipSelect(slaveVib);
+        status = spi1TransferWord(inBuff[0], &speakerFreq_ref_old);
+        chipDeselect(slaveVib);
+        count++;
+    }
 
     //ADT7420 sensors initalization
     status = adt7420Init(0, ADT74_I2C_ADD_mainBoard);
@@ -158,9 +209,7 @@ int main(int argc, char** argv) {
     muxCh = I2C1ChSelect(1,6);
     status = adt7420Init(0, ADT74_I2C_ADD_flexPCB);
     UINT16 dummyData[2] = {0};
-   
-    spi1Init(2, 0);
-  
+     
     //Estimation initializaction
     for (i = 0; i < 50; i++) {
         adt7320ReadTemp(tSlaveF, &temp_f); delay_t1(5);
@@ -228,6 +277,7 @@ int main(int argc, char** argv) {
         IFS0bits.T2IF = 0; //Clear interrupt flag
         OpenTimer2(T1_ON | T1_PS_1_256, 30000); //Configure timer
         
+ 
         /*
          **** Do not read acc sensors - we have to implement fft
         if (readAccX(aSlaveR, &ax) <= 0) {
