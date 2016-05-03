@@ -97,9 +97,7 @@ int main(int argc, char** argv) {
         delay_t1(200);
         ClrWdt();
     }
-    
-    I2C2SlaveInit(I2C2_CASU_ADD, 1);
-    
+        
     status = adxl345Init(aSlaveF);
     //error = ErrorInitCheck(status);
     delay_t1(5);
@@ -263,6 +261,8 @@ int main(int argc, char** argv) {
     diagLED_r[0] = 0;
     diagLED_r[1] = 0;
     diagLED_r[2] = 0;
+    
+    I2C2SlaveInit(I2C2_CASU_ADD, 1);
     
     while (i2cStarted == 0) {
         delay_t1(200);

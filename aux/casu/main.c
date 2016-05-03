@@ -101,17 +101,7 @@ int main()
     ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_2);
     
     while(1) {
-        
-        if (vibeAmp_ref > 100)
-            vibeAmp_ref = 100;
-        else if (vibeAmp_ref < 0)
-            vibeAmp_ref = 0;
-        
-        if (vibeFreq_ref > 500) 
-            vibeFreq_ref = 500;
-        else if (vibeFreq_ref < 1)
-            vibeFreq_ref = 1;
-        
+                
         if (vibeFreq_ref != vibeFreq_ref_old) {
             dt_f = 35333.0/(float)vibeFreq_ref; // 2 ms
             vibeFreq_ref_old = vibeFreq_ref;
@@ -258,10 +248,22 @@ void __attribute__((__interrupt__, __auto_psv__)) _T2Interrupt(void)
     buffer = (UINT16) SPI1BUF;
     if ((buffer & 0xF000) == 0x1000) {
         vibeAmp_ref =  buffer & 0x0FFF;
+        
+        if (vibeAmp_ref > 100)
+            vibeAmp_ref = 100;
+        else if (vibeAmp_ref < 0)
+            vibeAmp_ref = 0;
+        
         SPI1BUF = vibeAmp_ref;
     }
     else if ((buffer & 0xF000) == 0x2000) {
         vibeFreq_ref = buffer & 0x0FFF;
+        
+        if (vibeFreq_ref > 500) 
+            vibeFreq_ref = 500;
+        else if (vibeFreq_ref < 1)
+            vibeFreq_ref = 1;
+        
         SPI1BUF = vibeFreq_ref;
     }
    
