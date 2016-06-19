@@ -107,6 +107,11 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
                     updateCalibrationData();
                     msg_status = 0;
                 }
+                else if (msg_id == MSG_REF_PROXY_ID && msg_rec_bytes == IN_PROXY_REF_DATA_NUM) {
+                    msg_status = MSG_REF_PROXY_ID;
+                    updateReferences(msg_status);
+                    msg_status = 0;
+                }
         }
         else {
             // master request reading

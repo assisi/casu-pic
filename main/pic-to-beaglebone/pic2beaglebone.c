@@ -26,6 +26,7 @@ UINT8 calRec = 0;
 UINT16 speakerAmp_ref = 0, speakerFreq_ref = 0;
 UINT16 speakerAmp_ref_old = 0;
 UINT16 speakerFreq_ref_old = 0;
+UINT8 proxyStandby = 0;
 
 /*
  * Function updates references (temperature, motor, LED1, LED2) transfered from beaglebone.
@@ -105,6 +106,9 @@ void updateReferences(UINT8 msg_id) {
             temp_ref = dummy / 10.0;
         if (temp_ref < 26)
             temp_ref = 0.0;
+    }
+    else if (msg_id == MSG_REF_PROXY_ID) {
+        proxyStandby = i2c2_rx_buff[0];
     } 
 }
 

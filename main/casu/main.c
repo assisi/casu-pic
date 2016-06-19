@@ -88,6 +88,7 @@ int main(int argc, char** argv) {
     extern UINT8 pwmMotor;
     extern UINT16 speakerAmp_ref;
     extern UINT16 speakerFreq_ref;
+    extern UINT8 proxyStandby;
     
     setUpPorts();
      // configure i2c2 as a slave device and interrupt priority 1
@@ -305,30 +306,48 @@ int main(int argc, char** argv) {
         vAmp_l = sqrtl((double)ax * ax + (double)ay * ay + (double)az * az);
         */
          //Front
-       
-        statusProxi[0] = I2C1ChSelect(1, 2);
-        proxy_f = VCNL4000ReadProxi();
-        delay_t1(1);
-        //Front right
-        statusProxi[2] = I2C1ChSelect(1, 3);
-        proxy_fr = VCNL4000ReadProxi();
-        delay_t1(1);
-        //Back right
-        statusProxi[1] = I2C1ChSelect(1, 4);
-        proxy_br = VCNL4000ReadProxi();
-        delay_t1(1);
-        //Back
-        statusProxi[3] = I2C1ChSelect(1, 5);
-        proxy_b = VCNL4000ReadProxi();
-        delay_t1(1);
-        //Back left
-        statusProxi[4] = I2C1ChSelect(1, 0);
-        proxy_bl = VCNL4000ReadProxi();
-        delay_t1(1);
-        //Front left
-        statusProxi[5] = I2C1ChSelect(1, 1);
-        proxy_fl = VCNL4000ReadProxi();
-        delay_t1(1);
+        
+        if (!proxyStandby)  {
+            
+            statusProxi[0] = I2C1ChSelect(1, 2);
+            proxy_f = VCNL4000ReadProxi();
+            delay_t1(1);
+            //Front right
+            statusProxi[2] = I2C1ChSelect(1, 3);
+            proxy_fr = VCNL4000ReadProxi();
+            delay_t1(1);
+            //Back right
+            statusProxi[1] = I2C1ChSelect(1, 4);
+            proxy_br = VCNL4000ReadProxi();
+            delay_t1(1);
+            //Back
+            statusProxi[3] = I2C1ChSelect(1, 5);
+            proxy_b = VCNL4000ReadProxi();
+            delay_t1(1);
+            //Back left
+            statusProxi[4] = I2C1ChSelect(1, 0);
+            proxy_bl = VCNL4000ReadProxi();
+            delay_t1(1);
+            //Front left
+            statusProxi[5] = I2C1ChSelect(1, 1);
+            proxy_fl = VCNL4000ReadProxi();
+            delay_t1(1);
+            
+        }   else {
+        
+                proxy_f = 0;
+                //Front right
+                proxy_fr = 0;
+                //Back right
+                proxy_br = 0;
+                //Back
+                proxy_b = 0;
+                //Back left
+                proxy_bl = 0;
+                //Front left
+                proxy_fl = 0;       
+        
+        }
         
         //Temperature readings and control
         // readings every 2 second
