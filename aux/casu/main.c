@@ -25,7 +25,7 @@ UINT16 vibeFreq_ref_old = 1;
 UINT16 vibeAmp_ref = 0;
 float vibe_period = 5000.0; // in usec
 volatile float dt_f = 0;
-int N = 18;
+int N = 7;
 float pwm_i[25];
 int dt = 0;
 int temp;
@@ -103,7 +103,7 @@ int main()
     while(1) {
                 
         if (vibeFreq_ref != vibeFreq_ref_old) {
-            dt_f = 35333.0/(float)vibeFreq_ref; // 2 ms
+            dt_f = 70666.0/(float)vibeFreq_ref; // 2 ms
             vibeFreq_ref_old = vibeFreq_ref;
             //CloseTimer2();
             OpenTimer2(T2_ON | T2_PS_1_1, ticks_from_us(dt_f, 1));  
@@ -198,27 +198,27 @@ void __attribute__((__interrupt__, __auto_psv__)) _T2Interrupt(void)
     //pwm_int = pwm_int * vibeAmp_ref / 100.0;
     
     
-    if (dt<15)
+    if (dt<7)
        PDC1 = temp * (pwm_i[dt]*vibeAmp_ref+100);
-    else if (dt<30)
-        PDC1 = temp * (pwm_i[29-dt]*vibeAmp_ref+100);
-    else if (dt<45)
-        PDC1 = temp * (-pwm_i[dt-30]*vibeAmp_ref+100);
-    else if (dt<60)
-        PDC1 = temp * (-pwm_i[59-dt]*vibeAmp_ref+100);
+    else if (dt<14)
+        PDC1 = temp * (pwm_i[13-dt]*vibeAmp_ref+100);
+    else if (dt<21)
+        PDC1 = temp * (-pwm_i[dt-14]*vibeAmp_ref+100);
+    else if (dt<28)
+        PDC1 = temp * (-pwm_i[27-dt]*vibeAmp_ref+100);
     else
         PDC1 = 0;
     
     
     
-    if (dt == 14 || dt == 29 || dt == 44)
+    if (dt == 6 || dt == 13 || dt == 20)
         dt = dt + 2;
     else 
         dt = dt + 1;
     
     
 
-    if (dt >= 60) {
+    if (dt >= 28) {
         dt = 1;
     }
     
@@ -259,8 +259,8 @@ void __attribute__((__interrupt__, __auto_psv__)) _T2Interrupt(void)
     else if ((buffer & 0xF000) == 0x2000) {
         vibeFreq_ref = buffer & 0x0FFF;
         
-        if (vibeFreq_ref > 500) 
-            vibeFreq_ref = 500;
+        if (vibeFreq_ref > 2000) 
+            vibeFreq_ref = 2000;
         else if (vibeFreq_ref < 1)
             vibeFreq_ref = 1;
         
