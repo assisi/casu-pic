@@ -456,6 +456,10 @@ int main(int argc, char** argv) {
                 fanCooler = FAN_COOLER_ON;
             else if (temp_pcb <= 29 && fanCooler == FAN_COOLER_ON)
                 fanCooler = FAN_COOLER_OFF;
+            //In case of I2C1 fail turn on the fan
+            if((proxy_f == 0xFFFF) && (proxy_fr == 0xFFFF) && (proxy_br == 0xFFFF) && (proxy_b == 0xFFFF) && (proxy_bl == 0xFFFF) && (proxy_fl == 0xFFFF)){
+                fanCooler = FAN_COOLER_ON;
+            }
         }
         else if (fanCtlOn == 2) {
             fanCooler = 0;
