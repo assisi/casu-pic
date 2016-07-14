@@ -18,7 +18,6 @@ _FICD(ICS_PGD1 & JTAGEN_OFF)
 void init_PWM(void);
 void InitializeSPI(void);
 void _ISRFAST _SPI1Interrupt(void);
-unsigned long ticks_from_us(float usec, int prescaler);
 
 
 volatile UINT16 vibeFreq_ref = 1;
@@ -289,10 +288,4 @@ void __attribute__((__interrupt__, __auto_psv__)) _T2Interrupt(void)
     IFS0bits.SPI1IF = 0;             //Clear the interrupt flag
     SPI1STATbits.SPIROV = 0;
  }
- 
- unsigned long ticks_from_us(float usec, int prescaler) {
-    unsigned long ticks;
-    ticks = FOSC / 2.0 / prescaler * usec / 1000000.0;
-    return ticks;
-}
  
