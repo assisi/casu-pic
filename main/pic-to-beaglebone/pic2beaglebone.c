@@ -45,8 +45,8 @@ void updateReferences(UINT8 msg_id) {
             speakerAmp_ref = 0;
         
         speakerFreq_ref = i2c2_rx_buff[1] | (i2c2_rx_buff[2] << 8);
-        if (speakerFreq_ref > 500)
-            speakerFreq_ref = 500;
+        if (speakerFreq_ref > 2000)
+            speakerFreq_ref = 2000;
         else if (speakerFreq_ref < 1)
             speakerFreq_ref = 1;
           
