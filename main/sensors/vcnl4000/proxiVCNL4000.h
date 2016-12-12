@@ -64,6 +64,11 @@ struct VCNL4000Data{
     unsigned int Light;
 };
 
+/*! \brief Function initializes digital proximity sensor.
+*/
+char VCNL4000Init(void);
+
+
 /*! \brief Function reads ambient light value.
  *
  * @return Returns -1 if I2C communication error occured, else returns ambient light value.

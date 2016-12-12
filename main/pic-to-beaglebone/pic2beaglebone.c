@@ -4,7 +4,7 @@
 float temp_f = -1, temp_b = -1, temp_r = -1, temp_l = -1, temp_pcb = -1,
         temp_casu = 25, temp_casu1 = 25, temp_wax = 25, temp_wax1 = 25, temp_flexPCB = -1;
 float vAmp_m[4] = {-1.0};
-UINT16 fAmp_m[4] = {-1.0};
+UINT16 fAmp_m[4] = {0.0};
 UINT16 proxy_f = 0, proxy_fr = 0, proxy_br = 0, proxy_b = 0, proxy_bl = 0, proxy_fl = 0, proxy_t = 0;
 int ctlPeltier = 0, fanCooler = 0;
 UINT8 tempCtlOn = 0, fanCtlOn = 0;
@@ -12,7 +12,7 @@ float Kf1 = 0.1428, Kf2 = 0.1428, Kf3 = 0.7101;
 float Kp = 20, Ki = 0.9;
 float temp_ref_shutdown = 25;
 float temp_ref_l = 26, temp_ref_h = 45;
-UINT8 pwmMotor = 0;
+//UINT8 pwmMotor = 0;
 
 /* Init variables for storing references and control inputs*/
 float temp_ref = 25.0;
@@ -27,6 +27,10 @@ UINT16 speakerAmp_ref = 0, speakerFreq_ref = 0;
 UINT16 speakerAmp_ref_old = 0;
 UINT16 speakerFreq_ref_old = 0;
 UINT8 proxyStandby = 0;
+int source_array[FFT_BUFF] = {0};
+int amplitudes[FFT_BUFF] = {0};
+extern UINT16 accPeriod;
+UINT16 maxAmp, fAmp, vAmp;
 
 /*
  * Function updates references (temperature, motor, LED1, LED2) transfered from beaglebone.
@@ -49,38 +53,55 @@ void updateReferences(UINT8 msg_id) {
             speakerFreq_ref = 2000;
         else if (speakerFreq_ref < 1)
             speakerFreq_ref = 1;
-          
+
         int count = 0;
+        //fAmp_m[0] = 0;
+        UINT16 inBuff[2] = {0};
+        UINT16 outBuff[2] = {0};
+        inBuff[0] = (speakerAmp_ref & 0x0FFF) | 0x1000;
+        if (SPI1STATbits.SPITBF)    
+            while(SPI1STATbits.SPITBF);
         while (speakerAmp_ref != speakerAmp_ref_old) {
-            if (count > 5 ) {
+            //fAmp_m[1] = count;
+            if (count > 0) {
+                delay_t1(5);
+            }
+            if (count > 10 ) {
+                //fAmp_m[0] = 1;
                 // Error !
                 //LedUser(100,0,0);
+
                 break;
             }
-            UINT16 inBuff[2] = {0};
-            UINT16 outBuff[2] = {0};
-            inBuff[0] = (speakerAmp_ref & 0x0FFF) | 0x1000;
             chipSelect(slaveVib);
             status = spi1TransferWord(inBuff[0], outBuff);
             chipDeselect(slaveVib);
-            
+            //fAmp_m[2] = status;
+
             //delay_t1(1);
             chipSelect(slaveVib);
             status = spi1TransferWord(inBuff[0], &speakerAmp_ref_old);
             chipDeselect(slaveVib);
+
             count++;
         }
         
         count = 0;
+        if (SPI1STATbits.SPITBF) {
+            //LedUser(100,0,0);
+            while(SPI1STATbits.SPITBF);   
+     
+        }   
+        inBuff[0] = (speakerFreq_ref & 0x0FFF) | 0x2000;
         while (speakerFreq_ref != speakerFreq_ref_old) {
-            if (count > 5 ) {
+            if (count > 0) {
+                delay_t1(5);
+            }
+            if (count > 10 ) {
                 // Error !
-                //LedUser(0,100,0);
+                LedUser(0,100,0);
                 break;
             }
-            UINT16 inBuff[2] = {0};
-            UINT16 outBuff[2] = {0};
-            inBuff[0] = (speakerFreq_ref & 0x0FFF) | 0x2000;
             chipSelect(slaveVib);
             status = spi1TransferWord(inBuff[0], outBuff);
             chipDeselect(slaveVib);
@@ -96,7 +117,7 @@ void updateReferences(UINT8 msg_id) {
         diagLED_r[0] = i2c2_rx_buff[0];
         diagLED_r[1] = i2c2_rx_buff[1];
         diagLED_r[2] = i2c2_rx_buff[2];
-        LedUser(diagLED_r[0], diagLED_r[1],diagLED_r[2]);
+        LedUser(diagLED_r[0], diagLED_r[1], diagLED_r[2]);
     }
     else if (msg_id == MSG_REF_TEMP_ID) {
         dummy = i2c2_rx_buff[0] | (i2c2_rx_buff[1] << 8);
@@ -214,56 +235,93 @@ void updateMeasurements() {
     i2c2_tx_buff[16] = dummy & 0x00FF;
     i2c2_tx_buff[17] = (dummy & 0xFF00) >> 8;
 
-    dummy = vAmp_m[0] * 10;
+    //dummy = vAmp_m[0] * 10;
+    dummy = maxAmp;
     i2c2_tx_buff[18] = dummy & 0x00FF;
     i2c2_tx_buff[19] = (dummy & 0xFF00) >> 8;
+    i2c2_tx_buff_fast[0] = i2c2_tx_buff[18];
+    i2c2_tx_buff_fast[1] = i2c2_tx_buff[19];
 
     dummy = vAmp_m[1] * 10;
     i2c2_tx_buff[20] = dummy & 0x00FF;
     i2c2_tx_buff[21] = (dummy & 0xFF00) >> 8;
+    i2c2_tx_buff_fast[2] = i2c2_tx_buff[20];
+    i2c2_tx_buff_fast[3] = i2c2_tx_buff[21];
 
     dummy = vAmp_m[2] * 10;
     i2c2_tx_buff[22] = dummy & 0x00FF;
     i2c2_tx_buff[23] = (dummy & 0xFF00) >> 8;
+    i2c2_tx_buff_fast[4] = i2c2_tx_buff[22];
+    i2c2_tx_buff_fast[5] = i2c2_tx_buff[23];
 
     dummy = vAmp_m[3] * 10;
     i2c2_tx_buff[24] = dummy & 0x00FF;
     i2c2_tx_buff[25] = (dummy & 0xFF00) >> 8;
+    i2c2_tx_buff_fast[6] = i2c2_tx_buff[24];
+    i2c2_tx_buff_fast[7] = i2c2_tx_buff[25];
 
+// using fAmp_m[0] & fAmp_m[1] as flag and count
+
+    //fAmp_m[0] = fAmp;
+    //fAmp_m[0] = (int) *(source_array + 25);
     i2c2_tx_buff[26] = fAmp_m[0] & 0x00FF;
     i2c2_tx_buff[27] = (fAmp_m[0] & 0xFF00) >> 8;
+    i2c2_tx_buff_fast[8] = i2c2_tx_buff[26];
+    i2c2_tx_buff_fast[9] = i2c2_tx_buff[27];
 
+    //fAmp_m[1] = (int) *(source_array + 26);
     i2c2_tx_buff[28] = fAmp_m[1] & 0x00FF;
     i2c2_tx_buff[29] = (fAmp_m[1] & 0xFF00) >> 8;
+    i2c2_tx_buff_fast[10] = i2c2_tx_buff[28];
+    i2c2_tx_buff_fast[11] = i2c2_tx_buff[29];
 
     i2c2_tx_buff[30] = fAmp_m[2] & 0x00FF;
     i2c2_tx_buff[31] = (fAmp_m[2] & 0xFF00) >> 8;
+    i2c2_tx_buff_fast[12] = i2c2_tx_buff[30];
+    i2c2_tx_buff_fast[13] = i2c2_tx_buff[31];
 
     i2c2_tx_buff[32] = fAmp_m[3] & 0x00FF;
     i2c2_tx_buff[33] = (fAmp_m[3] & 0xFF00) >> 8;
+    i2c2_tx_buff_fast[14] = i2c2_tx_buff[32];
+    i2c2_tx_buff_fast[15] = i2c2_tx_buff[33];
     
      // send back what you received
     i2c2_tx_buff[34] = speakerAmp_ref_old;
     i2c2_tx_buff[35] = speakerFreq_ref_old & 0x00FF;
     i2c2_tx_buff[36] = (speakerFreq_ref_old & 0xFF00) >> 8;
+    i2c2_tx_buff_fast[16] = i2c2_tx_buff[34];
+    i2c2_tx_buff_fast[17] = i2c2_tx_buff[35];
+    i2c2_tx_buff_fast[18] = i2c2_tx_buff[36];
 
     i2c2_tx_buff[37] = proxy_f & 0x00FF;
     i2c2_tx_buff[38] = (proxy_f & 0xFF00) >> 8;
+    i2c2_tx_buff_fast[19] = i2c2_tx_buff[37];
+    i2c2_tx_buff_fast[20] = i2c2_tx_buff[38];
 
     i2c2_tx_buff[39] = proxy_fr & 0x00FF;
     i2c2_tx_buff[40] = (proxy_fr & 0xFF00) >> 8;
+    i2c2_tx_buff_fast[21] = i2c2_tx_buff[39];
+    i2c2_tx_buff_fast[22] = i2c2_tx_buff[40];
 
     i2c2_tx_buff[41] = proxy_br & 0x00FF;
     i2c2_tx_buff[42] = (proxy_br & 0xFF00) >> 8;
+    i2c2_tx_buff_fast[23] = i2c2_tx_buff[41];
+    i2c2_tx_buff_fast[24] = i2c2_tx_buff[42];
 
     i2c2_tx_buff[43] = proxy_b & 0x00FF;
     i2c2_tx_buff[44] = (proxy_b & 0xFF00) >> 8;
+    i2c2_tx_buff_fast[25] = i2c2_tx_buff[43];
+    i2c2_tx_buff_fast[26] = i2c2_tx_buff[44];
 
     i2c2_tx_buff[45] = proxy_bl & 0x00FF;
     i2c2_tx_buff[46] = (proxy_bl & 0xFF00) >> 8;
+    i2c2_tx_buff_fast[27] = i2c2_tx_buff[45];
+    i2c2_tx_buff_fast[28] = i2c2_tx_buff[46];
 
     i2c2_tx_buff[47] = proxy_fl & 0x00FF;
     i2c2_tx_buff[48] = (proxy_fl & 0xFF00) >> 8;
+    i2c2_tx_buff_fast[29] = i2c2_tx_buff[47];
+    i2c2_tx_buff_fast[30] = i2c2_tx_buff[48];
 
     if(ctlPeltier < 0)
         dummy1 = ctlPeltier + 201;
@@ -275,11 +333,60 @@ void updateMeasurements() {
     i2c2_tx_buff[50] = diagLED_r[0];
     i2c2_tx_buff[51] = diagLED_r[1];
     i2c2_tx_buff[52] = diagLED_r[2];
+/*    i2c2_tx_buff_fast[31] = diagLED_r[0];
+    i2c2_tx_buff_fast[32] = diagLED_r[1];
+    i2c2_tx_buff_fast[33] = diagLED_r[2];
+*/  i2c2_tx_buff_fast[31] = i2c2_tx_buff[50];
+    i2c2_tx_buff_fast[32] = i2c2_tx_buff[51];
+    i2c2_tx_buff_fast[33] = i2c2_tx_buff[52];
 
-    if (fanCooler == FAN_COOLER_ON)
+    if (fanCooler == FAN_COOLER_ON) {
         i2c2_tx_buff[53] = 100;
-    else
+        i2c2_tx_buff_fast[34] = i2c2_tx_buff[53];
+    }
+    else {
         i2c2_tx_buff[53] = 0;
+        i2c2_tx_buff_fast[34] = i2c2_tx_buff[53];
+    }
     
     i2c2_tx_buff[54] = calRec;
+    i2c2_tx_buff_fast[35] = i2c2_tx_buff[54];
+
+}
+
+void updateAccLog() {
+    UINT16 i, dummy;
+    UINT16 iMax = 0;
+
+    maxAmp = *(amplitudes + 0);
+
+    for (i = 0; i < FFT_BUFF; i++) {
+
+        if (amplitudes[i] >= 0)
+            dummy = amplitudes[i];
+        else {
+            dummy = amplitudes[i] + 65536;
+        }
+
+//sta ne bi amplitude trebale bit pozitivne??
+
+        if ((i < 127) & (dummy > maxAmp)){
+            maxAmp = dummy;
+            iMax = i;
+        }
+
+        //dummy = ((*(source_array + i)) << (16 - ACC_RES - 1));
+        //if (i > 127) dummy = 10;
+        i2c2_tx_buff_acc[2*i] = dummy & 0x00FF;
+        i2c2_tx_buff_acc[2*i+1] = (dummy & 0xFF00) >> 8;
+//        i2c2_tx_buff_acc[2*i+1] = 1;
+  
+    }
+
+
+    UINT16 sampleFreq = 1000000 / accPeriod; // us to Hz
+    fAmp_m[0] = (int) (iMax * sampleFreq / FFT_BUFF);
+    fAmp_m[1] = iMax + 1;
+  
+    i2c2_tx_ready = 1;
 }

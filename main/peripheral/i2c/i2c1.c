@@ -1,4 +1,5 @@
 #include "i2c1.h"
+#include "i2c.h"
 #include "../../casu/initializeHardware.h"
 
 UINT8 rx_buff[BUFF_SIZE] = {0};     // buffer for incoming data
@@ -249,11 +250,14 @@ void muxReset(){
  * returns: -1 - error
  *          1 - test ok
  */
+
+/*
 int MUXTest() {
 
     UINT8 address;
-    UINT8 check = 0;
-    UINT8 trByte, recByte;
+    //UINT8 check = 0;
+    //UINT8 trByte;
+    UINT8 recByte;
     recByte = 0;
 
     //Write control byte to mux
@@ -299,7 +303,7 @@ int MUXTest() {
 
     return recByte;
 }
-
+*/
 int MuxRead(void){
 
     UINT8 address = 0;

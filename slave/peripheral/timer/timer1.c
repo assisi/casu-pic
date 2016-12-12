@@ -60,10 +60,11 @@ void WriteTimer1(unsigned int timer)
 }
 
 /********************************************************************
-*    Function Name:  WriteTimer1                                    *
-*    Description:    This routine writes a 16-bit value to Timer1   *
-*    Parameters:     unsigned int: value to write to Timer          *
-*    Return Value:   None                                           *
+*    Function Name:  ReadTimer1                                     *
+*    Description:    This routine reads the 16-bit value from       *
+*                    Timer1 Register.                               *
+*    Parameters:     None                                           *
+*    Return Value:   unsigned int: Timer  16-bit value              *
 ********************************************************************/
 
 unsigned int ReadTimer1(void)

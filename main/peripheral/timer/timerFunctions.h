@@ -28,6 +28,8 @@ void delay_t1(int msec);
  */
 unsigned long ticks_from_ms(int msec, int prescaler);
 
+unsigned long ticks_from_us(float usec, int prescaler);
+
 float ms_from_ticks(UINT16 ticks, int prescaler);
 
 unsigned long ticks_from_s(float sec, int prescaler);

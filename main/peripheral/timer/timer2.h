@@ -138,8 +138,7 @@
  * @param config Value of timer configuration register.
  * @param period Value of timer period value.
 */
-void OpenTimer2(unsigned int config, unsigned int period) __attribute__ ((section
-(".libperi")));
+void OpenTimer2(unsigned int config, unsigned int period) __attribute__ ((section(".libperi")));
 
 /*! \brief Function turns off timer2.
  */

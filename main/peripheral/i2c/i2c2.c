@@ -3,11 +3,16 @@
 UINT8 i2c2_rx_buff[BUFF_SIZE] = {0};     // buffer for incoming data
 UINT8 i2c2_rx_head = 0;                  // pointer to buffer element where new byte is to be stored
 UINT8 i2c2_tx_buff[BUFF_SIZE] = {0};     // buffer for outgoing data
+UINT8 i2c2_tx_buff_fast[BUFF_SIZE] = {0};     // buffer for outgoing data
+UINT8 i2c2_tx_buff_acc[BUFF_SIZE_ACC] = {0};     // buffer for outgoing data
 UINT8 i2c2_tx_head = 0;                  // pointer to a buffer element which will be send in next outgoing transmission
+UINT8 i2c2_tx_ready = 0;
 UINT8 msg_id = 0;
 UINT16 msg_rec_bytes = 0;
 UINT8 msg_status = 0;
 UINT8 i2cStarted = 0;
+
+int msg_type_flag = 0;
 
 /*
  * Function initializes i2c2 module as a slave device
@@ -112,6 +117,15 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
                     updateReferences(msg_status);
                     msg_status = 0;
                 }
+                else if (msg_id == MSG_MEASUREMENT_FAST_ID && msg_rec_bytes == IN_MSG_MEASUREMENT_REQUEST_NUM) {
+                    msg_type_flag = MSG_MEASUREMENT_FAST_ID;
+                }
+                else if (msg_id == MSG_MEASUREMENT_SLOW_ID && msg_rec_bytes == IN_MSG_MEASUREMENT_REQUEST_NUM) {
+                    msg_type_flag = MSG_MEASUREMENT_SLOW_ID;
+                }
+                else if (msg_id == MSG_MEASUREMENT_ACC_ID && msg_rec_bytes == IN_MSG_MEASUREMENT_REQUEST_NUM) {
+                    msg_type_flag = MSG_MEASUREMENT_ACC_ID;
+                }
         }
         else {
             // master request reading
@@ -120,6 +134,39 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
 
             if (I2C2STATbits.ACKSTAT == 0) {
                 // master expects more bytes
+
+                if (msg_type_flag == MSG_MEASUREMENT_SLOW_ID) {
+                    I2C2TRN = i2c2_tx_buff[i2c2_tx_head++];
+                    int i = 0;
+                    while(I2C2STATbits.TBF) {
+                        //Wait till all
+                        i++;
+                        if (i == WAIT_TIME) break;
+                    }
+                }
+                else if (msg_type_flag == MSG_MEASUREMENT_FAST_ID) {
+                    I2C2TRN = i2c2_tx_buff_fast[i2c2_tx_head++];
+                    int i = 0;
+                    while(I2C2STATbits.TBF) {
+                        //Wait till all
+                        i++;
+                        if (i == WAIT_TIME) break;
+                    }
+                }
+                else if (msg_type_flag == MSG_MEASUREMENT_ACC_ID) {
+                    I2C2TRN = i2c2_tx_buff_acc[i2c2_tx_head++];
+                    int i = 0;
+                    while(I2C2STATbits.TBF) {
+                        //Wait till all
+                        i++;
+                        if (i == WAIT_TIME) break;
+                    }
+                    if (i2c2_tx_head == FFT_BUFF * 2) {
+                       i2c2_tx_ready = 0;
+                    }
+                }
+
+/*
                 I2C2TRN = i2c2_tx_buff[i2c2_tx_head++];
                 int i = 0;
                 while(I2C2STATbits.TBF) {
@@ -127,7 +174,9 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
                     i++;
                     if (i == WAIT_TIME) break;
                 }
+*/                
             }
+            else msg_type_flag = 0;
         }
     }
 

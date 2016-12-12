@@ -27,8 +27,8 @@ void OpenTimer1(unsigned int config,unsigned int period)
 void ConfigIntTimer1(unsigned int config)
 {
     IFS0bits.T1IF = 0;                   /* clear IF bit */
-    IPC0bits.T1IP = (config &0x0007);    /* assigning Interrupt Priority */
-    IEC0bits.T1IE = (config &0x0008)>>3; /* Interrupt Enable /Disable */
+    IPC0bits.T1IP = (config & 0x0007);    /* assigning Interrupt Priority */
+    IEC0bits.T1IE = (config & 0x0008)>>3; /* Interrupt Enable /Disable */
 }
 
 

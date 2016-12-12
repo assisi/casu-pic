@@ -54,6 +54,11 @@ unsigned long ticks_from_ms(int msec, int prescaler) {
     ticks = FOSC / 2 / prescaler * msec / 1000;
     return ticks;
 }
+unsigned long ticks_from_us(float usec, int prescaler) {
+    unsigned long ticks;
+    ticks = FOSC / 2.0 / prescaler * usec / 1000000.0;
+    return ticks;
+}
 
 float ms_from_ticks(UINT16 ticks, int prescaler) {
     float res;

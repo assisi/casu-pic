@@ -1,7 +1,7 @@
 /****************************************************************************/
 /* 2015 LARICS - Laboratory for Robotics and Intelligent Control Systems
-; Project:	ASSISI CASU v1.0
-; Processor:	dsPIC33Exxxx
+; Project:  ASSISI CASU v1.0
+; Processor:    dsPIC33Exxxx
 ; Compiler:     -
 ;============================================================================;
 ; FILE DESCRIPTION:
@@ -366,7 +366,7 @@ int PeltierSetOut(int set){
     return sPeltierState;
 }
 
-int PeltierSetOut2(int set){
+void PeltierSetOut2(int set){
 
     int direction = 0;
     float set_f = -(float)set;

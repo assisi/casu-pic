@@ -11,6 +11,8 @@
 /* Sensors are connected to spi2 */
 #include "../../peripheral/spi/spi2.h"
 
+
+
 /*! Mask for reading a register.
  */
 #define ADXL_READ 0x80
@@ -104,11 +106,13 @@ UINT8 readAccZ(digitalPin csPin, int *az);
 
 /*! \brief Function reads accelerometer X,Y,Z axis values in a single SPI transmission.
  * @param  csPin Digital pin used as a SPI chip select pin.
- * @param  acc Memory location for storing the data.
+ * @param  ax Memory location for storing x data.
+ * @param  ay Memory location for storing y data.
+ * @param  az Memory location for storing the z data.
  * @return 1 - Communication succeeded \n
  *         0 - Communication failed
  */
-UINT8 readAccXYZ(digitalPin csPin, int *acc);
+UINT8 readAccXYZ(digitalPin csPin, int *ax, int* ay, int *az);
 
 /*! \brief Function reads device id.
  * @param  csPin Digital pin used as a SPI chip select pin.

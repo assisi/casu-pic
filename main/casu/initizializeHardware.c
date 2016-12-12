@@ -42,7 +42,6 @@ void setUpPorts() {
     digitalHigh(LED2G);
     digitalHigh(LED2B);
     
-    
     // configure accelerometer SPI chip select ports as outputs
     digitalOutput(aSlaveF);
     digitalHigh(aSlaveF);
