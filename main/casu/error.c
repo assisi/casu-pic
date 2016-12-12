@@ -28,4 +28,5 @@ int ErrorInitCheck(int status){
         return 1;
         digitalHigh(LED2B);
     }
+    return 0;
 }

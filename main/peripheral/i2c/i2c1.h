@@ -104,7 +104,11 @@ void muxReset();
  * @return -1 - Multiplexer test failed. \n
  *         [0-7] - Number of the selected channel.
  */
-int MUXTest();
+//int MUXTest();
+
+
+int MuxRead(void);
+
 
 /*! \brief Function writes byte to an i2c slave device register.
  *

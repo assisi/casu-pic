@@ -7,11 +7,12 @@
 
 
 #define PI 3.14159265359
-
+#define VIBE_FREQ_REF_CONST 123665.5
 /* Configuration Bit Settings */
 _FOSCSEL(FNOSC_FRC)
 _FOSC(FCKSM_CSECMD & OSCIOFNC_ON)
-_FWDT(FWDTEN_ON & WDTPRE_PR128 & WDTPOST_PS256)
+//_FWDT(FWDTEN_ON & WDTPRE_PR128 & WDTPOST_PS256)
+_FWDT(FWDTEN_OFF)
 _FPOR(FPWRT_PWR128 )
 _FICD(ICS_PGD1 & JTAGEN_OFF)
 
@@ -33,6 +34,9 @@ int dt = 0;
 int temp;
 int SPI1counter = 0, tempVibeAmp = 0, tempVibeFreq = 0;
 UINT8 wordsRec = 0;
+
+int ampChange = 0;
+int freqChange = 0;
 
 int main()
 {
@@ -104,27 +108,53 @@ int main()
     }
     
     //vibe_period = 1000000.0 / vibeFreq_ref; // in usec
-    dt_f = 123665.5/(float)vibeFreq_ref; // 2 ms
+    dt_f = VIBE_FREQ_REF_CONST/(float)vibeFreq_ref; // 2 ms
     //CloseTimer2();
-    if(dt_f > 123665.5)
-                dt_f = 123665.5;
+    if(dt_f > VIBE_FREQ_REF_CONST)
+                dt_f = VIBE_FREQ_REF_CONST;
     ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_2);
     OpenTimer2(T2_ON | T2_PS_1_1, ticks_from_us(dt_f, 1));
     
     InitializeSPI();
     
+    float constFreq = 400;
+    int firstLoop = 1;
+    int freqFlag = 1;
+
     while(1) {
-        
-        if (vibeFreq_ref != vibeFreq_ref_old) {
-            dt_f = 123665.5/(float)vibeFreq_ref; // 2 ms
-            vibeFreq_ref_old = vibeFreq_ref;
-            //CloseTimer2();
-            if(dt_f > 123665.5)
-                dt_f = 123665.5;
+/*        
+        if (firstLoop) {
+            dt_f = VIBE_FREQ_REF_CONST/(float)constFreq; // 2 ms
+            if(dt_f > VIBE_FREQ_REF_CONST)
+                dt_f = VIBE_FREQ_REF_CONST;
             
+            firstLoop = 0;
             OpenTimer2(T2_ON | T2_PS_1_1, ticks_from_us(dt_f, 1));  
         }
-        
+
+        if ((freqChange != 0) && (freqFlag == 1)) {
+            freqFlag = 0;
+            constFreq += freqChange;
+            dt_f = VIBE_FREQ_REF_CONST/(float)constFreq; // 2 ms
+            if(dt_f > VIBE_FREQ_REF_CONST)
+                dt_f = VIBE_FREQ_REF_CONST;
+            
+            OpenTimer2(T2_ON | T2_PS_1_1, ticks_from_us(dt_f, 1)); 
+        }
+*/
+        if (vibeFreq_ref != vibeFreq_ref_old) {
+            CloseTimer2();
+            dt_f = VIBE_FREQ_REF_CONST/(float)vibeFreq_ref; // 2 ms
+            vibeFreq_ref_old = vibeFreq_ref;
+            //CloseTimer2();
+            if(dt_f > VIBE_FREQ_REF_CONST)
+                dt_f = VIBE_FREQ_REF_CONST;
+
+
+            ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_2);
+            OpenTimer2(T2_ON | T2_PS_1_1, ticks_from_us(dt_f, 1));  
+        }
+
         ClrWdt();
     }
 
@@ -208,10 +238,12 @@ void init_PWMuni()
 void __attribute__((__interrupt__, __auto_psv__)) _T2Interrupt(void)
 {
     
-    IFS0bits.T2IF = 0;
+    //T2CONbits.TON = 0;
+    //TMR2 = 0;
 
     // scale pwm int according to given amplitude
     //pwm_int = pwm_int * vibeAmp_ref / 100.0;
+
     if (dt<N)
        PDC1 = temp * (pwm_i[dt]*vibeAmp_ref+100);
     else if (dt<2*N)
@@ -222,8 +254,24 @@ void __attribute__((__interrupt__, __auto_psv__)) _T2Interrupt(void)
         PDC1 = temp * (-pwm_i[4*N-dt]*vibeAmp_ref+100);
     else
         PDC1 = 0;
-    
-    
+
+    /*
+    int constAmp = 50;
+
+    constAmp += ampChange;
+
+    if (dt<N)
+       PDC1 = temp * (pwm_i[dt]*constAmp+100);
+    else if (dt<2*N)
+        PDC1 = temp * (pwm_i[2*N-1-dt]*constAmp+100);
+    else if (dt<N*3)
+        PDC1 = temp * (-pwm_i[dt-2*N]*constAmp+100);
+    else if (dt<N*4)
+        PDC1 = temp * (-pwm_i[4*N-dt]*constAmp+100);
+    else
+        PDC1 = 0;
+    */
+
     
     if (dt == (N-1) || dt == (2*N-1) || dt == (3*N-1))
         dt = dt + 2;
@@ -235,33 +283,41 @@ void __attribute__((__interrupt__, __auto_psv__)) _T2Interrupt(void)
     if (dt >= 4*N) {
         dt = 1;
     }
-    
+    IFS0bits.T2IF = 0;
+    //T2CONbits.TON = 1;
+
 }
 
  void InitializeSPI(void) {
+
+
     SPI1BUF = 0;                     //Datasheet specifies the following order for setting SPI2 in slave mode
     IFS0bits.SPI1IF = 0;             //Clear interrupt flag (no interrupt)
+    IEC0bits.SPI1IE = 1;          //Enable SPI1 interrupts
     IPC2bits.SPI1IP = 6;             //Set SPI2 interrupt priority pretty high, higher than all other user interrupts
     SPI1CON1 = 0b0000011011011010;   //Setup for slave (0,0) mode with SS2 enabled.
+    //SPI1CON1 = 0b0000000100011010;   //Setup for slave (0,0) mode with SS2 enabled.
     SPI1CON1bits.SMP = 0;            //Datasheet specifies this must be cleared.
     SPI1CON1bits.CKE = 0;            //Mode  
     SPI1CON1bits.CKP = 1;            //Idle state for clock is a low level;
-    SPI1CON1bits.SSEN = 1;           //SS2 enabled
+    SPI1CON1bits.SSEN = 1;           //SS1 enabled
     SPI1CON2 = 0b0100000000000000;   //Do not used framed SPI
-    SPI1STAT = 0b0000000000000000;   //Clear all status bits
+    SPI1STAT = 0b0000000000001100;   //Clear all status bits
 
     SPI1STATbits.SPIROV = 0;         //Make sure no errors
     
     IFS0bits.SPI1IF = 0;          //Clear interrupt flag (no interrupt)
     IEC0bits.SPI1IE = 1;             //Enable SPI2 interrupts
-    
     SPI1STATbits.SPIEN = 1;          //Start SPI
+
  }
  
  
- void _ISRFAST _SPI1Interrupt(void)
+ void __attribute__((__interrupt__, __auto_psv__)) _SPI1Interrupt(void)
  {
     UINT16 buffer;
+    if (!SPI1STATbits.SPIRBF)
+        while(!SPI1STATbits.SPIRBF);
     buffer = (UINT16) SPI1BUF;
     
     if ((buffer & 0xF000) == 0x1000) {
@@ -284,7 +340,21 @@ void __attribute__((__interrupt__, __auto_psv__)) _T2Interrupt(void)
         
         SPI1BUF = vibeFreq_ref;
     }
-   
+    else {
+        //SPI1BUF = 2000;
+        ampChange = 50;
+        freqChange = -100;
+    }
+
+
+    //SPI1BUF = buffer;
+
+    if (SPI1STATbits.SPIROV == 1) {
+//        SPI1STATbits.SPIEN = 0;
+//        SPI1STATbits.SPIEN = 1;
+        freqChange = 200;
+    }
+
     IFS0bits.SPI1IF = 0;             //Clear the interrupt flag
     SPI1STATbits.SPIROV = 0;
  }

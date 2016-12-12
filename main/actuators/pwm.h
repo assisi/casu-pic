@@ -41,6 +41,8 @@ void FanCooler(UINT8 set);
 
 void FanBlower(UINT8 set);
 
+void PeltierVoltageSet(int setVoltage);
+
 void VibrationSet(UINT8 set);
 
 void PeltierSetPwm(int set);
@@ -50,8 +52,6 @@ int PeltierSetOut(int set);
 void PeltierOff();
 
 void PeltierOn(int direction);
-
-void PeltierVoltageSet(int setVoltage);
 
 
 #ifdef	__cplusplus

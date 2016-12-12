@@ -7,11 +7,11 @@
 
 #include <Generic.h>
 
-typedef struct Pin {
+typedef struct digitalPin {
     int *trisReg;
     int *portReg;
     UINT8 pinNum;
-}digitalPin;
+} digitalPin;
 
 /*! \brief Function configures digital pin as input pin.
  *

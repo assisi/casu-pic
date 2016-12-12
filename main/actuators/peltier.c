@@ -1,7 +1,7 @@
 /****************************************************************************/
 /* 2014 LARICS - Laboratory for Robotics and Intelligent Control Systems
-; Project:	ASSISI CASU v1.3
-; Processor:	dsPIC33Exxxx
+; Project:  ASSISI CASU v1.3
+; Processor:    dsPIC33Exxxx
 ; Compiler:     -
 ;============================================================================;
 ; FILE DESCRIPTION:

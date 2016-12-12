@@ -14,7 +14,8 @@
 #include "../peripheral/i2c/i2c2.h"
 #include <Generic.h>
 #include "../actuators/peltier.h"
-#include "../peripheral/spi/spi2.h"
+#include "../fft/fft.h"
+#include "../peripheral/spi/spi1.h"
 
 /*Variables for measured data*/
 
@@ -131,6 +132,7 @@ extern UINT8 ctlLED_r[3];
  */
 extern UINT8 diagLED_r[3];
 
+
 /*! \brief Function updates referent values of each stimuli. Referent values are received through I2C communication with SBC.
 
  */
@@ -150,5 +152,13 @@ extern float Kp, Ki;
 extern UINT16 motPwm_ref;
 extern UINT8 fanBlower_r;
 
+extern int source_array[FFT_BUFF];
+extern int amplitudes[FFT_BUFF];
+extern UINT16 accPeriod;
+extern UINT16 maxAmp, fAmp, vAmp;
+
 void updateCalibrationData();
+
+void updateAccLog();
+
 #endif	/* PIC2BEAGLEBONE_H */
