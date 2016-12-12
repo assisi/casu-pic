@@ -12,9 +12,6 @@
         <itemPath>../casu/initializeHardware.h</itemPath>
         <itemPath>../casu/error.h</itemPath>
       </logicalFolder>
-      <logicalFolder name="fft" displayName="fft" projectFiles="true">
-        <itemPath>../fft/fft.h</itemPath>
-      </logicalFolder>
       <logicalFolder name="peripheral" displayName="peripheral" projectFiles="true">
         <logicalFolder name="gpio" displayName="gpio" projectFiles="true">
           <itemPath>../peripheral/gpio/digitalIO.h</itemPath>
@@ -70,9 +67,6 @@
         <itemPath>../casu/initizializeHardware.c</itemPath>
         <itemPath>../casu/main.c</itemPath>
         <itemPath>../casu/error.c</itemPath>
-      </logicalFolder>
-      <logicalFolder name="fft" displayName="fft" projectFiles="true">
-        <itemPath>../fft/fft.c</itemPath>
       </logicalFolder>
       <logicalFolder name="peripheral" displayName="peripheral" projectFiles="true">
         <logicalFolder name="gpio" displayName="gpio" projectFiles="true">
@@ -144,7 +138,6 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibFileItem>/opt/microchip/xc16/v1.21/lib/libdsp-elf.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
