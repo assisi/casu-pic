@@ -14,7 +14,6 @@
 #include "../peripheral/i2c/i2c2.h"
 #include <Generic.h>
 #include "../actuators/peltier.h"
-#include "../fft/fft.h"
 #include "../peripheral/spi/spi1.h"
 
 /*Variables for measured data*/

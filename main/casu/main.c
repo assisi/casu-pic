@@ -32,7 +32,6 @@
 #include "../peripheral/i2c/i2c1.h"
 #include "../peripheral/spi/spi1.h" 
 #include "../sensors/vcnl4000/proxiVCNL4000.h"
-#include "../fft/fft.h"
 #include "../peripheral/timer/timer2.h"
 #include "../peripheral/timer/timer3.h" 
 #include "../peripheral/timer/timer4.h" 
@@ -137,7 +136,7 @@ int main(int argc, char** argv) {
     delay_t1(5);
 
     /* Init FFT coefficients */
-    TwidFactorInit(LOG2_FFT_BUFF, &Twiddles_array[0],0);
+    //TwidFactorInit(LOG2_FFT_BUFF, &Twiddles_array[0],0);
 
     // read 100 values to calculate bias
     int m;
