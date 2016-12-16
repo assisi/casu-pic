@@ -103,8 +103,10 @@ int main(int argc, char** argv) {
     int status = 0;
     int i = 0;
     int ax = 0, ay = 0, az = 0;
+    float kAdapt = 1;           //Adaptive gain coeff.
     float temp = 0;
     float tempBridge[4];        //Bridge temperature copy
+    float uref_m[4];
     int statusProxi[8];
     int statusTemp[4];          //Temperature sensors initialization status
     int tempLoopControl = 0;
@@ -117,7 +119,7 @@ int main(int argc, char** argv) {
     extern UINT16 speakerAmp_ref;
     extern UINT16 speakerFreq_ref;
     extern UINT8 proxyStandby;
-    
+   
     setUpPorts();
 
     digitalHigh(LED2R);
@@ -308,6 +310,10 @@ int main(int argc, char** argv) {
     temp_casu1 = temp_casu;
     temp_wax = temp_casu; 
     temp_wax1 = temp_casu;
+    ka1 = 1;
+    
+    //Temperature PT1 model initial value
+    ymk1 = temp_casu;
     
     diagLED_r[0] = 0;
     diagLED_r[1] = 0;
@@ -316,10 +322,10 @@ int main(int argc, char** argv) {
     // Configure i2c2 as a slave device and interrupt priority 1
     I2C2SlaveInit(I2C2_CASU_ADD, 1);
     
-    while (i2cStarted == 0) {
-        delay_t1(200);
-        ClrWdt();
-    }
+//    while (i2cStarted == 0) {
+//        delay_t1(200);
+//        ClrWdt();
+//    }
     
     /* // Timers not initialized - no FFT
     OpenTimer3(T3_ON| T3_PS_1_1, ticks_from_us(accPeriod, 1));
@@ -332,53 +338,53 @@ int main(int argc, char** argv) {
     LedUser(diagLED_r[0], diagLED_r[1], diagLED_r[2]);
 
     while(1) {
-
+        
         ConfigIntTimer2(T1_INT_OFF);    //Disable timer interrupt
         IFS0bits.T2IF = 0;              //Clear interrupt flag
         OpenTimer2(T1_ON | T1_PS_1_256, 30000); //Configure timer
         
         // Not run - timers not started
-        if (timer4_flag == 1) {
-            timer4_flag = 0;
-
-            /*
-             * FOSC = 40 Mhz
-             *      FFT_BUFF = 256: t(fft) = 20 ms
-             *      FFT_BUFF = 512: t(fft) = 40 ms
-             * FOSC = 40 Mhz
-             *      FFT_BUFF = 256: t(fft) = 10 ms
-             *      FFT_BUFF = 512: t(fft) = 23 ms
-             */
-
-            /*FastFourierTransform(&source_array[0], &amplitudes[0], &destination_array[0], &src_array[0], &Twiddles_array[0]);
-            updateAccLog();
-            */
-            // Only works when no other process (FFT only): 
-            /*
-            _SI2C2IE = 1;
-            while (i2c2_tx_ready == 1) {
-                delay_t1(10);
-                ax++;
-                if (ax == 500) {
-                    break;
-                    i2c2_tx_ready = 0;
-                }
-                ClrWdt();   //Clear watchdog timer
-            }
-            _SI2C2IE = 0;
-            */
-
-            mainLoopCount = 0;
-            OpenTimer3(T3_ON | T3_PS_1_1, ticks_from_us(accPeriod, 1));
-            ConfigIntTimer3(T3_INT_ON | T3_INT_PRIOR_1);
-            
-            OpenTimer4(T4_ON| T4_PS_1_1, ticks_from_ms(1000, 1));
-            ConfigIntTimer4(T4_INT_ON | T4_INT_PRIOR_3);
-        }
-        else {
-            delay_t1(2);
-            ClrWdt();   //Clear watchdog timer
-        }
+//        if (timer4_flag == 1) {
+//            timer4_flag = 0;
+//
+//            /*
+//             * FOSC = 40 Mhz
+//             *      FFT_BUFF = 256: t(fft) = 20 ms
+//             *      FFT_BUFF = 512: t(fft) = 40 ms
+//             * FOSC = 40 Mhz
+//             *      FFT_BUFF = 256: t(fft) = 10 ms
+//             *      FFT_BUFF = 512: t(fft) = 23 ms
+//             */
+//
+//            /*FastFourierTransform(&source_array[0], &amplitudes[0], &destination_array[0], &src_array[0], &Twiddles_array[0]);
+//            updateAccLog();
+//            */
+//            // Only works when no other process (FFT only): 
+//            /*
+//            _SI2C2IE = 1;
+//            while (i2c2_tx_ready == 1) {
+//                delay_t1(10);
+//                ax++;
+//                if (ax == 500) {
+//                    break;
+//                    i2c2_tx_ready = 0;
+//                }
+//                ClrWdt();   //Clear watchdog timer
+//            }
+//            _SI2C2IE = 0;
+//            */
+//
+//            mainLoopCount = 0;
+//            OpenTimer3(T3_ON | T3_PS_1_1, ticks_from_us(accPeriod, 1));
+//            ConfigIntTimer3(T3_INT_ON | T3_INT_PRIOR_1);
+//            
+//            OpenTimer4(T4_ON| T4_PS_1_1, ticks_from_ms(1000, 1));
+//            ConfigIntTimer4(T4_INT_ON | T4_INT_PRIOR_3);
+//        }
+//        else {
+//            delay_t1(2);
+//            ClrWdt();   //Clear watchdog timer
+//        }
         
 
         if (!proxyStandby)  {    
@@ -466,20 +472,36 @@ int main(int argc, char** argv) {
             temp_wax = Kf1 * temp_casu + Kf2 * temp_casu1 + Kf3 * temp_wax1;
             temp_wax1 = temp_wax;
             temp_casu1 = temp_casu;
-
+            
+            //Temperature reference model
+            temp_model = TempModel(uref_m[3]);
+            //Delay of the model reference for 4 steps
+            for(i=1; i<4; i++)
+                uref_m[4-i] = uref_m[3-i];
+            uref_m[0] = temp_ref;
+            
+            if(fabs(temp_ref - temp_wax) > 0.5)     //When is close to reference temperature do not use adaptation
+                kAdapt = AdaptiveController(temp_ref, temp_wax, temp_model);
+                        
             // Peltier feedback loop
             if (tempSensors > 0) {
                 if (tempCtlOn == 1) {
                     if (temp_ref <= temp_ref_shutdown) {
                         ctlPeltier = 0;
                         PeltierVoltageSet(ctlPeltier);
+                        //Reset adaptive controller parameters
+                        ymk1 = temp_wax;
+                        for(i=0; i<4; i++)
+                            uref_m[i] = temp_wax;
+                        ka1 = 1;
                     }
                     else {
                         if (temp_ref > temp_ref_h)
                             temp_ref = temp_ref_h;
                         if (temp_ref < temp_ref_l)
                             temp_ref = temp_ref_l;
-                        ctlPeltier = PeltierPID(temp_ref, temp_wax);
+
+                        ctlPeltier = PeltierPID(temp_ref, temp_wax, kAdapt);
                     }
                     if ((temp_casu > 45) || (temp_pcb > 45)) { //Check limits
                         ctlPeltier = 0;
@@ -519,7 +541,16 @@ int main(int argc, char** argv) {
             fanCooler = 100;
         }
         FanCooler(fanCooler);
-
+        
+        //TEST
+//        temp_casu = temp_model;
+//        //temp_flexPCB = kAdapt;
+//        proxy_fr = kAdapt*100;
+//        proxy_fl = uref_m[0];
+//        proxy_bl = uref_m[1];
+//        proxy_b = uref_m[2];
+//        proxy_br = uref_m[3];
+        
         updateMeasurements();
 
         timerVal = ReadTimer2();

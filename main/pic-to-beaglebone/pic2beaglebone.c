@@ -3,6 +3,7 @@
 /*Init variables for measured data*/
 float temp_f = -1, temp_b = -1, temp_r = -1, temp_l = -1, temp_pcb = -1,
         temp_casu = 25, temp_casu1 = 25, temp_wax = 25, temp_wax1 = 25, temp_flexPCB = -1;
+float temp_model = 25;
 float vAmp_m[4] = {-1.0};
 UINT16 fAmp_m[4] = {0.0};
 UINT16 proxy_f = 0, proxy_fr = 0, proxy_br = 0, proxy_b = 0, proxy_bl = 0, proxy_fl = 0, proxy_t = 0;

@@ -15,14 +15,19 @@
 #define DCOEF   (DMAX-DOFFSET)/100        //Output multiplification factor
 
 extern float uk1;
+extern float ymk1;
+extern float ka1;
 
 void PeltierInit(digitalPin csPin);
 
 void PeltierSet(digitalPin csPin, UINT8 lShdn, int set);
 
-
-int PeltierPID(float ref, float y);
+int PeltierPID(float ref, float y, float ka);
 
 void PeltierResetPID(void);
+
+float TempModel(float uref);
+
+float AdaptiveController(float uref, float y, float ym);
 
 #endif	/* PELTIER_H */

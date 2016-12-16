@@ -40,6 +40,8 @@ extern float temp_pcb, temp_flexPCB;
 
 extern float temp_casu, temp_casu1, temp_wax, temp_wax1;    // temperature
 
+extern float temp_model;
+
 /*! Amplitude of vibration in g (g = 9.81 m/s2) measured by the front accelerometer.
  */
 extern float vAmp_m[4];

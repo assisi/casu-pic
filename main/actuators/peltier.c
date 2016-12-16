@@ -5,7 +5,7 @@
 ; Compiler:     -
 ;============================================================================;
 ; FILE DESCRIPTION:
-; Peltier firware - peltier driver is controlled with DAC connected with SPI
+; Peltier firmware - peltier driver is controlled with DAC connected with SPI
 ; Schematic documentation:
  * "ASSISI_controller_board_v1.3"
  * "ASSISI_CASU05_AmpBoard"
@@ -27,20 +27,23 @@
 
 //PI controller global variables and parameters
 float uk1 = 0;
-
+float ymk1 = 0;
+float ka1 = 1;
 
 /* PI controller
  * inputs:  ref - reference value
  *          y - feedback value
+ *          ka - adaptation gain 
  * returns: uk
  */
-int PeltierPID(float ref, float y){
-    float ek, uk, ui, up;
+int PeltierPID(float ref, float y, float ka){
+    float ek, uk, ui, up, Kp1;
 
     ek = ref - y;
 
     //uk = Kp*ek + Ki*(uk1 + ek);
-    up = Kp * ek;
+    Kp1 = Kp*ka;
+    up = Kp1 * ek;
     if (Ki <= 0.00001)
         ui = 0;
     else
@@ -80,4 +83,36 @@ void PeltierResetPID(){
 
     uk1 = 0;
     temp_ref_cur = temp_wax;
+}
+
+//Peltier temperature model
+// Gm(s) = Ym(s)/Uref(s) = 1/(1+75s) - temperature model 
+float TempModel(float uref){
+    float Km = 0.97561; //40/41; 0.9736; //37/38; Td = 2s
+    float ymk; 
+    int i;
+    //static float ymk1 = 25;
+    
+    ymk = (1-Km)*uref + Km*ymk1;
+    ymk1 = ymk;
+    
+    return ymk; 
+}
+
+//Adaptive gain algorithm
+float AdaptiveController(float uref, float y, float ym){
+    float ka, em, sign;
+    
+    em = y - ym; //Process and model error
+    
+    if((uref-ym)>= 0)
+        sign = 1;
+    else
+        sign = -1;
+    
+    ka = ka1 - 0.005*em*sign; //gama = 0.005
+    ka1 = ka;
+    
+    
+    return ka;
 }
