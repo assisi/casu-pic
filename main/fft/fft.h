@@ -5,8 +5,8 @@
 #ifndef FFT_H
 #define	FFT_H
 
-#include<dsp.h>
-#include<math.h>
+#include <dsp.h>
+#include <math.h>
 
 /*! Size of the buffer used for FFT. Also the number of samples used for FFT algorithm.
  */
@@ -29,9 +29,7 @@ int FastFourierTransform(int *source_array,
                          int *amplitudes,
                          fractcomplex *destination_array,
                          fractcomplex *src_array,
-                         fractcomplex *twiddle_P,
-                         float *freq,
-                         float *amp);
+                         fractcomplex *twiddle_P);
 
 #endif	/* FFT_H */
 
