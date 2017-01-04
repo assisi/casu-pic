@@ -95,7 +95,7 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
 
                 if (msg_id == MSG_REF_VIBE_ID && msg_rec_bytes == IN_VIBE_REF_DATA_NUM) {
                     msg_status = MSG_REF_VIBE_ID;
-                    updateReferences(msg_status);  //TODO update this function, use msg_status variable as as parameter.
+                    updateReferences(msg_status);  
                     msg_status = 0;
                 }
                 else if (msg_id == MSG_REF_LED_ID && msg_rec_bytes == IN_LED_REF_DATA_NUM) {

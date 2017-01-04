@@ -117,7 +117,7 @@ void updateReferences(UINT8 msg_id) {
         diagLED_r[0] = i2c2_rx_buff[0];
         diagLED_r[1] = i2c2_rx_buff[1];
         diagLED_r[2] = i2c2_rx_buff[2];
-        //LedUser(diagLED_r[0], diagLED_r[1], diagLED_r[2]);
+        LedUser(diagLED_r[0], diagLED_r[1], diagLED_r[2]);
     }
     else if (msg_id == MSG_REF_TEMP_ID) {
         dummy = i2c2_rx_buff[0] | (i2c2_rx_buff[1] << 8);
