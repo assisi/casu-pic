@@ -5,7 +5,7 @@
  * Function suspends program using timer1
  * int msec - desired CPU "sleep" time in milliseconds
  */
-void delay_t1(float msec) {
+void delay_t1(int msec) {
     int count = msec / 400;
     int i;
     for(i = 0; i <= count; i++) {
@@ -54,7 +54,7 @@ unsigned long ticks_from_ms(float msec, int prescaler) {
     return ticks;
 }
 
-unsigned long ticks_from_us(long usec, int prescaler) {
+unsigned long ticks_from_us(float usec, int prescaler) {
     unsigned long ticks;
     ticks = FOSC / 2.0 / prescaler * usec / 1000000.0;
     return ticks;

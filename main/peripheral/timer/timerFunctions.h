@@ -18,7 +18,7 @@
  *
  * @param msec Time in milliseconds.
  */
-void delay_t1(float msec);
+void delay_t1(int msec);
 
 /*!\brief Function calculates CPU ticks to count with timer which correspond to a given time in milliseconds and timer prescaler.
  *
@@ -26,15 +26,13 @@ void delay_t1(float msec);
  * @param prescaler Timer prescaler. Use predefined timer prescale values: T1_PS_1_x, x = 1,8,64,256
  * @return Number of CPU ticks to be counted with timer.
  */
-unsigned long ticks_from_ms(float msec, int prescaler);
-
-unsigned long ticks_from_us(float usec, int prescaler);
+unsigned long ticks_from_ms(int msec, int prescaler);
 
 float ms_from_ticks(UINT16 ticks, int prescaler);
 
 unsigned long ticks_from_s(float sec, int prescaler);
 
-unsigned long ticks_from_us(long usec, int prescaler);
+unsigned long ticks_from_us(float usec, int prescaler);
 
 #endif	/* TIMERFUNCTIONS_H */
 
