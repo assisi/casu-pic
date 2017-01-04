@@ -5,12 +5,15 @@
                    displayName="Header Files"
                    projectFiles="true">
       <logicalFolder name="actuators" displayName="actuators" projectFiles="true">
-        <itemPath>../actuators/peltier.h</itemPath>
         <itemPath>../actuators/pwm.h</itemPath>
+        <itemPath>../actuators/peltier.h</itemPath>
       </logicalFolder>
       <logicalFolder name="casu" displayName="casu" projectFiles="true">
         <itemPath>../casu/initializeHardware.h</itemPath>
         <itemPath>../casu/error.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="fft" displayName="fft" projectFiles="true">
+        <itemPath>../fft/fft.h</itemPath>
       </logicalFolder>
       <logicalFolder name="peripheral" displayName="peripheral" projectFiles="true">
         <logicalFolder name="gpio" displayName="gpio" projectFiles="true">
@@ -25,10 +28,11 @@
           <itemPath>../peripheral/spi/spi2.h</itemPath>
         </logicalFolder>
         <logicalFolder name="timer" displayName="timer" projectFiles="true">
-          <itemPath>../peripheral/timer/timer45.h</itemPath>
           <itemPath>../peripheral/timer/timerFunctions.h</itemPath>
           <itemPath>../peripheral/timer/timer1.h</itemPath>
           <itemPath>../peripheral/timer/timer2.h</itemPath>
+          <itemPath>../peripheral/timer/timer3.h</itemPath>
+          <itemPath>../peripheral/timer/timer4.h</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="pic-to-beaglebone"
@@ -60,13 +64,16 @@
                    displayName="Source Files"
                    projectFiles="true">
       <logicalFolder name="actuators" displayName="actuators" projectFiles="true">
-        <itemPath>../actuators/peltier.c</itemPath>
         <itemPath>../actuators/pwm.c</itemPath>
+        <itemPath>../actuators/peltier.c</itemPath>
       </logicalFolder>
       <logicalFolder name="casu" displayName="casu" projectFiles="true">
         <itemPath>../casu/initizializeHardware.c</itemPath>
         <itemPath>../casu/main.c</itemPath>
         <itemPath>../casu/error.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="fft" displayName="fft" projectFiles="true">
+        <itemPath>../fft/fft.c</itemPath>
       </logicalFolder>
       <logicalFolder name="peripheral" displayName="peripheral" projectFiles="true">
         <logicalFolder name="gpio" displayName="gpio" projectFiles="true">
@@ -82,9 +89,10 @@
         </logicalFolder>
         <logicalFolder name="timer" displayName="timer" projectFiles="true">
           <itemPath>../peripheral/timer/timer2.c</itemPath>
-          <itemPath>../peripheral/timer/timer45.c</itemPath>
           <itemPath>../peripheral/timer/timer1.c</itemPath>
           <itemPath>../peripheral/timer/timerFunctions.c</itemPath>
+          <itemPath>../peripheral/timer/timer3.c</itemPath>
+          <itemPath>../peripheral/timer/timer4.c</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="pic-to-beaglebone"
@@ -138,6 +146,7 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
+            <linkerLibFileItem>/opt/microchip/xc16/v1.21/lib/libdsp-elf.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
