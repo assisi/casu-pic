@@ -5,9 +5,11 @@
 #include "../sensors/adt7320/adt7320.h"
 #include "../peripheral/timer/timer2.h"
 
+/*
 digitalPin LED2R = {&TRISEbits, &PORTEbits, 6};
 digitalPin LED2G = {&TRISCbits, &PORTCbits, 2};
 digitalPin LED2B = {&TRISCbits, &PORTCbits, 3};
+*/ 
 
 /* Define and initialize digital pins used as chip select pins*/
 digitalPin aSlaveR = {&TRISEbits, &PORTEbits, 8};
@@ -34,6 +36,7 @@ void setUpPorts() {
     /* Set port configuration */
     ANSELA = ANSELB = ANSELC = ANSELD = ANSELE = ANSELG = 0x0000;; // all ports digitaL
     delay_t1(20);
+    /*
     // configure LED2 ports as outputs
     digitalOutput(LED2R);
     digitalOutput(LED2G);
@@ -41,6 +44,7 @@ void setUpPorts() {
     digitalHigh(LED2R);
     digitalHigh(LED2G);
     digitalHigh(LED2B);
+    */
     
     // configure accelerometer SPI chip select ports as outputs
     digitalOutput(aSlaveF);
