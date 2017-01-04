@@ -25,9 +25,9 @@ UINT8 spi2Init(UINT8 mode, UINT8 int_en) {
     SPI2CON1bits.CKP = (mode & 0x02) >> 1;   // 1 = Idle state for clock is a high-level, active is low level
     SPI2CON1bits.SSEN = 0;
     SPI2CON1bits.MSTEN = 1;                  // Master mode enabled
-    // Fp = Fosc/2 = 20 Mhz , 20 / 5 / 1 = 4 Mhz
-    SPI2CON1bits.SPRE = 0b011;                // 8 - spre; second prescaler 111 = 1, 110 = 2, ... 000 = 8
-    SPI2CON1bits.PPRE = 0b11;                // pri prescaler 11 = 1, 10 = 4, 01 = 16, 00 = 32
+    // Fp = Fosc/2 = 20 Mhz , 20 / 4 / 4 = 1.25 Mhz
+    SPI2CON1bits.SPRE = 0b100;                // 8 - spre; second prescaler 111 = 1, 110 = 2, ... 000 = 8
+    SPI2CON1bits.PPRE = 0b10;                // pri prescaler 11 = 1, 10 = 4, 01 = 16, 00 = 32
     SPI2STATbits.SPIROV = 0;                 // clear overflow flag
     SPI2STATbits.SPIEN = 1;                  // Enable SPI module
    
