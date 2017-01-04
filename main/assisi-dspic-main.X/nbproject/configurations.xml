@@ -16,6 +16,10 @@
         <itemPath>../fft/fft.h</itemPath>
       </logicalFolder>
       <logicalFolder name="peripheral" displayName="peripheral" projectFiles="true">
+        <logicalFolder name="dma" displayName="dma" projectFiles="true">
+          <itemPath>../peripheral/dma/dma1.h</itemPath>
+          <itemPath>../peripheral/dma/dma0.h</itemPath>
+        </logicalFolder>
         <logicalFolder name="gpio" displayName="gpio" projectFiles="true">
           <itemPath>../peripheral/gpio/digitalIO.h</itemPath>
         </logicalFolder>
@@ -68,14 +72,18 @@
         <itemPath>../actuators/peltier.c</itemPath>
       </logicalFolder>
       <logicalFolder name="casu" displayName="casu" projectFiles="true">
-        <itemPath>../casu/initizializeHardware.c</itemPath>
         <itemPath>../casu/main.c</itemPath>
         <itemPath>../casu/error.c</itemPath>
+        <itemPath>../casu/initializeHardware.c</itemPath>
       </logicalFolder>
       <logicalFolder name="fft" displayName="fft" projectFiles="true">
         <itemPath>../fft/fft.c</itemPath>
       </logicalFolder>
       <logicalFolder name="peripheral" displayName="peripheral" projectFiles="true">
+        <logicalFolder name="dma" displayName="dma" projectFiles="true">
+          <itemPath>../peripheral/dma/dma0.c</itemPath>
+          <itemPath>../peripheral/dma/dma1.c</itemPath>
+        </logicalFolder>
         <logicalFolder name="gpio" displayName="gpio" projectFiles="true">
           <itemPath>../peripheral/gpio/digitalIO.c</itemPath>
         </logicalFolder>
