@@ -11,10 +11,13 @@
 #define FAN_COOLER_ON 0
 #define FAN_COOLER_OFF 100
 
+#define MAX_FFT_NUM 4  // number of max fft component sent to the beaglebone
+
 #include "../peripheral/i2c/i2c2.h"
 #include <Generic.h>
 #include "../actuators/peltier.h"
 #include "../fft/fft.h"
+#include "../peripheral/spi/spi2.h"
 #include "../peripheral/spi/spi1.h"
 
 /*Variables for measured data*/
@@ -50,6 +53,8 @@ extern float vAmp_m[4];
 /*! Frequency of vibration in Hz measured by the acceleromer. This array contains the first 4 dominant frequencies.
  */
 extern UINT16 fAmp_m[4];
+/*! Frequency of vibration in Hz measured by the back accelerometer.
+ */
 
 /*! The front proximity sensor value in bits, range [0-65535].
  */
@@ -151,9 +156,9 @@ extern UINT16 motPwm_ref;
 extern UINT8 fanBlower_r;
 
 extern int source_array[FFT_BUFF];
-extern int amplitudes[FFT_BUFF];
+extern int amplitudes[(int)(FFT_BUFF/2)];
 extern UINT16 accPeriod;
-extern UINT16 maxAmp, fAmp, vAmp;
+extern UINT16 maxAmp;
 
 void updateCalibrationData();
 

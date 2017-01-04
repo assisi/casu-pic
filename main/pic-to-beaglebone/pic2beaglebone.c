@@ -4,7 +4,7 @@
 float temp_f = -1, temp_b = -1, temp_r = -1, temp_l = -1, temp_pcb = -1,
         temp_casu = 25, temp_casu1 = 25, temp_wax = 25, temp_wax1 = 25, temp_flexPCB = -1;
 float vAmp_m[4] = {-1.0};
-UINT16 fAmp_m[4] = {0.0};
+UINT16 fAmp_m[4] = {0};
 UINT16 proxy_f = 0, proxy_fr = 0, proxy_br = 0, proxy_b = 0, proxy_bl = 0, proxy_fl = 0, proxy_t = 0;
 int ctlPeltier = 0, fanCooler = 0;
 UINT8 tempCtlOn = 0, fanCtlOn = 0;
@@ -28,9 +28,9 @@ UINT16 speakerAmp_ref_old = 0;
 UINT16 speakerFreq_ref_old = 0;
 UINT8 proxyStandby = 0;
 int source_array[FFT_BUFF] = {0};
-int amplitudes[FFT_BUFF] = {0};
+int amplitudes[FFT_BUFF/2] = {0};
 extern UINT16 accPeriod;
-UINT16 maxAmp, fAmp, vAmp;
+UINT16 maxAmp;
 
 /*
  * Function updates references (temperature, motor, LED1, LED2) transfered from beaglebone.
@@ -99,7 +99,7 @@ void updateReferences(UINT8 msg_id) {
             }
             if (count > 10 ) {
                 // Error !
-                LedUser(0,100,0);
+                //LedUser(0,100,0);
                 break;
             }
             chipSelect(slaveVib);
@@ -117,7 +117,7 @@ void updateReferences(UINT8 msg_id) {
         diagLED_r[0] = i2c2_rx_buff[0];
         diagLED_r[1] = i2c2_rx_buff[1];
         diagLED_r[2] = i2c2_rx_buff[2];
-        LedUser(diagLED_r[0], diagLED_r[1], diagLED_r[2]);
+        //LedUser(diagLED_r[0], diagLED_r[1], diagLED_r[2]);
     }
     else if (msg_id == MSG_REF_TEMP_ID) {
         dummy = i2c2_rx_buff[0] | (i2c2_rx_buff[1] << 8);
@@ -235,8 +235,7 @@ void updateMeasurements() {
     i2c2_tx_buff[16] = dummy & 0x00FF;
     i2c2_tx_buff[17] = (dummy & 0xFF00) >> 8;
 
-    //dummy = vAmp_m[0] * 10;
-    dummy = maxAmp;
+    dummy = vAmp_m[0] * 10;
     i2c2_tx_buff[18] = dummy & 0x00FF;
     i2c2_tx_buff[19] = (dummy & 0xFF00) >> 8;
     i2c2_tx_buff_fast[0] = i2c2_tx_buff[18];
