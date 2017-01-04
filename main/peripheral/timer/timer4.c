@@ -26,9 +26,9 @@ void OpenTimer4(unsigned int config,unsigned int period)
 
 void ConfigIntTimer4(unsigned int config)
 {
-    IFS0bits.T4IF = 0;                   /* clear IF bit */
-    IPC1bits.T4IP = (config &0x0007);    /* assigning Interrupt Priority */
-    IEC0bits.T4IE = (config &0x0008)>>3; /* Interrupt Enable /Disable */
+    IFS1bits.T4IF = 0;                   /* clear IF bit */
+    IPC6bits.T4IP = (config &0x0007);    /* assigning Interrupt Priority */
+    IEC1bits.T4IE = (config &0x0008)>>3; /* Interrupt Enable /Disable */
 }
 
 /********************************************************************
@@ -41,9 +41,9 @@ void ConfigIntTimer4(unsigned int config)
 
 void CloseTimer4(void)
 {
-    IEC0bits.T4IE = 0;      /* Disable the Timer4 interrupt */
+    IEC1bits.T4IE = 0;      /* Disable the Timer4 interrupt */
     T4CONbits.TON = 0;      /* Disable timer4 */
-    IFS0bits.T4IF = 0;      /* Clear Timer interrupt flag */
+    IFS1bits.T4IF = 0;      /* Clear Timer interrupt flag */
 }
 
 /********************************************************************
