@@ -1,4 +1,5 @@
 #include "dma0.h"
+#include "../../casu/interrupts.h"
 
 /* Function initializes DMA0 for communication with peripheral
  * inputs: ctrl_register  - 16bit control register for DMA setup
@@ -40,7 +41,7 @@ UINT8 dma0Init(void) {
   DMA0CNT = 511; // transmit DMA0CNT+1 bytes
 
   IFS0bits.DMA0IF = 0;          // clear interrupt flag?
-  IPC1bits.DMA0IP = 6;          // interrupt prioriyry
+  IPC1bits.DMA0IP = DMA0_PRIORITY;          // interrupt prioriyry
   IEC0bits.DMA0IE = 1;          // Enable DMA interrupt
   DMA0CONbits.CHEN = 1;         // enable channel
 

@@ -41,6 +41,7 @@
 #include "../peripheral/timer/timer4.h" 
 #include "../actuators/pwm.h"
 #include "../actuators/peltier.h"
+#include "interrupts.h"
 
 
 // Select Internal FRC at POR
@@ -291,7 +292,7 @@ int main(int argc, char** argv) {
     temp_wax1 = temp_casu;
     
     // Configure i2c2 as a slave device and interrupt priority 5
-    I2C2SlaveInit(I2C2_CASU_ADD, 5);
+    I2C2SlaveInit(I2C2_CASU_ADD, BB_I2C_INT_PRIORITY);
     
     // delay for 2 sec
     for(i = 0; i < 4; i ++) {
@@ -308,7 +309,7 @@ int main(int argc, char** argv) {
     dma1Init();
 
     CloseTimer4();
-    ConfigIntTimer4(T4_INT_ON | T4_INT_PRIOR_4);
+    ConfigIntTimer4(T4_INT_ON | TIMER4_PRIORITY);
     OpenTimer4(T4_ON | T4_PS_1_256, ticks_from_ms(500, 256));
     
     diagLED_r[0] = 0;
@@ -498,7 +499,7 @@ void start_acc_acquisition() {
     dma_spi2_started = 1;
     chipSelect(aSlaveR);
     CloseTimer3();
-    ConfigIntTimer3(T3_INT_ON | T3_INT_PRIOR_6);
+    ConfigIntTimer3(T3_INT_ON | ACC_TIMER_PRIORITY);
     OpenTimer3(T3_ON | T3_PS_1_1, ticks_from_us(accPeriod, 1));
     
 }
