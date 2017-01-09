@@ -39,7 +39,8 @@ UINT8 dma0Init(void) {
   DMA0PAD = (volatile unsigned int ) &SPI2BUF;
   DMA0CNT = 511; // transmit DMA0CNT+1 bytes
 
-  IFS0bits.DMA0IF = 0;          // clear interrupt flag
+  IFS0bits.DMA0IF = 0;          // clear interrupt flag?
+  IPC1bits.DMA0IP = 6;          // interrupt prioriyry
   IEC0bits.DMA0IE = 1;          // Enable DMA interrupt
   DMA0CONbits.CHEN = 1;         // enable channel
 

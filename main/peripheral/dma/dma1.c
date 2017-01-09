@@ -67,7 +67,7 @@ UINT8 dma1Init(void) {
     DMA1PAD = (volatile unsigned int) &SPI2BUF;
     DMA1CNT = 1; // transmit DMA1CNT + 1 bytes
     IFS0bits.DMA1IF = 0;          // clear interrupt
-    IEC0bits.DMA1IE = 1;          // Disable DMA interrupt
+    IEC0bits.DMA1IE = 0;          // Disable DMA interrupt
     DMA1CONbits.CHEN = 1;         // enable
 
   return 1;
@@ -77,8 +77,3 @@ UINT8 dma1Start(void) {
     DMA1CONbits.CHEN = 1;         // enable
     DMA1REQbits.FORCE = 1;        // force transfer
 }
-
-unsigned int RxDmaBuffer = 0;
-int az_dma = 0;
-//unsigned int flagDmaLed = 0;
-
