@@ -29,7 +29,7 @@ UINT16 speakerFreq_ref_old = 0;
 UINT8 proxyStandby = 0;
 int source_array[FFT_BUFF] = {0};
 int amplitudes[FFT_BUFF/2] = {0};
-extern UINT16 accPeriod;
+float accPeriod;
 UINT16 maxAmp;
 
 /*

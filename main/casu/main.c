@@ -13,7 +13,7 @@
  * 04.01.2017.      |   dma+spi+fft implemented
  */
 
-#define ACC_RATE 2000   // Hz
+#define ACC_RATE 3200   // Hz
 #define PI 3.141593
 #define MAIN_LOOP_DUR 80 
 
@@ -68,7 +68,6 @@ static fractcomplex      src_array[FFT_BUFF]   __attribute__ ((space(ymemory), f
 fractcomplex destination_array[FFT_BUFF] = {{0}};
 
 digitalPin accPin;
-UINT16 accPeriod;
 UINT16 dma_spi_rx_count = 0;
 UINT16 dma_spi_tx_count = 0;
 int statusTemp[4];          //Temperature sensors initialization status
@@ -188,8 +187,7 @@ int main(int argc, char** argv) {
     }
 
     accPin = aSlaveR;
-    accPeriod = 500;  // 500 us
-
+    accPeriod = 1.0 / ACC_RATE * 1000000.0;  // in us; for ACC_RATE = 3200 Hz it should equal 312.5 us
     status = adxl345Init(accPin);
     ax = status;
     delay_t1(5);

@@ -157,7 +157,7 @@ extern UINT8 fanBlower_r;
 
 extern int source_array[FFT_BUFF];
 extern int amplitudes[(int)(FFT_BUFF/2)];
-extern UINT16 accPeriod;
+extern float accPeriod;
 extern UINT16 maxAmp;
 
 void updateCalibrationData();
