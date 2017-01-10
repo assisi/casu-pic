@@ -251,17 +251,6 @@ void PeltierVoltageSet(int setVoltage){
     return;
 }
 
-
-
-
-
-
-
-
-
-
-
-
 void PeltierSetPwm(int set){
 
     unsigned int K = PTPER/100;
@@ -297,117 +286,6 @@ void PeltierSetPwm(int set){
     return;
 }
 
-int PeltierSetOut(int set){
-
-    static int sPeltierState = 0; //0 - OFF, 1 - ON
-    static int sOutState = 0;  //0 = OFF, 1 = ON
-    static long sSet, setOFF, setON;    //Last period set value
-    int direction = 1;
-    int fInt;
-
-    if (set > 100)
-        set = 100;
-    else if (set < -100)
-        set = -100;
-
-    if(set == 0){
-        PeltierOff();
-        CloseTimer45();
-        sOutState = 0;
-        sPeltierState = 0;
-    }
-    else{
-        if(set < 0){
-            direction = -1;
-            set *= -1;
-        }
-        if(set > 100)  set = 100;
-
-        set *= PELTIER_K;
-        if(set < PELTIER_TD_MIN) set = PELTIER_TD_MIN;
-
-        //Check peltier first period
-        if(sOutState == 0){
-            sOutState = 1;
-            OpenTimer45(T4_PS_1_256, ticks_from_s(set, 256));
-            PeltierOn(direction);
-            sPeltierState = 1;
-            setON = set;
-            setOFF = PELTIER_T - set;
-        }
-
-        else if(set != sSet){    //Set new reference
-            setON = set;
-            setOFF = PELTIER_T - set;
-//            OpenTimer45(T4_PS_1_256, ticks_from_s(set, 256));
-//            PeltierOn(direction);
-//            sPeltierState = 1;
-        }
-
-        //Read timer interrupt
-
-        fInt = ReadIntTimer45();
-        if(fInt == 1){
-            if(sPeltierState == 1){  //Turn off peltier
-                OpenTimer45(T4_PS_1_256, ticks_from_s(setOFF, 256));
-                PeltierOff(direction);
-                sPeltierState = 0;
-            }
-            else{   //Turn on peltier
-                OpenTimer45(T4_PS_1_256, ticks_from_s(setON, 256));
-                PeltierOn(direction);
-                sPeltierState = 1;
-            }
-        }
-    }
-
-    sSet = set;
-
-    return sPeltierState;
-}
-
-void PeltierSetOut2(int set){
-
-    int direction = 0;
-    float set_f = -(float)set;
-
-    if (set_f > 100)
-        set_f = 100;
-    else if (set_f < -100)
-        set = -100;
-
-    if (set_f > 0.2) {
-        direction = 1;
-    }
-    else if (set_f < -0.2) {
-        direction = -1;
-        set_f = set_f * -1;
-    }
-
-    set_f = set_f / 13.33; // s, 100% -> 7.5
-    if (direction == 0) {
-        PeltierOff();
-    }
-    else {
-        PeltierOn(direction);
-        //diagLED_r[2] = 30;
-        unsigned long ticks = ticks_from_s(set_f, 256);
-        OpenTimer45(T4_ON | T4_PS_1_256, ticks);
-//        if (ticks <= 65535) {
-//            OpenTimer2(T2_ON | T2_PS_1_256, ticks);
-//            ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_1);
-//        }
-//        else {
-//            OpenTimer45(T4_ON | T4_PS_1_256, ticks);
-//        }
-        //ConfigIntTimer45(T2_INT_ON | T2_INT_PRIOR_1);
-        //OpenTimer2(T2_ON | T2_PS_1_256, ticks_from_s(set_f/10.0 * 2.0, 256));
-        //ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_1);
-
-    }
-
-}
-
 //Peltier bridge off
 void PeltierOff(){
     digitalLow(PEL_L);
@@ -425,14 +303,4 @@ void PeltierOn(int direction){
         digitalLow(PEL_H);
         digitalHigh(PEL_L);
     }
-}
-
-void __attribute__((__interrupt__, __auto_psv__)) _T5Interrupt(void)
-{
-    IFS1bits.T5IF = 0;
-    IEC1bits.T5IE = 0; // Enable Timer3 interrupt
-    T4CONbits.TON = 0; // Start 32-bit Timer
-    PeltierOff();
-//    if (diagLED_r[2] > 0)
-//        diagLED_r[2] = 0;
 }

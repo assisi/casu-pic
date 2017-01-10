@@ -9,7 +9,7 @@ void delay_t1(int msec) {
     int count = msec / 400;
     int i;
     for(i = 0; i <= count; i++) {
-        OpenTimer1(T1_ON | T1_PS_1_256, ticks_from_ms(msec, 256));
+        OpenTimer1(T1_ON | T1_PS_1_64, ticks_from_ms(msec, 64));
         ConfigIntTimer1(T1_INT_OFF | T1_INT_PRIOR_1);
         while (1) {
             int dummy = IFS0bits.T1IF;

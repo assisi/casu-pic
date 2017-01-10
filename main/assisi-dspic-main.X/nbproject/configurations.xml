@@ -5,14 +5,22 @@
                    displayName="Header Files"
                    projectFiles="true">
       <logicalFolder name="actuators" displayName="actuators" projectFiles="true">
-        <itemPath>../actuators/peltier.h</itemPath>
         <itemPath>../actuators/pwm.h</itemPath>
+        <itemPath>../actuators/peltier.h</itemPath>
       </logicalFolder>
       <logicalFolder name="casu" displayName="casu" projectFiles="true">
         <itemPath>../casu/initializeHardware.h</itemPath>
         <itemPath>../casu/error.h</itemPath>
+        <itemPath>../casu/interrupts.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="fft" displayName="fft" projectFiles="true">
+        <itemPath>../fft/fft.h</itemPath>
       </logicalFolder>
       <logicalFolder name="peripheral" displayName="peripheral" projectFiles="true">
+        <logicalFolder name="dma" displayName="dma" projectFiles="true">
+          <itemPath>../peripheral/dma/dma1.h</itemPath>
+          <itemPath>../peripheral/dma/dma0.h</itemPath>
+        </logicalFolder>
         <logicalFolder name="gpio" displayName="gpio" projectFiles="true">
           <itemPath>../peripheral/gpio/digitalIO.h</itemPath>
         </logicalFolder>
@@ -25,10 +33,11 @@
           <itemPath>../peripheral/spi/spi2.h</itemPath>
         </logicalFolder>
         <logicalFolder name="timer" displayName="timer" projectFiles="true">
-          <itemPath>../peripheral/timer/timer45.h</itemPath>
           <itemPath>../peripheral/timer/timerFunctions.h</itemPath>
           <itemPath>../peripheral/timer/timer1.h</itemPath>
           <itemPath>../peripheral/timer/timer2.h</itemPath>
+          <itemPath>../peripheral/timer/timer3.h</itemPath>
+          <itemPath>../peripheral/timer/timer4.h</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="pic-to-beaglebone"
@@ -60,15 +69,23 @@
                    displayName="Source Files"
                    projectFiles="true">
       <logicalFolder name="actuators" displayName="actuators" projectFiles="true">
-        <itemPath>../actuators/peltier.c</itemPath>
         <itemPath>../actuators/pwm.c</itemPath>
+        <itemPath>../actuators/peltier.c</itemPath>
       </logicalFolder>
       <logicalFolder name="casu" displayName="casu" projectFiles="true">
-        <itemPath>../casu/initizializeHardware.c</itemPath>
         <itemPath>../casu/main.c</itemPath>
         <itemPath>../casu/error.c</itemPath>
+        <itemPath>../casu/initializeHardware.c</itemPath>
+        <itemPath>../casu/interrupts.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="fft" displayName="fft" projectFiles="true">
+        <itemPath>../fft/fft.c</itemPath>
       </logicalFolder>
       <logicalFolder name="peripheral" displayName="peripheral" projectFiles="true">
+        <logicalFolder name="dma" displayName="dma" projectFiles="true">
+          <itemPath>../peripheral/dma/dma0.c</itemPath>
+          <itemPath>../peripheral/dma/dma1.c</itemPath>
+        </logicalFolder>
         <logicalFolder name="gpio" displayName="gpio" projectFiles="true">
           <itemPath>../peripheral/gpio/digitalIO.c</itemPath>
         </logicalFolder>
@@ -82,9 +99,10 @@
         </logicalFolder>
         <logicalFolder name="timer" displayName="timer" projectFiles="true">
           <itemPath>../peripheral/timer/timer2.c</itemPath>
-          <itemPath>../peripheral/timer/timer45.c</itemPath>
           <itemPath>../peripheral/timer/timer1.c</itemPath>
           <itemPath>../peripheral/timer/timerFunctions.c</itemPath>
+          <itemPath>../peripheral/timer/timer3.c</itemPath>
+          <itemPath>../peripheral/timer/timer4.c</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="pic-to-beaglebone"
@@ -138,6 +156,7 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
+            <linkerLibFileItem>/opt/microchip/xc16/v1.21/lib/libdsp-elf.a</linkerLibFileItem>
           </linkerLibItems>
         </linkerTool>
         <archiverTool>
@@ -324,6 +343,7 @@
         <property key="UART 4" value="true"/>
         <property key="USB" value="true"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="false"/>

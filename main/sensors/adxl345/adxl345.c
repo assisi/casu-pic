@@ -124,7 +124,7 @@ UINT8 readAccX(digitalPin csPin, int *ax) {
    if (status <= 0 ) return 0;
    *ax = *ax + 256 * (data & 0x00FF);
 
-   if (*ax < 32767) *ax = *ax - 65536;
+   if (*ax > 32767) *ax = *ax - 65536;
 
    return 1;
 }
@@ -152,7 +152,7 @@ UINT8 readAccY(digitalPin csPin, int *ay) {
    if (status <= 0 ) return 0;
    *ay = *ay + 256 * (data & 0x00FF);
 
-   if (*ay < 32767) *ay = *ay - 65536;
+   if (*ay > 32767) *ay = *ay - 65536;
 
    return 1;
 }
@@ -180,7 +180,7 @@ UINT8 readAccZ(digitalPin csPin, int *az) {
    if (status <= 0 ) return 0;
    *az = *az + 256 * (data & 0x00FF);
 
-   if (*az <= 32767) *az = *az - 65536;
+   if (*az > 32767) *az = *az - 65536;
 
    return 1;
 }

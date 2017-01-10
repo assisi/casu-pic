@@ -47,8 +47,6 @@ void VibrationSet(UINT8 set);
 
 void PeltierSetPwm(int set);
 
-int PeltierSetOut(int set);
-
 void PeltierOff();
 
 void PeltierOn(int direction);

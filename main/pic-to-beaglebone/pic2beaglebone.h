@@ -11,9 +11,13 @@
 #define FAN_COOLER_ON 0
 #define FAN_COOLER_OFF 100
 
+#define MAX_FFT_NUM 4  // number of max fft component sent to the beaglebone
+
 #include "../peripheral/i2c/i2c2.h"
 #include <Generic.h>
 #include "../actuators/peltier.h"
+#include "../fft/fft.h"
+#include "../peripheral/spi/spi2.h"
 #include "../peripheral/spi/spi1.h"
 
 /*Variables for measured data*/
@@ -152,9 +156,9 @@ extern UINT16 motPwm_ref;
 extern UINT8 fanBlower_r;
 
 extern int source_array[FFT_BUFF];
-extern int amplitudes[FFT_BUFF];
-extern UINT16 accPeriod;
-extern UINT16 maxAmp, fAmp, vAmp;
+extern int amplitudes[(int)(FFT_BUFF/2)];
+extern float accPeriod;
+extern UINT16 maxAmp;
 
 void updateCalibrationData();
 

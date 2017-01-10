@@ -29,9 +29,11 @@
 #define ACC_B 2
 #define ACC_L 3
 
+/*
 extern digitalPin LED2R;
 extern digitalPin LED2G;
 extern digitalPin LED2B;
+*/
 
 /* Digital pins used as chip select pins for SPI comm*/
 extern digitalPin aSlaveF;
