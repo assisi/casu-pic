@@ -15,7 +15,7 @@
 
 #define ACC_RATE 3200   // Hz
 #define PI 3.141593
-#define MAIN_LOOP_DUR 80 
+#define MAIN_LOOP_DUR 80
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,14 +31,14 @@
 #include "../sensors/adt7420/adt7420.h"
 #include "../sensors/adxl345/adxl345.h"
 #include "../peripheral/i2c/i2c1.h"
-#include "../peripheral/spi/spi1.h" 
+#include "../peripheral/spi/spi1.h"
 #include "../peripheral/dma/dma0.h"
 #include "../peripheral/dma/dma1.h"
 #include "../sensors/vcnl4000/proxiVCNL4000.h"
 #include "../fft/fft.h"
 #include "../peripheral/timer/timer2.h"
-#include "../peripheral/timer/timer3.h" 
-#include "../peripheral/timer/timer4.h" 
+#include "../peripheral/timer/timer3.h"
+#include "../peripheral/timer/timer4.h"
 #include "../actuators/pwm.h"
 #include "../actuators/peltier.h"
 #include "interrupts.h"
@@ -119,21 +119,21 @@ int main(int argc, char** argv) {
     extern UINT16 speakerFreq_ref;
     extern UINT8 proxyStandby;
     UINT16 dummy = 0x0000;
-    
+
     setUpPorts();
     delay_t1(50);
 
     PWMInit();
     delay_t1(50);
-    
+
     ctlPeltier = 0;
-    PeltierVoltageSet(ctlPeltier);    
+    PeltierVoltageSet(ctlPeltier);
     FanCooler(0);
     diagLED_r[0] = 100;
     diagLED_r[1] = 0;
     diagLED_r[2] = 0;
     LedUser(diagLED_r[0], diagLED_r[1],diagLED_r[2]);
-    
+
     // Speaker initialization - set to 0,1
     spi1Init(2, 0);
     speakerAmp_ref = 0;
@@ -143,7 +143,7 @@ int main(int argc, char** argv) {
     int count = 0;
     UINT16 inBuff[2] = {0};
     UINT16 outBuff[2] = {0};
-        
+
     while (speakerAmp_ref != speakerAmp_ref_old) {
         if (count > 5 ) {
             // Error !
@@ -163,10 +163,10 @@ int main(int argc, char** argv) {
 
         count++;
     }
-        
+
     count = 0;
-    
-    while (speakerFreq_ref != speakerFreq_ref_old) {    
+
+    while (speakerFreq_ref != speakerFreq_ref_old) {
         if (count > 5 ) {
             // Error !
             //LedUser(0, 100, 0);
@@ -220,10 +220,10 @@ int main(int argc, char** argv) {
 
     _SI2C2IE = 0;
     _SI2C2IF = 0;
-        
-    // Proximity sensors initalization    
+
+    // Proximity sensors initalization
     I2C1MasterInit();
-    status = VCNL4000Init();  
+    status = VCNL4000Init();
 
     // Cooler temperature sensors initalization
     status = adt7420Init(0, ADT74_I2C_ADD_mainBoard);
@@ -240,14 +240,14 @@ int main(int argc, char** argv) {
     delay_t1(5);
     statusTemp[3] = adt7320Init(tSlaveL, ADT_CONT_MODE | ADT_16_BIT);
     delay_t1(5);
-     
+
     // Temperature estimation initialization
     for (i = 0; i < 50; i++) {
-        adt7320ReadTemp(tSlaveF, &temp_f); 
+        adt7320ReadTemp(tSlaveF, &temp_f);
         delay_t1(1);
-        adt7320ReadTemp(tSlaveL, &temp_l); 
+        adt7320ReadTemp(tSlaveL, &temp_l);
         delay_t1(1);
-        adt7320ReadTemp(tSlaveB, &temp_b); 
+        adt7320ReadTemp(tSlaveB, &temp_b);
         delay_t1(1);
         adt7320ReadTemp(tSlaveR, &temp_r);
         delay_t1(1);
@@ -266,7 +266,7 @@ int main(int argc, char** argv) {
         temp_b = -1;
     if (statusTemp[3] != 1)
         temp_l = -1;
-    
+
     // CASU ring average temperature
     temp_casu = 0;
     tempNum = 0;
@@ -284,45 +284,45 @@ int main(int argc, char** argv) {
         temp_casu /= tempNum;
     else
         temp_casu = -1;
-    
+
     temp_casu1 = temp_casu;
-    temp_wax = temp_casu; 
+    temp_wax = temp_casu;
     temp_wax1 = temp_casu;
-    
+
     // Configure i2c2 as a slave device and interrupt priority 5
     I2C2SlaveInit(I2C2_CASU_ADD, BB_I2C_INT_PRIORITY);
-    
+
     // delay for 2 sec
     for(i = 0; i < 4; i ++) {
         delay_t1(500);
         ClrWdt();
     }
-   
+
     while (i2cStarted == 0) {
         delay_t1(200);
         ClrWdt();
     }
-        
+
     dma0Init();
     dma1Init();
 
     CloseTimer4();
     ConfigIntTimer4(T4_INT_ON | TIMER4_PRIORITY);
     OpenTimer4(T4_ON | T4_PS_1_256, ticks_from_ms(500, 256));
-    
+
     diagLED_r[0] = 0;
     diagLED_r[1] = 0;
     diagLED_r[2] = 0;
     LedUser(diagLED_r[0], diagLED_r[1],diagLED_r[2]);
-    
+
     start_acc_acquisition();
- 
+
     while(1) {
-        
+
         ConfigIntTimer2(T2_INT_OFF);    // Disable timer interrupt
         IFS0bits.T2IF = 0;              // Clear interrupt flag
         OpenTimer2(T2_ON | T2_PS_1_256, 65535); // Configure timer
-        
+
         if (!proxyStandby) {
             statusProxi[0] = I2C1ChSelect(1, 2);            // Front
             proxy_f = VCNL4000ReadProxi();
@@ -341,8 +341,8 @@ int main(int argc, char** argv) {
             delay_t1(1);
             statusProxi[5] = I2C1ChSelect(1, 1);            // Front left
             proxy_fl = VCNL4000ReadProxi();
-            delay_t1(1);    
-        }   
+            delay_t1(1);
+        }
         else {
             proxy_f = 0;            // Front
             proxy_br = 0;            // Back right
@@ -351,15 +351,14 @@ int main(int argc, char** argv) {
             proxy_bl = 0;            // Back left
             proxy_fl = 0;            // Front left
         }
-        
-        
+
+
         if (timer4_flag == 1) {
             // every 1 second
             timer4_flag = 0;
-            
+
             if (slowLoopControl == 0 || slowLoopControl == 2 ) {
                 // fft loop every 1 sec
-                LedUser(100, 0, 0);
                 fftLoop();
                 dummy = 1;
                 start_acc_acquisition();
@@ -367,15 +366,13 @@ int main(int argc, char** argv) {
             }
             else if (slowLoopControl == 3) {
                 // temp loop every 2 sec
-                LedUser(0, 0, 0);
                 tempLoop();
                 slowLoopControl = 0;
             }
             else {
-                LedUser(0, 0, 0);
                 slowLoopControl++;
             }
-            
+
         }
 
         // Cooler fan control
@@ -392,15 +389,15 @@ int main(int argc, char** argv) {
             fanCooler = FAN_COOLER_ON;
         else
             fanCooler = FAN_COOLER_OFF;
-        
+
         updateMeasurements();
-         
+
         timerVal = ReadTimer2();
         CloseTimer2();
         timeElapsed = ms_from_ticks(timerVal, 256);
         if (timeElapsed < MAIN_LOOP_DUR)
             delay_t1(MAIN_LOOP_DUR - timeElapsed);
-        
+
         ClrWdt(); //Clear watchdog timer
 
     } // end while(1)
@@ -417,7 +414,7 @@ void tempLoop() {
     if (tempSensors > 0) {
         // We have at least one temperature sensor working
         // Peltier controlled
-       
+
         if (dma_spi2_started == 1) {
             // error - something wrong with dma, spi or timers!?
             // this should never happen
@@ -448,7 +445,7 @@ void tempLoop() {
             }
         }
     }
-    else 
+    else
         tempNum = 0;
 
     if (tempNum > 0)
@@ -499,7 +496,7 @@ void start_acc_acquisition() {
     CloseTimer3();
     ConfigIntTimer3(T3_INT_ON | ACC_TIMER_PRIORITY);
     OpenTimer3(T3_ON | T3_PS_1_1, ticks_from_us(accPeriod, 1));
-    
+
 }
 
 void fftLoop() {
@@ -513,25 +510,25 @@ void fftLoop() {
             source_array[i] = acc_data;
         source_array[i] -= az_b_l;
     }
-    
+
     FastFourierTransform(&source_array[0], &amplitudes[0], &destination_array[0], &src_array[0], &Twiddles_array[0]);
     find_max_amplitudes();
 }
 
 UINT16 find_min_value_index(int array[], UINT16 len) {
-    
+
     int min_value;
     UINT16 i, min_value_index = 0;
-    
+
     min_value = array[min_value_index];
-    
+
     for(i = 1; i < len; i++) {
         if (array[i] < min_value) {
             min_value = array[i];
             min_value_index = i;
         }
     }
-    
+
     return min_value_index;
 
 }
@@ -556,14 +553,14 @@ void find_max_amplitudes() {
     int max_amplitudes[MAX_FFT_NUM];
     UINT16 max_frequencies[MAX_FFT_NUM];
     UINT16 i, j , min_value_index;
-    
+
     for(i = 0; i < MAX_FFT_NUM; i++) {
         max_amplitudes[i] = amplitudes[i];
         max_frequencies[i] = i;
     }
-    
+
     min_value_index = find_min_value_index(max_amplitudes, MAX_FFT_NUM);
-    
+
     for (i = MAX_FFT_NUM; i < FFT_BUFF / 2; i ++) {
         if (amplitudes[i] > max_amplitudes[min_value_index]) {
             max_amplitudes[min_value_index] = amplitudes[i];
@@ -571,7 +568,7 @@ void find_max_amplitudes() {
             min_value_index = find_min_value_index(max_amplitudes, MAX_FFT_NUM);
         }
     }
-    
+
     for (i = 0; i < MAX_FFT_NUM-1; i++) {
         for (j = i + 1; j < MAX_FFT_NUM; j++) {
             if (max_amplitudes[j] > max_amplitudes[i]) {
@@ -579,9 +576,9 @@ void find_max_amplitudes() {
                 switch_uint_vars(&max_frequencies[i], &max_frequencies[j]);
             }
         }
-            
+
     }
-    
+
     for(i = 0; i < MAX_FFT_NUM; i++) {
         vAmp_m[i] = max_amplitudes[i];
         fAmp_m[i] = max_frequencies[i] * delta_freq;
@@ -592,16 +589,16 @@ unsigned int flagDmaLed=0;
 int iMLC = 0;
 // Timer 3 interrupt service for reading accelerometer measurements at exactly 2 KHz
 void __attribute__((__interrupt__, __auto_psv__)) _T3Interrupt(void)
-{ 
-    dma1Start();    
+{
+    dma1Start();
     IFS0bits.T3IF = 0;
 
 }
 
-// Timer 4 interrupt service for FFT on accelerometer reading 
+// Timer 4 interrupt service for FFT on accelerometer reading
 void __attribute__((__interrupt__, __auto_psv__)) _T4Interrupt(void)
 {
- 
+
     timer4_flag = 1;
     IFS1bits.T4IF = 0;
 
@@ -609,14 +606,14 @@ void __attribute__((__interrupt__, __auto_psv__)) _T4Interrupt(void)
 
 
 void __attribute__((__interrupt__, no_auto_psv)) _DMA1Interrupt(void) {
-    
+
     dma_spi_tx_count++;
     IFS0bits.DMA1IF = 0;
 }
 
 
 void __attribute__((__interrupt__, no_auto_psv)) _DMA0Interrupt(void) {
-  
+
   dma_spi_rx_count++;
   CloseTimer3();
   chipDeselect(accPin);
