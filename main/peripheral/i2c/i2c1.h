@@ -17,7 +17,7 @@
 
 /*! Size of the buffers used for transmitting (tx) and receiving data (rx).
  */
-#define BUFF_SIZE 64
+#define BUFF_SIZE 128 // use ~~40 + 4 * MAX_FFT_NUM
 /*! Wait time in number of simple while loop cycles. Used for i2c fault diagnostic.
  */
 #define WAIT_TIME 100
@@ -46,7 +46,7 @@ void I2C1Start(void);
 /*! \brief Function puts i2c1 bus in idle mode (master mode).
  *
  * @return -1 Failed to put i2c in idle mode \n
- *          1 Succesfully put i2c in idle mode 
+ *          1 Succesfully put i2c in idle mode
  */
 int I2C1Idle(void);
 
@@ -91,7 +91,7 @@ UINT8 I2C1SlaveInit(UINT8 address, UINT8 int_priority);
  * @param enable Enable/disable (1/0) i2c mux.
  * @param channel Number of channel to be selected.
  * @return -1 - Channel selection failed. \n
- *         [0-7] - Number of the selected channel. 
+ *         [0-7] - Number of the selected channel.
  */
 int I2C1ChSelect(UINT8 enable, UINT8 channel);
 
@@ -128,9 +128,8 @@ int I2C1WriteByte(UINT8 slaveAdd, UINT8 registerAdd, UINT8 data);
  */
 int I2C1ReadByte(UINT8 slaveAdd, UINT8 registerAdd);
 
-/*! \brief Interrupt routine for i2c1 device. 
+/*! \brief Interrupt routine for i2c1 device.
  */
 void __attribute__((__interrupt__, auto_psv)) _SI2C1Interrupt(void);
 
 #endif	/* I2C1_H */
-

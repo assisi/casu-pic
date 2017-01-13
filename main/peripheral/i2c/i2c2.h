@@ -1,7 +1,7 @@
 /*! \file i2c2.h
  * \brief Declaration of functions and variables used for working with i2c2.
  */
- 
+
 #ifndef I2C2_H
 #define	I2C2_H
 
@@ -15,19 +15,17 @@
 
 #include <Generic.h>
 
-/*! I2C address of the dsPIC 
+/*! I2C address of the dsPIC
  */
 #define I2C2_CASU_ADD 0x11
 
-/*! Size of the buffers used for transmitting (tx) and receiving data (rx). 
+/*! Size of the buffers used for transmitting (tx) and receiving data (rx).
  */
-#define BUFF_SIZE 64
+#define BUFF_SIZE 128 // use ~~40 + 4 * MAX_FFT_NUM
 /*! Wait time in number of simple while loop cycles. Used for i2c fault diagnostic.
  */
 
 #define FFT_BUFF 256
-
-#define BUFF_SIZE_ACC 512
 
 #define WAIT_TIME 100
 
@@ -44,8 +42,6 @@
 #define MSG_REF_PROXY_ID 6
 #define MSG_MEASUREMENT_FAST_ID 11
 #define MSG_MEASUREMENT_SLOW_ID 12
-#define MSG_MEASUREMENT_ACC_ID 13
-
 
 #define IN_RESET_DATA_NUM 2
 #define IN_CAL_DATA_NUM 13
@@ -68,7 +64,6 @@ extern UINT8 i2c2_rx_buff[BUFF_SIZE];
  */
 extern UINT8 i2c2_tx_buff[BUFF_SIZE];
 extern UINT8 i2c2_tx_buff_fast[BUFF_SIZE];
-extern UINT8 i2c2_tx_buff_acc[BUFF_SIZE_ACC];
 extern UINT8 i2c2_tx_ready;
 
 extern void updateReferences(UINT8 msg_id);
@@ -83,4 +78,3 @@ extern void updateCalibrationData();
 UINT8 I2C2SlaveInit(UINT8 address, UINT8 int_priority);
 
 #endif	/* I2C2_H */
-

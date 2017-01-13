@@ -1,17 +1,17 @@
 /*! \file pic2beaglebone.h
  * \brief Declaration of functions and variables used for I2C communication with single-board computer (SBC), such as BeagleBone.
- * 
+ *
 
  * Sensors are labeled with respect to the CASU side they are mounted to. The front temperature sensor refers to the sensor mounted on the front CASU side and the front-right proximity sensor refers to the sensor mounted on the front-right side of the hexagonal CASU upper body part.
  */
- 
+
 #ifndef PIC2BEAGLEBONE_H
 #define	PIC2BEAGLEBONE_H
 
 #define FAN_COOLER_ON 0
 #define FAN_COOLER_OFF 100
 
-#define MAX_FFT_NUM 4  // number of max fft component sent to the beaglebone
+#define MAX_FFT_NUM 2  // number of max fft component sent to the beaglebone
 
 #include "../peripheral/i2c/i2c2.h"
 #include <Generic.h>
@@ -46,13 +46,13 @@ extern float temp_casu, temp_casu1, temp_wax, temp_wax1;    // temperature
 
 /*! Amplitude of vibration in g (g = 9.81 m/s2) measured by the front accelerometer.
  */
-extern float vAmp_m[4];
+extern float vAmp_m[MAX_FFT_NUM];
 /*! Amplitude of vibration in g measured by the accelerometer for 4 dominant frequencies.
  */
 
 /*! Frequency of vibration in Hz measured by the acceleromer. This array contains the first 4 dominant frequencies.
  */
-extern UINT16 fAmp_m[4];
+extern UINT16 fAmp_m[MAX_FFT_NUM];
 /*! Frequency of vibration in Hz measured by the back accelerometer.
  */
 
@@ -161,7 +161,5 @@ extern float accPeriod;
 extern UINT16 maxAmp;
 
 void updateCalibrationData();
-
-void updateAccLog();
 
 #endif	/* PIC2BEAGLEBONE_H */

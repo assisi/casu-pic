@@ -4,7 +4,6 @@ UINT8 i2c2_rx_buff[BUFF_SIZE] = {0};     // buffer for incoming data
 UINT8 i2c2_rx_head = 0;                  // pointer to buffer element where new byte is to be stored
 UINT8 i2c2_tx_buff[BUFF_SIZE] = {0};     // buffer for outgoing data
 UINT8 i2c2_tx_buff_fast[BUFF_SIZE] = {0};     // buffer for outgoing data
-UINT8 i2c2_tx_buff_acc[BUFF_SIZE_ACC] = {0};     // buffer for outgoing data
 UINT8 i2c2_tx_head = 0;                  // pointer to a buffer element which will be send in next outgoing transmission
 UINT8 i2c2_tx_ready = 0;
 UINT8 msg_id = 0;
@@ -95,7 +94,7 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
 
                 if (msg_id == MSG_REF_VIBE_ID && msg_rec_bytes == IN_VIBE_REF_DATA_NUM) {
                     msg_status = MSG_REF_VIBE_ID;
-                    updateReferences(msg_status);  
+                    updateReferences(msg_status);
                     msg_status = 0;
                 }
                 else if (msg_id == MSG_REF_LED_ID && msg_rec_bytes == IN_LED_REF_DATA_NUM) {
@@ -122,9 +121,6 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
                 }
                 else if (msg_id == MSG_MEASUREMENT_SLOW_ID && msg_rec_bytes == IN_MSG_MEASUREMENT_REQUEST_NUM) {
                     msg_type_flag = MSG_MEASUREMENT_SLOW_ID;
-                }
-                else if (msg_id == MSG_MEASUREMENT_ACC_ID && msg_rec_bytes == IN_MSG_MEASUREMENT_REQUEST_NUM) {
-                    msg_type_flag = MSG_MEASUREMENT_ACC_ID;
                 }
         }
         else {
@@ -153,18 +149,6 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
                         if (i == WAIT_TIME) break;
                     }
                 }
-                else if (msg_type_flag == MSG_MEASUREMENT_ACC_ID) {
-                    I2C2TRN = i2c2_tx_buff_acc[i2c2_tx_head++];
-                    int i = 0;
-                    while(I2C2STATbits.TBF) {
-                        //Wait till all
-                        i++;
-                        if (i == WAIT_TIME) break;
-                    }
-                    if (i2c2_tx_head == FFT_BUFF * 2) {
-                       i2c2_tx_ready = 0;
-                    }
-                }
 
 /*
                 I2C2TRN = i2c2_tx_buff[i2c2_tx_head++];
@@ -174,7 +158,7 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
                     i++;
                     if (i == WAIT_TIME) break;
                 }
-*/                
+*/
             }
             else msg_type_flag = 0;
         }
@@ -183,6 +167,6 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
     if (I2C2CONbits.SCLREL == 0) {
         I2C2CONbits.SCLREL = 1;	// Release SCL1 line
     }
-    
+
     _SI2C2IF = 0;
 }
