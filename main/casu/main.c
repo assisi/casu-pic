@@ -43,7 +43,6 @@
 #include "../actuators/peltier.h"
 #include "interrupts.h"
 
-
 // Select Internal FRC at POR
 _FOSCSEL(FNOSC_FRC & IESO_OFF);
 // Enable Clock Switching and Configure POSC in XT mode
@@ -61,7 +60,7 @@ float ax_b_r = 0, ay_b_r = 0, az_b_r = 0;
 float vibe_period = 100; // 100 ms
 
 /****FFT****/
-int k=0, str_count = 0, while_count = 0, enable_i2c2 = 0;
+int k = 0, str_count = 0, while_count = 0, enable_i2c2 = 0;
 //static fractcomplex Twiddles_array[FFT_BUFF/2] __attribute__ ((space(xmemory), far, aligned (FFT_BUFF * 2    )));
 static fractcomplex Twiddles_array[FFT_BUFF/2] __attribute__ ((space(xmemory)));
 static fractcomplex      src_array[FFT_BUFF]   __attribute__ ((space(ymemory), far, aligned (FFT_BUFF * 2 * 2)));
@@ -79,6 +78,13 @@ char muxCh;
 float delta_freq;
 
 UINT8 timer4_flag = 0;
+
+float uref_m[4] = {25};
+float temp_model = 25;
+float smc_parameters[2] = {0};
+//test only
+//extern float sigma_m;
+//extern float sigma;
 
 
 int main(int argc, char** argv) {
@@ -288,6 +294,11 @@ int main(int argc, char** argv) {
     temp_casu1 = temp_casu;
     temp_wax = temp_casu;
     temp_wax1 = temp_casu;
+    temp_model = temp_wax;
+
+    for (i = 0; i < 4; i++) {
+        uref_m[i] = temp_wax;
+    }
 
     // Configure i2c2 as a slave device and interrupt priority 5
     I2C2SlaveInit(I2C2_CASU_ADD, BB_I2C_INT_PRIORITY);
@@ -390,6 +401,12 @@ int main(int argc, char** argv) {
         else
             fanCooler = FAN_COOLER_OFF;
 
+        //TEST
+        //temp_casu = temp_model;
+        //temp_pcb = smc_parameters[0] * 10;
+        //temp_flexPCB = sigma_m * 10;
+        //temp_l = sigma * 10;
+
         updateMeasurements();
 
         timerVal = ReadTimer2();
@@ -459,9 +476,24 @@ void tempLoop() {
     temp_wax1 = temp_wax;
     temp_casu1 = temp_casu;
 
+    // local vars
+    float alpha, beta;
+
+    // Delay of the model reference for 4 steps
+    for (i = 1; i < 4; i++) {
+            uref_m[4 - i] = uref_m[3 - i];
+    }
+    uref_m[0] = temp_ref;
+
+    // Temperature reference model
+    if (uref_m[3] > temp_ref_shutdown) {
+        temp_model = TempModel(uref_m[3]);
+    }
+
     // Peltier feedback loop
     if (tempSensors > 0) {
         if (tempCtlOn == 1) {
+
             if (temp_ref <= temp_ref_shutdown) {
                 ctlPeltier = 0;
                 PeltierVoltageSet(ctlPeltier);
@@ -471,7 +503,13 @@ void tempLoop() {
                     temp_ref = temp_ref_h;
                 if (temp_ref < temp_ref_l)
                     temp_ref = temp_ref_l;
-                ctlPeltier = PeltierPID(temp_ref, temp_wax);
+                //ctlPeltier = PeltierPID(temp_ref, temp_wax);
+                // SMC parameter adaptation alpha & beta
+                SmcParamAdapt(&smc_parameters[0], temp_model, temp_wax, temp_ref);
+                alpha = smc_parameters[0];
+                beta = smc_parameters[1];
+
+                ctlPeltier = PeltierSMC(temp_ref, temp_wax, alpha, beta);
             }
             if ((temp_casu > 45) || (temp_pcb > 45)) //Check limits
                 ctlPeltier = 0;

@@ -20,9 +20,16 @@ void PeltierInit(digitalPin csPin);
 
 void PeltierSet(digitalPin csPin, UINT8 lShdn, int set);
 
-
 int PeltierPID(float ref, float y);
 
+float PeltierSMC(float ref, float y, float alpha, float beta);
+
 void PeltierResetPID(void);
+
+void SmcParamAdapt(float *params, float ym, float y, float ref);
+
+float saturation(float x, float K);
+
+float TempModel(float uref);
 
 #endif	/* PELTIER_H */

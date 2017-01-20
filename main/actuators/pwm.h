@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   pwm.h
  * Author: Karlo
  *
@@ -41,7 +41,7 @@ void FanCooler(UINT8 set);
 
 void FanBlower(UINT8 set);
 
-void PeltierVoltageSet(int setVoltage);
+void PeltierVoltageSet(float setVoltage);
 
 void VibrationSet(UINT8 set);
 
@@ -57,4 +57,3 @@ void PeltierOn(int direction);
 #endif
 
 #endif	/* PWM_H */
-

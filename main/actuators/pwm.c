@@ -125,30 +125,30 @@ void LedUser(UINT8 red, UINT8 green, UINT8 blue)
 
     //Red
     if(red > 100) red = 100;
-    if(red == 0) 
+    if(red == 0)
         IOCON4bits.PENL = 0;
     else    {
         IOCON4bits.PENL = 1;
         SDC4 = Kled*(unsigned int)(100-red);
     }
-    
+
 
     //Green
     if(green > 100) green = 100;
-    
-    if(green == 0) 
+
+    if(green == 0)
         IOCON5bits.PENH = 0;
-    else    { 
+    else    {
         IOCON5bits.PENH = 1;
         PDC5 = Kled*(unsigned int)(100-green);
     }
     //Blue
 
     if(blue > 100) blue = 100;
-    
-    if(blue == 0) 
+
+    if(blue == 0)
         IOCON6bits.PENL = 0;
-    else    {     
+    else    {
         IOCON6bits.PENL = 1;
         SDC6 = Kled*(unsigned int)(100-blue);
     }
@@ -230,7 +230,7 @@ void VibrationSet(UINT8 set)
 
     SDC2 = K*(unsigned int)set;
 
-    
+
     return;
 }
 
@@ -239,15 +239,16 @@ void VibrationSet(UINT8 set)
  * inputs:  setVoltage - output voltage in range [-100 100]%
  * returns: none
  */
-void PeltierVoltageSet(int setVoltage){
+void PeltierVoltageSet(float setVoltage){
 
-    int VabsMax = 80;
-    if (setVoltage>VabsMax) 
-        setVoltage = VabsMax;
-    else if(setVoltage<-VabsMax)
-        setVoltage = -VabsMax;
-    
-    PDC1 = PTPER * (setVoltage+100.0) / 200.0;
+    float VabsMax = 80;
+    if (setVoltage > VabsMax)
+     setVoltage = VabsMax;
+    else if (setVoltage < -VabsMax)
+     setVoltage = - VabsMax;
+
+    float dummy = (float) PTPER;
+    PDC1 = (int)(dummy * (setVoltage + 100.0) / 200.0);
     return;
 }
 
@@ -282,7 +283,7 @@ void PeltierSetPwm(int set){
         PDC1 = 0;
         SDC1 = 0;
     }
-    
+
     return;
 }
 
