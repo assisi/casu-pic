@@ -323,12 +323,10 @@ void updateMeasurements() {
     i2c2_tx_buff_fast[29] = i2c2_tx_buff[47];
     i2c2_tx_buff_fast[30] = i2c2_tx_buff[48];
 
-    if(ctlPeltier < 0) {
+    if(ctlPeltier < 0)
         dummy1 = (int)((ctlPeltier + 201.0) * 100.0);
-    }
-    else {
+    else
         dummy1 = (int)(ctlPeltier * 100.0);
-    }
 
     i2c2_tx_buff[49] = dummy1 & 0x00FF;
     i2c2_tx_buff[50] = (dummy1 & 0xFF00) >> 8;
