@@ -13,6 +13,9 @@ float Kf1 = 0.1428, Kf2 = 0.1428, Kf3 = 0.7101;
 float Kp = 20, Ki = 0.9;
 float temp_ref_shutdown = 24.9;
 float temp_ref_l = 26, temp_ref_h = 45;
+
+float C_sigma = 0, C_sigma_m = 0, K1_alpha = 0, K2_beta = 0, epsilon = 0, alphak1 = 0;
+int controller_type = 0;
 //UINT8 pwmMotor = 0;
 
 /* Init variables for storing references and control inputs*/
@@ -159,6 +162,40 @@ void updateCalibrationData() {
     else
         Kf3 = dummy / 10000.0;
     fanCtlOn = i2c2_rx_buff[11];
+
+    controller_type = i2c2_rx_buff[12];
+
+    dummy = (i2c2_rx_buff[13] | (i2c2_rx_buff[14] << 8));
+    if (dummy > 32767)
+        C_sigma = (dummy - 65536) / 1000.0;
+    else
+        C_sigma = dummy / 1000.0;
+    dummy = (i2c2_rx_buff[15] | (i2c2_rx_buff[16] << 8));
+    if (dummy > 32767)
+        C_sigma_m = (dummy - 65536) / 1000.0;
+    else
+        C_sigma_m = dummy / 1000.0;
+    dummy = (i2c2_rx_buff[17] | (i2c2_rx_buff[18] << 8));
+    if (dummy > 32767)
+        K1_alpha = (dummy - 65536) / 10000.0;
+    else
+        K1_alpha = dummy / 10000.0;
+    dummy = (i2c2_rx_buff[19] | (i2c2_rx_buff[20] << 8));
+    if (dummy > 32767)
+        K2_beta = (dummy - 65536) / 10000.0;
+    else
+        K2_beta = dummy / 10000.0;
+    dummy = (i2c2_rx_buff[21] | (i2c2_rx_buff[22] << 8));
+    if (dummy > 32767)
+        epsilon = (dummy - 65536) / 1000.0;
+    else
+        epsilon = dummy / 1000.0;
+    dummy = (i2c2_rx_buff[23] | (i2c2_rx_buff[24] << 8));
+    if (dummy > 32767)
+        alphak1 = (dummy - 65536) / 100.0;
+    else
+        alphak1 = dummy / 100.0;
+
     calRec = 1;
 }
 

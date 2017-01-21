@@ -151,6 +151,9 @@ extern float Kf1, Kf2, Kf3;
 extern float temp_ref_l, temp_ref_h, temp_ref_shutdown;
 extern float Kp, Ki;
 
+extern float alphak1, C_sigma, C_sigma_m, K1_alpha, K2_beta, epsilon;
+extern int controller_type;
+
 /* Variables for storing references and control inputs*/
 extern UINT16 motPwm_ref;
 extern UINT8 fanBlower_r;
