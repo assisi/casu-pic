@@ -33,21 +33,21 @@ float uk1 = 0;
 float yk1 = 25;
 float vk1 = 0;
 float emk1 = 0;
-float alphak1 = 7;
+//float alphak1 = 7;
 
 float ymk1 = 25;
 
 //SMC controller parameters
 float k_sat = 10;
-float C_sigma = 1;
-float C_sigma_m = 1;
-float epsilon = 0.4;
-float K1_alpha = 0.01;
-float K2_beta = 0.01;
+//float C_sigma = 1;
+//float C_sigma_m = 1;
+//float epsilon = 0.4;
+//float K1_alpha = 0.01;
+//float K2_beta = 0.01;
 
 // test only
-//float sigma_m;
-//float sigma;
+float sigma_m = 0;
+float sigma = 0;
 
 /* PI controller
  * inputs:  ref - reference value
@@ -88,7 +88,7 @@ float PeltierPID(float ref, float y){
 
 float PeltierSMC(float ref, float y, float alpha, float beta) {
     float e, d_y;
-    float sigma;
+    //float sigma; // comment out in test - global in main
     float sat_sigma;
     float v, u;
 
@@ -123,7 +123,7 @@ void PeltierResetPID(){
 
 void SmcParamAdapt(float *params, float ym, float y, float ref) {
     float em, e, sat_e, d_em;
-    float sigma_m;
+    //float sigma_m; // comment in test mode - global in main
     float sat_sigma_m;
     float alpha, beta;
 

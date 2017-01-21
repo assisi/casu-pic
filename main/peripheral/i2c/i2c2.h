@@ -1,7 +1,7 @@
 /*! \file i2c2.h
  * \brief Declaration of functions and variables used for working with i2c2.
  */
- 
+
 #ifndef I2C2_H
 #define	I2C2_H
 
@@ -15,11 +15,11 @@
 
 #include <Generic.h>
 
-/*! I2C address of the dsPIC 
+/*! I2C address of the dsPIC
  */
 #define I2C2_CASU_ADD 0x11
 
-/*! Size of the buffers used for transmitting (tx) and receiving data (rx). 
+/*! Size of the buffers used for transmitting (tx) and receiving data (rx).
  */
 #define BUFF_SIZE 64
 /*! Wait time in number of simple while loop cycles. Used for i2c fault diagnostic.
@@ -48,7 +48,7 @@
 
 
 #define IN_RESET_DATA_NUM 2
-#define IN_CAL_DATA_NUM 13
+#define IN_CAL_DATA_NUM 26
 #define IN_VIBE_REF_DATA_NUM 4
 #define IN_LED_REF_DATA_NUM 4
 #define IN_TEMP_REF_DATA_NUM 3
@@ -83,4 +83,3 @@ extern void updateCalibrationData();
 UINT8 I2C2SlaveInit(UINT8 address, UINT8 int_priority);
 
 #endif	/* I2C2_H */
-

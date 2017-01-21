@@ -83,8 +83,8 @@ float uref_m[4] = {25};
 float temp_model = 25;
 float smc_parameters[2] = {0};
 //test only
-//extern float sigma_m;
-//extern float sigma;
+extern float sigma_m;
+extern float sigma;
 
 
 int main(int argc, char** argv) {
@@ -402,10 +402,15 @@ int main(int argc, char** argv) {
             fanCooler = FAN_COOLER_OFF;
 
         //TEST
-        //temp_casu = temp_model;
-        //temp_pcb = smc_parameters[0] * 10;
-        //temp_flexPCB = sigma_m * 10;
-        //temp_l = sigma * 10;
+        temp_f = temp_model;
+        if (temp_ref < 30) {
+            temp_r = smc_parameters[0] * 10;
+        }
+        else {
+            temp_r = smc_parameters[0] / 2.0 * 10.0;
+        }
+        temp_b = sigma_m * 10;
+        temp_l = sigma * 10;
 
         updateMeasurements();
 
@@ -477,7 +482,7 @@ void tempLoop() {
     temp_casu1 = temp_casu;
 
     // local vars
-    float alpha, beta;
+    float alpha = 0, beta = 0;
 
     // Delay of the model reference for 4 steps
     for (i = 1; i < 4; i++) {
@@ -503,13 +508,21 @@ void tempLoop() {
                     temp_ref = temp_ref_h;
                 if (temp_ref < temp_ref_l)
                     temp_ref = temp_ref_l;
-                //ctlPeltier = PeltierPID(temp_ref, temp_wax);
-                // SMC parameter adaptation alpha & beta
-                SmcParamAdapt(&smc_parameters[0], temp_model, temp_wax, temp_ref);
-                alpha = smc_parameters[0];
-                beta = smc_parameters[1];
-
-                ctlPeltier = PeltierSMC(temp_ref, temp_wax, alpha, beta);
+                if (controller_type == 0) {
+                    ctlPeltier = PeltierPID(temp_ref, temp_wax);
+                }
+                else {
+                    LedUser(100,0,0);
+                    // SMC parameter adaptation alpha & beta
+                    SmcParamAdapt(&smc_parameters[0], temp_model, temp_wax, temp_ref);
+                    alpha = smc_parameters[0];
+                    beta = smc_parameters[1];
+                    if (temp_ref >= 30) {
+                        // rough linearization
+                        alpha = alpha / 2.0;
+                    }
+                    ctlPeltier = PeltierSMC(temp_ref, temp_wax, alpha, beta);
+                }
             }
             if ((temp_casu > 45) || (temp_pcb > 45)) //Check limits
                 ctlPeltier = 0;
