@@ -241,11 +241,11 @@ void VibrationSet(UINT8 set)
  */
 void PeltierVoltageSet(float setVoltage){
 
-    float VabsMax = 80.0;
+    float VabsMax = 80;
     if (setVoltage > VabsMax)
         setVoltage = VabsMax;
-    else if(setVoltage < -VabsMax)
-        setVoltage = -VabsMax;
+    else if (setVoltage < -VabsMax)
+        setVoltage = - VabsMax;
 
     float dummy = (float) PTPER;
     PDC1 = (int)(dummy * (setVoltage + 100.0) / 200.0);

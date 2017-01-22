@@ -61,7 +61,7 @@ float ax_b_r = 0, ay_b_r = 0, az_b_r = 0;
 float vibe_period = 100; // 100 ms
 
 /****FFT****/
-int k=0, str_count = 0, while_count = 0, enable_i2c2 = 0;
+int k = 0, str_count = 0, while_count = 0, enable_i2c2 = 0;
 //static fractcomplex Twiddles_array[FFT_BUFF/2] __attribute__ ((space(xmemory), far, aligned (FFT_BUFF * 2    )));
 static fractcomplex Twiddles_array[FFT_BUFF/2] __attribute__ ((space(xmemory)));
 static fractcomplex      src_array[FFT_BUFF]   __attribute__ ((space(ymemory), far, aligned (FFT_BUFF * 2 * 2)));
