@@ -324,7 +324,6 @@ void updateMeasurements() {
     i2c2_tx_buff_fast[30] = i2c2_tx_buff[48];
 
     if(ctlPeltier < 0) {
-        dummy1 = ctlPeltier + 201;
         dummy1 = (int)((ctlPeltier + 201.0) * 100.0);
     }
     else {
