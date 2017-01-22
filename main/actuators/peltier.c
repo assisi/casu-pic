@@ -34,7 +34,7 @@ float uk1 = 0;
  *          y - feedback value
  * returns: uk
  */
-int PeltierPID(float ref, float y){
+float PeltierPID(float ref, float y){
     float ek, uk, ui, up;
 
     ek = ref - y;
@@ -45,7 +45,7 @@ int PeltierPID(float ref, float y){
         ui = 0;
     else
         ui = uk1 + Ki * ek;
-    
+
     uk = up + ui;
     uk1 = ui;
 
@@ -63,7 +63,7 @@ int PeltierPID(float ref, float y){
     }
     //uk1 = uk;// - Kp*ek;
 
-    return (int)uk;
+    return uk;
 }
 
 int PeltierCooler(float tc){

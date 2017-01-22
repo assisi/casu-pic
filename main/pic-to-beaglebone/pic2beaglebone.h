@@ -1,10 +1,10 @@
 /*! \file pic2beaglebone.h
  * \brief Declaration of functions and variables used for I2C communication with single-board computer (SBC), such as BeagleBone.
- * 
+ *
 
  * Sensors are labeled with respect to the CASU side they are mounted to. The front temperature sensor refers to the sensor mounted on the front CASU side and the front-right proximity sensor refers to the sensor mounted on the front-right side of the hexagonal CASU upper body part.
  */
- 
+
 #ifndef PIC2BEAGLEBONE_H
 #define	PIC2BEAGLEBONE_H
 
@@ -112,7 +112,7 @@ extern UINT8 pwmB_diag;
 
 /*! Control PWM value of the Peltier device, range [-100,100].
  */
-extern int ctlPeltier;
+extern float ctlPeltier;
 
 /*! Referent temperature value of the CASU body.
  */
