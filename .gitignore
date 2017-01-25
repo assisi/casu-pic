@@ -36,3 +36,10 @@ slave/assisi-dspic-aux.X/nbproject/Makefile-local-default.mk
 slave/assisi-dspic-aux.X/nbproject/Makefile-variables.mk
 slave/assisi-dspic-aux.X/nbproject/Package-default.bash
 slave/assisi-dspic-aux.X/nbproject/private/
+/main/peripheral/
+/main/pic-to-beaglebone/
+/main/sensors/
+/main/assisi-dspic-main.X/
+/main/casu/
+/main/fft/
+/main/actuators/
