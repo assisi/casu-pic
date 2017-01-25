@@ -82,6 +82,8 @@ UINT8 timer4_flag = 0;
 float uref_m[4] = {25};
 float temp_model = 25;
 float smc_parameters[2] = {0};
+float alpha = 0, beta = 0;
+
 //test only
 extern float sigma_m;
 extern float sigma;
@@ -403,12 +405,13 @@ int main(int argc, char** argv) {
 
         //TEST
         temp_f = temp_model;
-        if (temp_ref < 30) {
-            temp_r = smc_parameters[0] * 10;
-        }
-        else {
-            temp_r = smc_parameters[0] / 2.0 * 10.0;
-        }
+//        if (temp_ref < 30) {
+//            temp_r = smc_parameters[0] * 10;
+//        }
+//        else {
+//            temp_r = smc_parameters[0] / 2.0 * 10.0;
+//        }
+        temp_r = alpha*10;
         temp_b = sigma_m * 10;
         temp_l = sigma * 10;
 
@@ -482,7 +485,6 @@ void tempLoop() {
     temp_casu1 = temp_casu;
 
     // local vars
-    float alpha = 0, beta = 0;
 
     // Delay of the model reference for 4 steps
     for (i = 1; i < 4; i++) {
@@ -517,10 +519,13 @@ void tempLoop() {
                     SmcParamAdapt(&smc_parameters[0], temp_model, temp_wax, temp_ref);
                     alpha = smc_parameters[0];
                     beta = smc_parameters[1];
-                    if (temp_ref >= 30) {
+                    /*if (temp_ref >= 30) {
                         // rough linearization
                         alpha = alpha / 2.0;
-                    }
+                    }*/
+                    //Gain scheduling
+                    alpha = alpha/(1+(powf(temp_wax - 26,4)/7000));
+                    
                     ctlPeltier = PeltierSMC(temp_ref, temp_wax, alpha, beta);
                 }
             }
