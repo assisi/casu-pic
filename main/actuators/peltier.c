@@ -158,7 +158,7 @@ float saturation(float x, float K) {
 }
 
 float TempModel(float uref) {
-    float Km = 0.98684; //75/76; //0.97561; //40/41; 0.9736; //37/38; Td = 2s
+    float Km = 0.9736; //.98684; //75/76; //0.97561; //40/41; 0.9736; //37/38; Td = 2s
     float ymk;
 
     ymk = (1-Km)*uref + Km*ymk1;
