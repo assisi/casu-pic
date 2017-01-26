@@ -82,7 +82,7 @@ UINT8 timer4_flag = 0;
 float uref_m[4] = {25};
 float temp_model = 25;
 float smc_parameters[2] = {0};
-float alpha = 0, beta = 0;
+float alpha = 7.0, beta = 0;
 
 //test only
 extern float sigma_m;
@@ -516,17 +516,31 @@ void tempLoop() {
                 else {
                     LedUser(100,0,0);
                     // SMC parameter adaptation alpha & beta
-                    SmcParamAdapt(&smc_parameters[0], temp_model, temp_wax, temp_ref);
-                    alpha = smc_parameters[0];
-                    beta = smc_parameters[1];
+                    if ((alpha > 5.0) && (alpha < 15.0)) {
+                        SmcParamAdapt(&smc_parameters[0], temp_model, temp_wax, temp_ref);
+                        alpha = smc_parameters[0];
+                        beta = smc_parameters[1];
+                    }
                     /*if (temp_ref >= 30) {
                         // rough linearization
                         alpha = alpha / 2.0;
                     }*/
                     //Gain scheduling
-                    alpha = alpha/(1+(powf(temp_wax - 26,4)/7000));
-                    
-                    ctlPeltier = PeltierSMC(temp_ref, temp_wax, alpha, beta);
+                    float polyvalue, polycoef[6], alpha_lin;
+                    polycoef[0] = 0.0006;
+                    polycoef[1] = -0.0131;
+                    polycoef[2] = 0.1041;
+                    polycoef[3] = -0.2716;
+                    polycoef[4] = 0.0028;
+                    polycoef[5] = 1.0316;
+                    polyvalue = 0;
+                    for(i = 0; i < 6; i++) {
+                        polyvalue += polycoef[i] * powf(temp_wax - 26, 5 - i);
+                    }
+                    alpha_lin = alpha / polyvalue;
+                    //alpha = alpha/(1+(powf(temp_wax - 26,4)/7000));
+
+                    ctlPeltier = PeltierSMC(temp_ref, temp_wax, alpha_lin, beta);
                 }
             }
             if ((temp_casu > 45) || (temp_pcb > 45)) //Check limits
