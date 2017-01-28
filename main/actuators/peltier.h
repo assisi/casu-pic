@@ -32,4 +32,6 @@ float saturation(float x, float K);
 
 float TempModel(float uref);
 
+float TempRamp(float ref, float model, float count);
+
 #endif	/* PELTIER_H */
