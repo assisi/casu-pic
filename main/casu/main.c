@@ -385,7 +385,6 @@ int main(int argc, char** argv) {
             else {
                 slowLoopControl++;
             }
-
         }
 
         // Cooler fan control
@@ -404,24 +403,30 @@ int main(int argc, char** argv) {
             fanCooler = FAN_COOLER_OFF;
 
         //TEST
-        temp_f = temp_model;
+//        temp_f = temp_model;
 //        if (temp_ref < 30) {
 //            temp_r = smc_parameters[0] * 10;
 //        }
 //        else {
 //            temp_r = smc_parameters[0] / 2.0 * 10.0;
 //        }
-        temp_r = alpha*10;
-        temp_b = sigma_m * 10;
-        temp_l = sigma * 10;
+//        temp_r = alpha*10;
+//        temp_b = sigma_m * 10;
+//        temp_l = sigma * 10;
+        //temp_flexPCB = temp_ref_ramp;
+        
+//        proxy_f = temp_model;        
+//        proxy_fl = alpha*10;
+//        proxy_bl = sigma_m * 10;
+//        proxy_b = sigma * 10;
 
         updateMeasurements();
 
         timerVal = ReadTimer2();
         CloseTimer2();
         timeElapsed = ms_from_ticks(timerVal, 256);
-        if (timeElapsed < MAIN_LOOP_DUR)
-            delay_t1(MAIN_LOOP_DUR - timeElapsed);
+        //if (timeElapsed < MAIN_LOOP_DUR)
+        //    delay_t1(MAIN_LOOP_DUR - timeElapsed);
 
         ClrWdt(); //Clear watchdog timer
 
@@ -490,8 +495,9 @@ void tempLoop() {
     for (i = 1; i < 4; i++) {
             uref_m[4 - i] = uref_m[3 - i];
     }
-    uref_m[0] = temp_ref;
-
+    //uref_m[0] = temp_ref;
+    uref_m[0] = temp_ref_ramp;
+    
     // Temperature reference model
     if (uref_m[3] > temp_ref_shutdown) {
         temp_model = TempModel(uref_m[3]);
@@ -514,10 +520,13 @@ void tempLoop() {
                     ctlPeltier = PeltierPID(temp_ref, temp_wax);
                 }
                 else {
-                    LedUser(100,0,0);
+                    //LedUser(100,0,0);
+                    //Temperature reference rate limitation
+                    temp_ref_ramp = TempRamp(temp_ref, temp_model, 0.05);
+                    
                     // SMC parameter adaptation alpha & beta
                     if ((alpha > 5.0) && (alpha < 15.0)) {
-                        SmcParamAdapt(&smc_parameters[0], temp_model, temp_wax, temp_ref);
+                        SmcParamAdapt(&smc_parameters[0], temp_model, temp_wax, temp_ref_ramp);
                         alpha = smc_parameters[0];
                         beta = smc_parameters[1];
                     }
@@ -526,21 +535,36 @@ void tempLoop() {
                         alpha = alpha / 2.0;
                     }*/
                     //Gain scheduling
-                    float polyvalue, polycoef[6], alpha_lin;
-                    polycoef[0] = 0.0006;
-                    polycoef[1] = -0.0131;
-                    polycoef[2] = 0.1041;
-                    polycoef[3] = -0.2716;
-                    polycoef[4] = 0.0028;
-                    polycoef[5] = 1.0316;
-                    polyvalue = 0;
-                    for(i = 0; i < 6; i++) {
-                        polyvalue += polycoef[i] * powf(temp_wax - 26, 5 - i);
-                    }
-                    alpha_lin = alpha / polyvalue;
+//                    float polyvalue, polycoef[6], alpha_lin;
+//                    polycoef[0] = 0.0003;
+//                    polycoef[1] = -0.0066;
+//                    polycoef[2] = 0.0542;
+//                    polycoef[3] = -0.1525;
+//                    polycoef[4] = 0.0415;
+//                    polycoef[5] = 1.0060;
+//                    polyvalue = 0;
+//                    for(i = 0; i < 6; i++) {
+//                        polyvalue += polycoef[i] * powf(temp_wax - 26, 5 - i);
+//                    }
+                    //alpha_lin = alpha / polyvalue;
                     //alpha = alpha/(1+(powf(temp_wax - 26,4)/7000));
-
-                    ctlPeltier = PeltierSMC(temp_ref, temp_wax, alpha_lin, beta);
+                    
+                    float dtemp, alpha_lin;
+                    dtemp = temp_wax-26;
+                    if(dtemp>0 && dtemp<2)
+                        alpha_lin = alpha;
+                    else if (dtemp>=2 && dtemp<4)
+                        alpha_lin = alpha/0.7;
+                    else if (dtemp>=4 && dtemp<6)
+                        alpha_lin = alpha;
+                    else if (dtemp>=6 && dtemp<8)
+                        alpha_lin = alpha/1.15;
+                    else if (dtemp>=8)
+                        alpha_lin = alpha/1.35;
+                    else
+                        alpha_lin = alpha;
+                    
+                    ctlPeltier = PeltierSMC(temp_ref_ramp, temp_wax, alpha_lin, beta);
                 }
             }
             if ((temp_casu > 45) || (temp_pcb > 45)) //Check limits

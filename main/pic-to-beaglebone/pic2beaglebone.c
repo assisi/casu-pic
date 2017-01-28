@@ -22,6 +22,7 @@ int controller_type = 0;
 float temp_ref = 25.0;
 float temp_ref_old = 25.0;
 float temp_ref_cur = 25.0;
+float temp_ref_ramp = 25.0;
 UINT16 motPwm_ref = 0;
 UINT8 ctlLED_r[3] = {0};
 UINT8 diagLED_r[3] = {0};

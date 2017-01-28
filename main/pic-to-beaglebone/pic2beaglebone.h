@@ -124,6 +124,8 @@ extern float temp_ref_cur;
 
  */
 extern float temp_ref_old;
+
+extern float temp_ref_ramp;
 /*! Referent frequency of vibration of the CASU body.
  */
 extern UINT16 vibeFreq_ref;
