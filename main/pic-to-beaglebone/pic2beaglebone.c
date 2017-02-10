@@ -3,6 +3,11 @@
 /*Init variables for measured data*/
 float temp_f = -1, temp_b = -1, temp_r = -1, temp_l = -1, temp_pcb = -1,
         temp_casu = 25, temp_casu1 = 25, temp_wax = 25, temp_wax1 = 25, temp_flexPCB = -1;
+
+float temp_old[8] = {0.0};
+int index_filter[8] = {0};
+
+UINT8 filtered_glitch = 0;
 float vAmp_m[4] = {-1.0};
 UINT16 fAmp_m[4] = {0};
 UINT16 proxy_f = 0, proxy_fr = 0, proxy_br = 0, proxy_b = 0, proxy_bl = 0, proxy_fl = 0, proxy_t = 0;
@@ -15,11 +20,14 @@ float temp_ref_shutdown = 24.9;
 float temp_ref_l = 26, temp_ref_h = 45;
 
 float C_sigma = 0, C_sigma_m = 0, K1_alpha = 0, K2_beta = 0, epsilon = 0, alphak1 = 0;
-int controller_type = 0;
+UINT8 controller_type = 0;
+float alpha = 7.0, beta = 0;
+
 //UINT8 pwmMotor = 0;
 
 /* Init variables for storing references and control inputs*/
 float temp_ref = 25.0;
+float ramp_slope = 0.0;
 float temp_ref_old = 25.0;
 float temp_ref_cur = 25.0;
 float temp_ref_ramp = 25.0;
@@ -132,6 +140,8 @@ void updateReferences(UINT8 msg_id) {
             temp_ref = dummy / 10.0;
         if (temp_ref < 26)
             temp_ref = 0.0;
+
+        ramp_slope = (i2c2_rx_buff[2] | (i2c2_rx_buff[3] << 8)) / 1000.0;
     }
     else if (msg_id == MSG_REF_PROXY_ID) {
         proxyStandby = i2c2_rx_buff[0];
@@ -391,6 +401,13 @@ void updateMeasurements() {
     i2c2_tx_buff[55] = calRec;
     i2c2_tx_buff_fast[35] = i2c2_tx_buff[55];
 
+    float dmy = alpha * 100.0;
+    //dummy = (int)(alpha * 100.0);
+    dummy = (int)dmy;
+    i2c2_tx_buff[56] = dummy & 0x00FF;
+    i2c2_tx_buff[57] = (dummy & 0xFF00) >> 8;
+
+    i2c2_tx_buff[58] = filtered_glitch;
 }
 
 void updateAccLog() {
