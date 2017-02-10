@@ -22,10 +22,11 @@
 
 /*Variables for measured data*/
 
-/*Variables for measured data*/
+/*!< Array containing latest temperature values 6 sensors + two estimated temperatures. */
+extern float temp_old[8];
+extern int index_filter[8];
 
 /*! The front temperature sensor value.
-
  */
 extern float temp_f;
 /*! The back temperature sensor value.
@@ -35,7 +36,6 @@ extern float temp_b;
  */
 extern float temp_r;
 /*! The left temperature sensor value.
-
  */
 extern float temp_l;
 /*! The top temperature sensor value.
@@ -43,6 +43,10 @@ extern float temp_l;
 extern float temp_pcb, temp_flexPCB;
 
 extern float temp_casu, temp_casu1, temp_wax, temp_wax1;    // temperature
+
+/*! Flag if temp_wax was filtered.
+*/
+extern UINT8 filtered_glitch;
 
 /*! Amplitude of vibration in g (g = 9.81 m/s2) measured by the front accelerometer.
  */
@@ -119,6 +123,9 @@ extern float ctlPeltier;
 extern float temp_ref;
 /*! The most recent referent temperature value of the CASU body. Used with the prefilter of the temperature reference.
  */
+
+extern float ramp_slope;
+
 extern float temp_ref_cur;
 /*! Referent temperature value of the CASU body in the previous time step. Used with the prefilter of the temperature reference.
 
@@ -154,7 +161,8 @@ extern float temp_ref_l, temp_ref_h, temp_ref_shutdown;
 extern float Kp, Ki;
 
 extern float alphak1, C_sigma, C_sigma_m, K1_alpha, K2_beta, epsilon;
-extern int controller_type;
+extern UINT8 controller_type;
+
 
 /* Variables for storing references and control inputs*/
 extern UINT16 motPwm_ref;

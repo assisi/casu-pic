@@ -143,8 +143,8 @@ void SmcParamAdapt(float *params, float ym, float y, float ref) {
         alpha = alphak1;
     }
 
-    //beta = K2_beta * alpha;
-    beta = 1/alpha;
+    beta = K2_beta * alpha;
+    //beta = 1/alpha;
     *(params) = alpha;
     *(params + 1) = beta;
 
@@ -168,8 +168,8 @@ float TempModel(float uref) {
     return ymk;
 }
 
-/* Temperature reference ramp function limits the rate of the reference if 
- * difference between reference and model is grater than 2 °C 
+/* Temperature reference ramp function limits the rate of the reference if
+ * difference between reference and model is greater than 2C
  * Inputs: ref - temperature reference
  * model - model temperature
  * count - change rate
@@ -177,21 +177,24 @@ float TempModel(float uref) {
 float TempRamp(float ref, float model, float count){
     static float t_ramp = 25.0;
     float dtemp, dref;
-    
+
     dtemp = ref - model;
     dref = ref - t_ramp;
-    if((fabs(dtemp) > 2)){
+    if(fabs(dtemp) > 2 * count){
         if(dtemp > 0)
             t_ramp += count;
         else
             t_ramp -= count;
-        
-        if(fabs(dref)<=5*count)
+
+/*
+        if(fabs(dref) <= 5*count) {
             t_ramp = temp_ref;
+        }
+*/
     }
     else{
         t_ramp = temp_ref;
     }
-        
+
     return t_ramp;
 }
