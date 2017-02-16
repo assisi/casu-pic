@@ -243,9 +243,9 @@ void PeltierVoltageSet(float setVoltage){
 
     float VabsMax = 80;
     if (setVoltage > VabsMax)
-     setVoltage = VabsMax;
+        setVoltage = VabsMax;
     else if (setVoltage < -VabsMax)
-     setVoltage = - VabsMax;
+        setVoltage = - VabsMax;
 
     float dummy = (float) PTPER;
     PDC1 = (int)(dummy * (setVoltage + 100.0) / 200.0);

@@ -20,7 +20,7 @@ void PeltierInit(digitalPin csPin);
 
 void PeltierSet(digitalPin csPin, UINT8 lShdn, int set);
 
-int PeltierPID(float ref, float y);
+float PeltierPID(float ref, float y);
 
 float PeltierSMC(float ref, float y, float alpha, float beta);
 

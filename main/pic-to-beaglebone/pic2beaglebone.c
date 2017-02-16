@@ -27,7 +27,7 @@ float alpha = 7.0, beta = 0;
 
 /* Init variables for storing references and control inputs*/
 float temp_ref = 25.0;
-float ramp_slope = 0.0;
+float ramp_slope = 0.025;
 float temp_ref_old = 25.0;
 float temp_ref_cur = 25.0;
 float temp_ref_ramp = 25.0;
@@ -51,6 +51,7 @@ UINT16 maxAmp;
  */
 void updateReferences(UINT8 msg_id) {
     UINT16 dummy;
+    float dummy_ramp;
     int status = 0;
 
     if (msg_id == MSG_REF_VIBE_ID) {
@@ -141,7 +142,8 @@ void updateReferences(UINT8 msg_id) {
         if (temp_ref < 26)
             temp_ref = 0.0;
 
-        ramp_slope = (i2c2_rx_buff[2] | (i2c2_rx_buff[3] << 8)) / 1000.0;
+        dummy_ramp = (i2c2_rx_buff[2] | (i2c2_rx_buff[3] << 8));
+        ramp_slope =  dummy_ramp / 1000.0;
     }
     else if (msg_id == MSG_REF_PROXY_ID) {
         proxyStandby = i2c2_rx_buff[0];
@@ -408,6 +410,18 @@ void updateMeasurements() {
     i2c2_tx_buff[57] = (dummy & 0xFF00) >> 8;
 
     i2c2_tx_buff[58] = filtered_glitch;
+
+    dmy = ramp_slope * 1000.0;
+    dummy = (int)dmy;
+    i2c2_tx_buff[59] = dummy & 0x00FF;
+    i2c2_tx_buff[60] = (dummy & 0xFF00) >> 8;
+
+    if (temp_ref_ramp >= 0)
+        dummy = (temp_ref_ramp * 10);
+    else
+        dummy = (int)(temp_ref_ramp * 10) + 65536;
+    i2c2_tx_buff[61] = dummy & 0x00FF;
+    i2c2_tx_buff[62] = (dummy & 0xFF00) >> 8;
 }
 
 void updateAccLog() {

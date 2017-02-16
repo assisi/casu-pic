@@ -54,7 +54,7 @@ float sigma = 0;
  *          y - feedback value
  * returns: uk
  */
-int PeltierPID(float ref, float y){
+float PeltierPID(float ref, float y){
     float ek, uk, ui, up;
 
     ek = ref - y;
@@ -83,7 +83,7 @@ int PeltierPID(float ref, float y){
     }
     //uk1 = uk;// - Kp*ek;
 
-    return (int)uk;
+    return uk;
 }
 
 float PeltierSMC(float ref, float y, float alpha, float beta) {
@@ -180,19 +180,16 @@ float TempRamp(float ref, float model, float count){
 
     dtemp = ref - model;
     dref = ref - t_ramp;
-    if(fabs(dtemp) > 2 * count){
-        if(dtemp > 0)
+    if(fabs(dtemp) > 2.0 * count){
+        if(dtemp > 0.0)
             t_ramp += count;
         else
             t_ramp -= count;
-
-/*
-        if(fabs(dref) <= 5*count) {
-            t_ramp = temp_ref;
-        }
-*/
     }
     else{
+        t_ramp = temp_ref;
+    }
+    if(fabs(dref) <= 5.0 * count) {
         t_ramp = temp_ref;
     }
 
