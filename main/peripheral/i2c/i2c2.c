@@ -95,7 +95,7 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
 
                 if (msg_id == MSG_REF_VIBE_ID && msg_rec_bytes == IN_VIBE_REF_DATA_NUM) {
                     msg_status = MSG_REF_VIBE_ID;
-                    updateReferences(msg_status);  
+                    updateReferences(msg_status);
                     msg_status = 0;
                 }
                 else if (msg_id == MSG_REF_LED_ID && msg_rec_bytes == IN_LED_REF_DATA_NUM) {
@@ -174,7 +174,7 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
                     i++;
                     if (i == WAIT_TIME) break;
                 }
-*/                
+*/
             }
             else msg_type_flag = 0;
         }
@@ -183,6 +183,6 @@ void __attribute__((__interrupt__, auto_psv)) _SI2C2Interrupt(void) {
     if (I2C2CONbits.SCLREL == 0) {
         I2C2CONbits.SCLREL = 1;	// Release SCL1 line
     }
-    
+
     _SI2C2IF = 0;
 }

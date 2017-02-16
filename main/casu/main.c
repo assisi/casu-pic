@@ -574,8 +574,8 @@ void tempLoop() {
                 //Temperature reference rate limitation
                 // ramp_slope = temperature change over 1 s; temploop every 2 s
                 // ramp_slope = 0 --> step fcn (convention)
-                if (ramp_slope > 0) {
-                    temp_ref_ramp = TempRamp(temp_ref, temp_model, ramp_slope * 2);
+                if (ramp_slope > 0.0) {
+                    temp_ref_ramp = TempRamp(temp_ref, temp_model, ramp_slope * 2.0);
                 }
                 else {
                     temp_ref_ramp = temp_ref;
@@ -640,7 +640,7 @@ void tempLoop() {
                 alpha_lin = alpha * k;
 
                 ctlPeltier = PeltierSMC(temp_ref_ramp, temp_wax, alpha_lin, beta);
-                //}
+                //} //else of controller_type
             }
             if ((temp_casu > 45) || (temp_pcb > 45)) //Check limits
                 ctlPeltier = 0;
