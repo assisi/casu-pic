@@ -144,7 +144,7 @@ extern UINT8 ctlLED_r[3];
  */
 extern UINT8 diagLED_r[3];
 
-
+extern UINT8 new_vibration_reference;
 /*! \brief Function updates referent values of each stimuli. Referent values are received through I2C communication with SBC.
 
  */

@@ -12,7 +12,7 @@
 #elif defined(__dsPIC33E__)
 #include <p33Exxxx.h>
 #endif
- 
+
 #include <dsp.h>
 #include <math.h>
 
@@ -20,7 +20,7 @@
 #include "../gpio/digitalIO.h"
 #include "../../actuators/pwm.h"
 #include "../../sensors/adxl345/adxl345.h"
-#include "../../pic-to-beaglebone/pic2beaglebone.h" 
+#include "../../pic-to-beaglebone/pic2beaglebone.h"
 
 extern int mainLoopCount;
 extern UINT16 dma1BufferA[2] __attribute__((space(dma)));
@@ -36,7 +36,6 @@ extern UINT16 dma1BufferA[2] __attribute__((space(dma)));
 
 UINT8 dma1Init(void);
 
-UINT8 dma1Start(void);
+void dma1Start(void);
 
 #endif	/* DMA0_H */
-

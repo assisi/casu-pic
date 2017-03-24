@@ -44,7 +44,7 @@ int source_array[FFT_BUFF] = {0};
 int amplitudes[FFT_BUFF/2] = {0};
 float accPeriod;
 UINT16 maxAmp;
-
+UINT8 new_vibration_reference = 0;
 /*
  * Function updates references (temperature, motor, LED1, LED2) transfered from beaglebone.
  * It takes data from rx_buff used in i2c communication with beaglebone
@@ -76,6 +76,7 @@ void updateReferences(UINT8 msg_id) {
         if (SPI1STATbits.SPITBF)
             while(SPI1STATbits.SPITBF);
         while (speakerAmp_ref != speakerAmp_ref_old) {
+            new_vibration_reference = 1;
             //fAmp_m[1] = count;
             if (count > 0) {
                 delay_t1(5);
@@ -96,7 +97,6 @@ void updateReferences(UINT8 msg_id) {
             chipSelect(slaveVib);
             status = spi1TransferWord(inBuff[0], &speakerAmp_ref_old);
             chipDeselect(slaveVib);
-
             count++;
         }
 

@@ -1,7 +1,7 @@
 #include "dma1.h"
 
 /* Function initializes DMA1 for communication with peripheral
- * inputs: ctrl_register  - 16bit control register for DMA setup
+ * ctrl_register - 16bit control register for DMA setup
  *                        bit 15 (CHEN) enable/disable
  *                        bit 14 (SIZE) byte/word
  *                        bit 13 (DIR)  DMA write/DMA read
@@ -11,7 +11,7 @@
  *                        bit 5-4 (AMODE) reserved/peripheral indirect/register indirect without increment/with increment
  *                        bit 3-2 unimplemented (0)
  *                        bit 1-0 (MODE) bit 1 ping-pong/no; bit 0 one-shot/continuous
- *         req_register - 
+ *         req_register -
  *         peripheral_address e.g. &SPI2BUF
  * return: 1 - initialization succeeded
  *         0 - initialization failed
@@ -19,7 +19,7 @@
 UINT16 dma1BufferA[2] __attribute__((space(dma)));
 
 /*UINT8 dma0Init(UINT16 ctrl_register, UINT16 req_register, volatile unsigned int *peripheral_address) {
-    
+
     LedUser(0,100,0);
     DMA0CON = ctrl_register; // set register while disabled
 
@@ -42,10 +42,10 @@ UINT16 dma1BufferA[2] __attribute__((space(dma)));
 */
 
 UINT8 dma1Init(void) {
-    
+
     //LedUser(0, 100, 0);
 
-    DMA1CONbits.CHEN = 0; //disable
+    DMA1CONbits.CHEN = 0; // disable
     DMA1CONbits.SIZE = 0;  // word
     DMA1CONbits.DIR = 1; // RAM to peripheral
     DMA1CONbits.HALF = 0; // interrupt at full transfer
@@ -55,11 +55,11 @@ UINT8 dma1Init(void) {
 
     DMA1STAL = __builtin_dmaoffset(&dma1BufferA[0]);
     DMA1STAH = 0x0000;
-    
+
     // not using ping pong
     //DMA1STBL = __builtin_dmaoffset(&dma1BufferB);
     //DMA1STBH = 0x0000;
-    
+
     dma1BufferA[0] = ADXL_COMMAND(REG_DATAZ0, ADXL_READ);
     dma1BufferA[1] = ADXL_COMMAND(REG_DATAZ1, ADXL_READ);;
 
@@ -73,7 +73,9 @@ UINT8 dma1Init(void) {
   return 1;
 }
 
-UINT8 dma1Start(void) {
+void dma1Start(void)
+{
+    DMA1CONbits.CHEN = 0;         // disable
     DMA1CONbits.CHEN = 1;         // enable
     DMA1REQbits.FORCE = 1;        // force transfer
 }

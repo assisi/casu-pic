@@ -38,6 +38,7 @@
           <itemPath>../peripheral/timer/timer2.h</itemPath>
           <itemPath>../peripheral/timer/timer3.h</itemPath>
           <itemPath>../peripheral/timer/timer4.h</itemPath>
+          <itemPath>../peripheral/timer/timer5.h</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="pic-to-beaglebone"
@@ -103,6 +104,7 @@
           <itemPath>../peripheral/timer/timerFunctions.c</itemPath>
           <itemPath>../peripheral/timer/timer3.c</itemPath>
           <itemPath>../peripheral/timer/timer4.c</itemPath>
+          <itemPath>../peripheral/timer/timer5.c</itemPath>
         </logicalFolder>
       </logicalFolder>
       <logicalFolder name="pic-to-beaglebone"

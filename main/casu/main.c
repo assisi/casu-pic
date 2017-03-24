@@ -39,6 +39,7 @@
 #include "../peripheral/timer/timer2.h"
 #include "../peripheral/timer/timer3.h"
 #include "../peripheral/timer/timer4.h"
+#include "../peripheral/timer/timer5.h"
 #include "../actuators/pwm.h"
 #include "../actuators/peltier.h"
 #include "interrupts.h"
@@ -74,10 +75,13 @@ float tempBridge[4];        //Bridge temperature copy
 int tempNum = 0;            //Sensors number
 int tempSensors = 0;
 UINT8 dma_spi2_started = 0;
+UINT8 dma_spi2_done = 0;
+extern UINT8 new_vibration_reference;
 char muxCh;
 float delta_freq;
 
 UINT8 timer4_flag = 0;
+UINT8 timer5_flag = 0;
 
 float uref_m[4] = {25};
 float temp_model = 25;
@@ -117,9 +121,7 @@ int main(int argc, char** argv) {
     int status = 0;
     int i = 0;
     int ax = 0, ay = 0, az = 0;
-    float temp = 0;
     int statusProxi[8];
-    int tempLoopControl = 0;
     int slowLoopControl = 0;
     UINT16 timerVal = 0;
     float timeElapsed = 0.0;
@@ -330,8 +332,12 @@ int main(int argc, char** argv) {
     dma1Init();
 
     CloseTimer4();
-    ConfigIntTimer4(T4_INT_ON | TIMER4_PRIORITY);
-    OpenTimer4(T4_ON | T4_PS_1_256, ticks_from_ms(500, 256));
+    ConfigIntTimer4(T4_INT_ON | TEMP_LOOP_PRIORITY);
+    OpenTimer4(T4_ON | T4_PS_1_256, ticks_from_ms(2000, 256));
+
+    CloseTimer5();
+    ConfigIntTimer5(T5_INT_ON | FFT_LOOP_PRIORITY);
+    OpenTimer5(T5_ON | T5_PS_1_256, ticks_from_ms(1000, 256));
 
     diagLED_r[0] = 0;
     diagLED_r[1] = 0;
@@ -375,27 +381,40 @@ int main(int argc, char** argv) {
             proxy_fl = 0;            // Front left
         }
 
-
         if (timer4_flag == 1) {
-            // every 1 second
+            // every 2 seconds
+            CloseTimer4();
+            ConfigIntTimer4(T4_INT_ON | TEMP_LOOP_PRIORITY);
             timer4_flag = 0;
 
-            if (slowLoopControl == 0 || slowLoopControl == 2 ) {
-                // fft loop every 1 sec
-                fftLoop();
-                dummy = 1;
-                start_acc_acquisition();
-                slowLoopControl++;
-            }
-            else if (slowLoopControl == 3) {
-                // temp loop every 2 sec
+            if (dma_spi2_started == 0) {
+                OpenTimer4(T4_ON | T4_PS_1_256, ticks_from_ms(2000, 256));
                 skip_temp_filter++;
                 tempLoop();
-                slowLoopControl = 0;
             }
             else {
-                slowLoopControl++;
+                OpenTimer4(T4_ON | T4_PS_1_256, ticks_from_ms(50, 256));
             }
+        }
+
+        if (dma_spi2_done == 1) {
+            fftLoop();
+            dma_spi2_done = 0;
+        }
+        if ((timer5_flag == 1) || (new_vibration_reference == 1)) {
+            // every 2 seconds
+            CloseTimer5();
+            ConfigIntTimer5(T5_INT_ON | FFT_LOOP_PRIORITY);
+            OpenTimer5(T5_ON | T5_PS_1_256, ticks_from_ms(1000, 256));
+
+            timer5_flag = 0;
+            if (new_vibration_reference == 1) {
+                delay_t1(30);
+            }
+            new_vibration_reference = 0;
+
+            // fft loop every 1 sec
+            start_acc_acquisition();
         }
 
         // Cooler fan control
@@ -425,12 +444,13 @@ int main(int argc, char** argv) {
 //        temp_b = sigma_m * 10;
 //        temp_l = sigma * 10;
         //temp_flexPCB = temp_ref_ramp;
-
-//        proxy_f = temp_model;
-//        proxy_fl = alpha*10;
-//        proxy_bl = sigma_m * 10;
-//        proxy_b = sigma * 10;
-
+/*
+        proxy_f = dma_spi2_started;
+        proxy_fl = dma_spi2_done;
+        proxy_bl = new_vibration_reference;
+        proxy_b = timer5_flag;
+        proxy_br = timer4_flag;
+*/
         int dummy_filt = 0;
         for (i = 0; i < 8; i++) {
             if (index_filter[i] > 0){
@@ -606,10 +626,10 @@ void tempLoop() {
                 //alpha_lin = alpha / polyvalue;
                 //alpha = alpha/(1+(powf(temp_wax - 26,4)/7000));
 
-                float dtemp, alpha_lin;
+                float alpha_lin;
                 float slopes[5];
 
-//                    dtemp = temp_wax - 26;
+//                   float dtemp = temp_wax - 26;
 
                 slopes[0] = 0.9684;
                 slopes[1] = 0.9979;
@@ -672,7 +692,6 @@ void FilterGlitch(float* old, float* new, int* index) {
 }
 
 void start_acc_acquisition() {
-
     dma0Start();
     dma_spi2_started = 1;
     chipSelect(aSlaveR);
@@ -766,40 +785,4 @@ void find_max_amplitudes() {
         vAmp_m[i] = max_amplitudes[i];
         fAmp_m[i] = max_frequencies[i] * delta_freq;
     }
-}
-
-unsigned int flagDmaLed=0;
-int iMLC = 0;
-// Timer 3 interrupt service for reading accelerometer measurements at exactly 2 KHz
-void __attribute__((__interrupt__, __auto_psv__)) _T3Interrupt(void)
-{
-    dma1Start();
-    IFS0bits.T3IF = 0;
-
-}
-
-// Timer 4 interrupt service for FFT on accelerometer reading
-void __attribute__((__interrupt__, __auto_psv__)) _T4Interrupt(void)
-{
-
-    timer4_flag = 1;
-    IFS1bits.T4IF = 0;
-
-}
-
-
-void __attribute__((__interrupt__, no_auto_psv)) _DMA1Interrupt(void) {
-
-    dma_spi_tx_count++;
-    IFS0bits.DMA1IF = 0;
-}
-
-
-void __attribute__((__interrupt__, no_auto_psv)) _DMA0Interrupt(void) {
-
-  dma_spi_rx_count++;
-  CloseTimer3();
-  chipDeselect(accPin);
-  dma_spi2_started = 0;
-  IFS0bits.DMA0IF = 0;    // Clear the DMA0 Interrupt Flag
 }
