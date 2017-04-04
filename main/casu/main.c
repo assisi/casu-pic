@@ -44,6 +44,7 @@
 #include "../actuators/peltier.h"
 #include "interrupts.h"
 
+/*
 // Select Internal FRC at POR
 _FOSCSEL(FNOSC_FRC & IESO_OFF);
 // Enable Clock Switching and Configure POSC in XT mode
@@ -53,6 +54,7 @@ _FPOR(ALTI2C2_OFF & ALTI2C1_ON);
 //Watchdog timer -> Twtd = PR*POST/32000 [s]
 _FWDT(FWDTEN_ON & WDTPRE_PR128 & WDTPOST_PS1024);   //Twdt ~ 4s
 //_FWDT(FWDTEN_OFF);
+*/
 
 int ax = 0, ay = 0, az = 0;
 float ax_b_l = 0, ay_b_l = 0, az_b_l = 0;
@@ -402,18 +404,26 @@ int main(int argc, char** argv) {
             dma_spi2_done = 0;
         }
         if ((timer5_flag == 1) || (new_vibration_reference == 1)) {
-            // every 2 seconds
+            // every 1 seconds
             CloseTimer5();
             ConfigIntTimer5(T5_INT_ON | FFT_LOOP_PRIORITY);
             OpenTimer5(T5_ON | T5_PS_1_256, ticks_from_ms(1000, 256));
 
             timer5_flag = 0;
             if (new_vibration_reference == 1) {
-                delay_t1(30);
+            //if(1){
+                CloseTimer3();
+                dma0Stop();
+                dma1Stop();
+                spi2Init(2, 0);
+                dma0Init();
+                dma1Init();
+                chipDeselect(aSlaveR);
+                IFS0bits.DMA0IF = 0;
+                delay_t1(30); // transient response
             }
             new_vibration_reference = 0;
 
-            // fft loop every 1 sec
             start_acc_acquisition();
         }
 
@@ -695,6 +705,7 @@ void start_acc_acquisition() {
     dma0Start();
     dma_spi2_started = 1;
     chipSelect(aSlaveR);
+    delay_t1(5);
     CloseTimer3();
     ConfigIntTimer3(T3_INT_ON | ACC_TIMER_PRIORITY);
     OpenTimer3(T3_ON | T3_PS_1_1, ticks_from_us(accPeriod, 1));

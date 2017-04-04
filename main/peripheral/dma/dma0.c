@@ -50,7 +50,14 @@ UINT8 dma0Init(void) {
 }
 
 void dma0Start() {
+    /*
     DMA0CONbits.CHEN = 0;         // disable channel
     dma0Init();
+    */
     DMA0CONbits.CHEN = 1;         // enable channel
+}
+
+void dma0Stop() {
+
+    DMA0CONbits.CHEN = 0;         // disable channel
 }

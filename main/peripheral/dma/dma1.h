@@ -38,4 +38,6 @@ UINT8 dma1Init(void);
 
 void dma1Start(void);
 
+void dma1Stop(void);
+
 #endif	/* DMA0_H */

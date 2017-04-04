@@ -12,7 +12,7 @@
 #elif defined(__dsPIC33E__)
 #include <p33Exxxx.h>
 #endif
- 
+
 #include <dsp.h>
 #include <math.h>
 
@@ -42,5 +42,6 @@ UINT8 dma0Init(void);
 
 void dma0Start();
 
-#endif	/* DMA0_H */
+void dma0Stop();
 
+#endif	/* DMA0_H */

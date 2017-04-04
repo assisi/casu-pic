@@ -75,7 +75,12 @@ UINT8 dma1Init(void) {
 
 void dma1Start(void)
 {
-    DMA1CONbits.CHEN = 0;         // disable
+    //DMA1CONbits.CHEN = 0;         // disable
     DMA1CONbits.CHEN = 1;         // enable
     DMA1REQbits.FORCE = 1;        // force transfer
+}
+
+void dma1Stop(void)
+{
+    DMA1CONbits.CHEN = 0;
 }
