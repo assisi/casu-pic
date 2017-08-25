@@ -36,8 +36,8 @@ int adt7320Init(digitalPin csPin, UINT8 config) {
     chipDeselect(csPin);
     if (status <= 0) return 0;
 
-    // wait for some time
-    for(i = 0; i < 1000; i++);
+    // wait for some time; should be 500us
+    for(i = 0; i < 5000; i++);
 
     // read device id, expected value 0xc3
     for(i = 0; i <  10; i++) {

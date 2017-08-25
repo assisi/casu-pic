@@ -102,6 +102,11 @@ float PeltierSMC(float ref, float y, float alpha, float beta) {
     vk1 = v;
     u = alpha * sqrt(fabs(sigma)) * sat_sigma + v;
 
+    if (u > 100)
+        u = 100;
+    else if (u < -100)
+        u = -100;
+
     return u;
 }
 
